@@ -68,6 +68,10 @@
   overflow: hidden;
 }
 
+.tl-draggable { cursor: grab; touch-action: none; }
+.tl-draggable:active { cursor: grabbing; }
+.tl-draggable:focus-visible { outline: 3px solid #098b76; outline-offset: 2px; }
+
 .tl-phase {
   position: absolute;
   top: 0;
@@ -113,6 +117,9 @@
 .tl-allocated {
   background: #2f7d4f;
 }
+
+.tl-changed .tl-equip-name { color: #087e70; font-weight: 800; }
+.tl-changed .tl-allocated { background: #e69a22; box-shadow: 0 0 0 2px #f8d7a0; }
 
 .tl-empty {
   color: #52606d;

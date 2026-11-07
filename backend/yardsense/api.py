@@ -1,4 +1,4 @@
-"""HTTP routes. Anant's main.py will call app.include_router(router)."""
+"""HTTP routes for the seeded equipment planning app."""
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, Query
@@ -24,9 +24,15 @@ class RecommendItem(BaseModel):
         return self
 
 
+class DateShift(BaseModel):
+    project_id: str
+    days: int
+
+
 class RecommendRequest(BaseModel):
     project_id: str
     items: list[RecommendItem] = Field(min_length=1)
+    shifts: list[DateShift] = []
 
 
 class CheckoutRequest(BaseModel):
@@ -38,11 +44,6 @@ class CheckoutRequest(BaseModel):
 
 class CheckinRequest(BaseModel):
     checked_in: date
-
-
-class DateShift(BaseModel):
-    project_id: str
-    days: int
 
 
 class PlanRequest(BaseModel):
@@ -107,7 +108,12 @@ def recommend(world, body):
 def post_recommend(body: RecommendRequest | None = None):
     """Ranked options for a request. No body = the hard-coded Riverside request."""
     payload = body.model_dump(by_alias=True, mode="json") if body else DEFAULT_REQUEST
-    return recommend(load_world(), payload)
+    shifts = payload.pop("shifts", [])
+    try:
+        world = allocator.shifted_world(load_world(), shifts)
+    except ValueError as error:
+        raise HTTPException(404, str(error)) from error
+    return recommend(world, payload)
 
 
 @router.get("/classes")

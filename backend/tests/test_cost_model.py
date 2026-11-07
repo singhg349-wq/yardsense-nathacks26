@@ -114,3 +114,13 @@ def test_request_form_endpoints_validate_inputs(client):
     body["items"][0]["finish"] = "2027-01-31"
     body["project_id"] = "missing"
     assert client.post("/recommend", json=body).status_code == 404
+
+
+def test_recommend_reflects_a_schedule_shift(client):
+    body = {"project_id": "PRJ-RIV", "items": [
+        {"class": "GEN_45KW", "qty": 1,
+         "start": "2026-11-23", "finish": "2027-01-31"}],
+            "shifts": [{"project_id": "PRJ-KNG", "days": 42}]}
+    response = client.post("/recommend", json=body)
+    assert response.status_code == 200
+    assert response.json()["items"][0]["options"][0]["option"] == "rent_outside"
