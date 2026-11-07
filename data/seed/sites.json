@@ -1,0 +1,83 @@
+[
+  {
+    "id": "Y-NB",
+    "name": "Northgate Builders yard",
+    "kind": "yard",
+    "company": "NB01",
+    "address": "11240 Alder Industrial Way NW, Edmonton, AB",
+    "lat": 53.57,
+    "lon": -113.42
+  },
+  {
+    "id": "Y-NR",
+    "name": "Northgate Rentals yard",
+    "kind": "yard",
+    "company": "NR01",
+    "address": "4410 Birchfield Road SW, Edmonton, AB",
+    "lat": 53.454,
+    "lon": -113.465
+  },
+  {
+    "id": "S-RIV",
+    "name": "Riverside Clinic site",
+    "kind": "site",
+    "company": "NB01",
+    "address": "9820 Maple Bank Drive NW, Edmonton, AB",
+    "lat": 53.538,
+    "lon": -113.495
+  },
+  {
+    "id": "S-WGT",
+    "name": "Westgate Tower site",
+    "kind": "site",
+    "company": "NB01",
+    "address": "17250 Cedar Gate Avenue NW, Edmonton, AB",
+    "lat": 53.542,
+    "lon": -113.615
+  },
+  {
+    "id": "S-KNG",
+    "name": "Kingsway Lofts site",
+    "kind": "site",
+    "company": "NB01",
+    "address": "10510 Larch Street NW, Edmonton, AB",
+    "lat": 53.561,
+    "lon": -113.505
+  },
+  {
+    "id": "S-WMD",
+    "name": "Whitemud Logistics Hub site",
+    "kind": "site",
+    "company": "NB01",
+    "address": "2600 Aspen Freight Road SE, Edmonton, AB",
+    "lat": 53.482,
+    "lon": -113.33
+  },
+  {
+    "id": "S-CAP",
+    "name": "Capilano Substation site",
+    "kind": "site",
+    "company": "NE01",
+    "address": "7380 Hazel Grid Road NW, Edmonton, AB",
+    "lat": 53.53,
+    "lon": -113.415
+  },
+  {
+    "id": "S-EX1",
+    "name": "Spruce Grove Storage (rental customer)",
+    "kind": "site",
+    "company": "NR01",
+    "address": "310 Poplar Court, Spruce Grove, AB",
+    "lat": 53.545,
+    "lon": -113.9
+  },
+  {
+    "id": "S-EX2",
+    "name": "Leduc Cold Storage (rental customer)",
+    "kind": "site",
+    "company": "NR01",
+    "address": "905 Willow Park Road, Leduc, AB",
+    "lat": 53.265,
+    "lon": -113.55
+  }
+]

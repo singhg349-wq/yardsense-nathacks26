@@ -1,0 +1,426 @@
+[
+  {
+    "ANLN1": "100001",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-03-14",
+    "ANSWL": 21500.0
+  },
+  {
+    "ANLN1": "100002",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-03-14",
+    "ANSWL": 21500.0
+  },
+  {
+    "ANLN1": "100003",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NR01",
+    "AKTIV": "2023-05-02",
+    "ANSWL": 22800.0
+  },
+  {
+    "ANLN1": "100004",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NR01",
+    "AKTIV": "2023-05-02",
+    "ANSWL": 22800.0
+  },
+  {
+    "ANLN1": "100005",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NR01",
+    "AKTIV": "2021-08-19",
+    "ANSWL": 20400.0
+  },
+  {
+    "ANLN1": "100006",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NR01",
+    "AKTIV": "2021-08-19",
+    "ANSWL": 20400.0
+  },
+  {
+    "ANLN1": "100007",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-02-27",
+    "ANSWL": 23900.0
+  },
+  {
+    "ANLN1": "100008",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-02-27",
+    "ANSWL": 23900.0
+  },
+  {
+    "ANLN1": "100009",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NR01",
+    "AKTIV": "2020-06-08",
+    "ANSWL": 19200.0
+  },
+  {
+    "ANLN1": "100010",
+    "TXT50": "Scissor Lift 19 ft electric",
+    "ANLKL": "SCISSOR_19",
+    "BUKRS": "NR01",
+    "AKTIV": "2020-06-08",
+    "ANSWL": 19200.0
+  },
+  {
+    "ANLN1": "100011",
+    "TXT50": "Articulating Boom Lift 60 ft",
+    "ANLKL": "BOOM_60",
+    "BUKRS": "NB01",
+    "AKTIV": "2021-09-20",
+    "ANSWL": 88000.0
+  },
+  {
+    "ANLN1": "100012",
+    "TXT50": "Articulating Boom Lift 60 ft",
+    "ANLKL": "BOOM_60",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-10-11",
+    "ANSWL": 91500.0
+  },
+  {
+    "ANLN1": "100013",
+    "TXT50": "Articulating Boom Lift 60 ft",
+    "ANLKL": "BOOM_60",
+    "BUKRS": "NE01",
+    "AKTIV": "2023-04-03",
+    "ANSWL": 94000.0
+  },
+  {
+    "ANLN1": "100014",
+    "TXT50": "Articulating Boom Lift 60 ft",
+    "ANLKL": "BOOM_60",
+    "BUKRS": "NR01",
+    "AKTIV": "2020-11-16",
+    "ANSWL": 82000.0
+  },
+  {
+    "ANLN1": "100015",
+    "TXT50": "Articulating Boom Lift 60 ft",
+    "ANLKL": "BOOM_60",
+    "BUKRS": "NR01",
+    "AKTIV": "2022-06-27",
+    "ANSWL": 90500.0
+  },
+  {
+    "ANLN1": "100016",
+    "TXT50": "Articulating Boom Lift 60 ft",
+    "ANLKL": "BOOM_60",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-01-15",
+    "ANSWL": 97000.0
+  },
+  {
+    "ANLN1": "100017",
+    "TXT50": "Telehandler 10k lb 55 ft",
+    "ANLKL": "TELEHANDLER",
+    "BUKRS": "NB01",
+    "AKTIV": "2021-04-12",
+    "ANSWL": 165000.0
+  },
+  {
+    "ANLN1": "100018",
+    "TXT50": "Telehandler 10k lb 55 ft",
+    "ANLKL": "TELEHANDLER",
+    "BUKRS": "NB01",
+    "AKTIV": "2023-03-06",
+    "ANSWL": 172000.0
+  },
+  {
+    "ANLN1": "100019",
+    "TXT50": "Telehandler 10k lb 55 ft",
+    "ANLKL": "TELEHANDLER",
+    "BUKRS": "NR01",
+    "AKTIV": "2020-08-24",
+    "ANSWL": 158000.0
+  },
+  {
+    "ANLN1": "100020",
+    "TXT50": "Telehandler 10k lb 55 ft",
+    "ANLKL": "TELEHANDLER",
+    "BUKRS": "NR01",
+    "AKTIV": "2022-02-14",
+    "ANSWL": 166000.0
+  },
+  {
+    "ANLN1": "100021",
+    "TXT50": "Telehandler 10k lb 55 ft",
+    "ANLKL": "TELEHANDLER",
+    "BUKRS": "NR01",
+    "AKTIV": "2023-09-18",
+    "ANSWL": 175000.0
+  },
+  {
+    "ANLN1": "100022",
+    "TXT50": "Telehandler 10k lb 55 ft",
+    "ANLKL": "TELEHANDLER",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-05-06",
+    "ANSWL": 178000.0
+  },
+  {
+    "ANLN1": "100023",
+    "TXT50": "Generator 45 kW towable diesel",
+    "ANLKL": "GEN_45KW",
+    "BUKRS": "NR01",
+    "AKTIV": "2022-04-04",
+    "ANSWL": 49500.0
+  },
+  {
+    "ANLN1": "100024",
+    "TXT50": "Generator 45 kW towable diesel",
+    "ANLKL": "GEN_45KW",
+    "BUKRS": "NR01",
+    "AKTIV": "2022-04-04",
+    "ANSWL": 49500.0
+  },
+  {
+    "ANLN1": "100025",
+    "TXT50": "Generator 45 kW towable diesel",
+    "ANLKL": "GEN_45KW",
+    "BUKRS": "NR01",
+    "AKTIV": "2023-07-10",
+    "ANSWL": 51800.0
+  },
+  {
+    "ANLN1": "100026",
+    "TXT50": "Generator 45 kW towable diesel",
+    "ANLKL": "GEN_45KW",
+    "BUKRS": "NR01",
+    "AKTIV": "2023-07-10",
+    "ANSWL": 51800.0
+  },
+  {
+    "ANLN1": "100027",
+    "TXT50": "Generator 45 kW towable diesel",
+    "ANLKL": "GEN_45KW",
+    "BUKRS": "NR01",
+    "AKTIV": "2021-10-25",
+    "ANSWL": 47600.0
+  },
+  {
+    "ANLN1": "100028",
+    "TXT50": "Indirect Heater 400k BTU",
+    "ANLKL": "HEATER_400K",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-09-12",
+    "ANSWL": 16400.0
+  },
+  {
+    "ANLN1": "100029",
+    "TXT50": "Indirect Heater 400k BTU",
+    "ANLKL": "HEATER_400K",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-09-12",
+    "ANSWL": 16400.0
+  },
+  {
+    "ANLN1": "100030",
+    "TXT50": "Indirect Heater 400k BTU",
+    "ANLKL": "HEATER_400K",
+    "BUKRS": "NB01",
+    "AKTIV": "2023-10-02",
+    "ANSWL": 17200.0
+  },
+  {
+    "ANLN1": "100031",
+    "TXT50": "Indirect Heater 400k BTU",
+    "ANLKL": "HEATER_400K",
+    "BUKRS": "NB01",
+    "AKTIV": "2023-10-02",
+    "ANSWL": 17200.0
+  },
+  {
+    "ANLN1": "100032",
+    "TXT50": "Indirect Heater 400k BTU",
+    "ANLKL": "HEATER_400K",
+    "BUKRS": "NR01",
+    "AKTIV": "2021-11-08",
+    "ANSWL": 15600.0
+  },
+  {
+    "ANLN1": "100033",
+    "TXT50": "Indirect Heater 400k BTU",
+    "ANLKL": "HEATER_400K",
+    "BUKRS": "NR01",
+    "AKTIV": "2021-11-08",
+    "ANSWL": 15600.0
+  },
+  {
+    "ANLN1": "100034",
+    "TXT50": "Indirect Heater 400k BTU",
+    "ANLKL": "HEATER_400K",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-09-23",
+    "ANSWL": 17900.0
+  },
+  {
+    "ANLN1": "100035",
+    "TXT50": "Indirect Heater 400k BTU",
+    "ANLKL": "HEATER_400K",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-09-23",
+    "ANSWL": 17900.0
+  },
+  {
+    "ANLN1": "100036",
+    "TXT50": "Light Tower LED 6 kW",
+    "ANLKL": "LIGHT_TOWER",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-05-30",
+    "ANSWL": 13800.0
+  },
+  {
+    "ANLN1": "100037",
+    "TXT50": "Light Tower LED 6 kW",
+    "ANLKL": "LIGHT_TOWER",
+    "BUKRS": "NB01",
+    "AKTIV": "2023-08-14",
+    "ANSWL": 14400.0
+  },
+  {
+    "ANLN1": "100038",
+    "TXT50": "Light Tower LED 6 kW",
+    "ANLKL": "LIGHT_TOWER",
+    "BUKRS": "NE01",
+    "AKTIV": "2024-03-11",
+    "ANSWL": 14900.0
+  },
+  {
+    "ANLN1": "100039",
+    "TXT50": "Light Tower LED 6 kW",
+    "ANLKL": "LIGHT_TOWER",
+    "BUKRS": "NR01",
+    "AKTIV": "2021-07-19",
+    "ANSWL": 13200.0
+  },
+  {
+    "ANLN1": "100040",
+    "TXT50": "Light Tower LED 6 kW",
+    "ANLKL": "LIGHT_TOWER",
+    "BUKRS": "NR01",
+    "AKTIV": "2021-07-19",
+    "ANSWL": 13200.0
+  },
+  {
+    "ANLN1": "100041",
+    "TXT50": "Light Tower LED 6 kW",
+    "ANLKL": "LIGHT_TOWER",
+    "BUKRS": "NR01",
+    "AKTIV": "2022-12-05",
+    "ANSWL": 13900.0
+  },
+  {
+    "ANLN1": "100042",
+    "TXT50": "Light Tower LED 6 kW",
+    "ANLKL": "LIGHT_TOWER",
+    "BUKRS": "NR01",
+    "AKTIV": "2023-02-20",
+    "ANSWL": 14100.0
+  },
+  {
+    "ANLN1": "100043",
+    "TXT50": "Light Tower LED 6 kW",
+    "ANLKL": "LIGHT_TOWER",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-06-17",
+    "ANSWL": 14800.0
+  },
+  {
+    "ANLN1": "100044",
+    "TXT50": "Plate Compactor reversible",
+    "ANLKL": "COMPACTOR_PLATE",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-04-18",
+    "ANSWL": 4600.0
+  },
+  {
+    "ANLN1": "100045",
+    "TXT50": "Plate Compactor reversible",
+    "ANLKL": "COMPACTOR_PLATE",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-04-18",
+    "ANSWL": 4600.0
+  },
+  {
+    "ANLN1": "100046",
+    "TXT50": "Plate Compactor reversible",
+    "ANLKL": "COMPACTOR_PLATE",
+    "BUKRS": "NR01",
+    "AKTIV": "2021-05-31",
+    "ANSWL": 4300.0
+  },
+  {
+    "ANLN1": "100047",
+    "TXT50": "Plate Compactor reversible",
+    "ANLKL": "COMPACTOR_PLATE",
+    "BUKRS": "NR01",
+    "AKTIV": "2023-06-12",
+    "ANSWL": 4900.0
+  },
+  {
+    "ANLN1": "100048",
+    "TXT50": "Plate Compactor reversible",
+    "ANLKL": "COMPACTOR_PLATE",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-04-29",
+    "ANSWL": 5100.0
+  },
+  {
+    "ANLN1": "100049",
+    "TXT50": "Mini Excavator 3.5 t",
+    "ANLKL": "MINI_EX",
+    "BUKRS": "NB01",
+    "AKTIV": "2021-06-14",
+    "ANSWL": 52000.0
+  },
+  {
+    "ANLN1": "100050",
+    "TXT50": "Mini Excavator 3.5 t",
+    "ANLKL": "MINI_EX",
+    "BUKRS": "NB01",
+    "AKTIV": "2022-08-22",
+    "ANSWL": 55500.0
+  },
+  {
+    "ANLN1": "100051",
+    "TXT50": "Mini Excavator 3.5 t",
+    "ANLKL": "MINI_EX",
+    "BUKRS": "NR01",
+    "AKTIV": "2023-03-27",
+    "ANSWL": 58000.0
+  },
+  {
+    "ANLN1": "100052",
+    "TXT50": "Mini Excavator 3.5 t",
+    "ANLKL": "MINI_EX",
+    "BUKRS": "NR01",
+    "AKTIV": "2020-09-14",
+    "ANSWL": 49500.0
+  },
+  {
+    "ANLN1": "100053",
+    "TXT50": "Mini Excavator 3.5 t",
+    "ANLKL": "MINI_EX",
+    "BUKRS": "NR01",
+    "AKTIV": "2024-07-08",
+    "ANSWL": 61000.0
+  }
+]
