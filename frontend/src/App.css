@@ -4,5 +4,8 @@
 .brand-copy { display: flex; flex-direction: column; line-height: 1.2; }
 .brand-copy strong { font-size: 19px; letter-spacing: -.035em; }
 .brand-copy span { margin-top: 3px; color: #9fb1c0; font-size: 11px; letter-spacing: .055em; text-transform: uppercase; }
-.header-note { margin-left: auto; color: #c7d5de; font-size: 13px; }
-@media (max-width: 700px) { .app-header { padding: 0 18px; } .header-note { display: none; } }
+.app-nav { display: flex; align-items: center; height: 100%; gap: 4px; margin-left: auto; }
+.app-nav button { height: 100%; border: 0; border-bottom: 3px solid transparent; padding: 3px 16px 0; background: transparent; color: #aabcc9; font-size: 13px; font-weight: 700; }
+.app-nav button:hover { color: #fff; }
+.app-nav button.active { border-bottom-color: #2ad1a3; color: #fff; }
+@media (max-width: 700px) { .app-header { padding: 0 18px; } .app-nav button { padding: 3px 10px 0; font-size: 12px; } .brand-copy span { display: none; } }
