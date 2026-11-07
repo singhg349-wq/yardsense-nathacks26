@@ -1,0 +1,119 @@
+/* Timeline: plain CSS, scales to its container (no horizontal page scroll at 1366px). */
+.tl {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font: 13px/1.3 system-ui, sans-serif;
+  color: #1f2933;
+}
+
+.tl-row {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  align-items: center;
+}
+
+.tl-label {
+  padding-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tl-track {
+  position: relative;
+  height: 26px;
+  border-left: 1px solid #d5dbe1;
+}
+
+.tl-header .tl-track {
+  height: 22px;
+  border-bottom: 1px solid #d5dbe1;
+}
+
+.tl-month {
+  position: absolute;
+  top: 3px;
+  padding-left: 3px;
+  font-size: 11px;
+  color: #52606d;
+  border-left: 1px solid #e4e7eb;
+  white-space: nowrap;
+}
+
+.tl-today {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: #d64545;
+  z-index: 2;
+}
+
+.tl-project {
+  margin-top: 10px;
+}
+
+.tl-project-name {
+  font-weight: 600;
+}
+
+.tl-bar {
+  position: absolute;
+  top: 4px;
+  height: 18px;
+  background: #e4e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tl-phase {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  opacity: 0.9;
+  border-right: 1px solid #fff;
+}
+
+.tl-phase-0 { background: #4c8bc7; }
+.tl-phase-1 { background: #3fa796; }
+.tl-phase-2 { background: #e0a030; }
+.tl-phase-3 { background: #9b6bc4; }
+.tl-phase-4 { background: #d0707a; }
+.tl-phase-5 { background: #7a8b99; }
+
+.tl-equip .tl-track {
+  height: 18px;
+}
+
+.tl-equip-name {
+  padding-left: 14px;
+  font-size: 12px;
+  color: #52606d;
+}
+
+.tl-equip-name em {
+  font-size: 10px;
+  color: #9aa5b1;
+}
+
+.tl-equip-bar {
+  position: absolute;
+  top: 4px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+/* planned = striped (not decided yet); allocated = solid */
+.tl-planned {
+  background: repeating-linear-gradient(45deg, #b8c4d0, #b8c4d0 4px, #e4e7eb 4px, #e4e7eb 8px);
+}
+
+.tl-allocated {
+  background: #2f7d4f;
+}
+
+.tl-empty {
+  color: #52606d;
+}

@@ -2,7 +2,7 @@
 
 **natHacks 2026 · Construction & Manufacturing track**
 
-When any project needs equipment, YardSense tells the equipment coordinator whether to **move a unit the group already owns**, **rent from the group's own rental company**, **rent outside**, or **have the rental company buy it**. It decides on what's cheapest for the *whole group of companies*, across every upcoming project, so rental money stays inside the group. It needs no trackers: it reads the SAP asset register, Procore schedules and Textura billing data a contractor already has.
+Equipment decisions in a group of companies are made project by project, by phone, so rental money leaves the group while the group's own equipment sits idle. YardSense tells the equipment coordinator what to do for each request: **move a unit the group owns**, **rent from the group's rental company**, **rent outside**, or **have the rental company buy it**. It picks the cheapest option for the *whole group*, looking across every upcoming project. No trackers: it reads the SAP, Procore and Textura data a contractor already has.
 
 > All project code is written during natHacks 2026 (Nov 6–9). The demo uses a fictional company group (**Northgate Group**) and synthetic data.
 
@@ -26,6 +26,14 @@ pitch/        deck, script, demo video
 | Git | any recent | `git --version` |
 
 Install Python from [python.org](https://www.python.org/downloads/) (on Windows, tick **"Add python.exe to PATH"**). Install Node 24 with [nvm](https://github.com/nvm-sh/nvm) on macOS (`nvm install 24`), [nvm-windows](https://github.com/coreybutler/nvm-windows) on Windows (`nvm install 24` then `nvm use 24`), or the LTS installer from [nodejs.org](https://nodejs.org/).
+## Team
+| Name | Role |
+|---|---|
+| Gurshmeer Singh | TBD |
+| Rakshit | TBD |
+| Sreeman | TBD |
+| Aarish | TBD |
+| Anant | TBD |
 
 ## Run
 
