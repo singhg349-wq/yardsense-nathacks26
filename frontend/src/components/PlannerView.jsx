@@ -19,7 +19,7 @@ export default function PlannerView({ shifts, onSetShift }) {
   const [error, setError] = useState('')
   const shiftKey = JSON.stringify(shifts)
   const plan = shifts.length === 0 ? baseline : shifted?.key === shiftKey ? shifted.plan : null
-  const busy = plan === null
+  const busy = plan === null && !error
 
   useEffect(() => {
     let cancelled = false

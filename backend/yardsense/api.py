@@ -4,7 +4,7 @@ from datetime import date
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field, model_validator
 
-from . import allocator, availability, cost_model, db
+from . import allocator, availability, cost_model, db, metrics
 
 router = APIRouter()
 
@@ -192,3 +192,12 @@ def post_plan(body: PlanRequest):
         return allocator.replan(load_world(), [shift.model_dump() for shift in body.shifts])
     except ValueError as error:
         raise HTTPException(404, str(error)) from error
+
+
+@router.post("/dashboard")
+def post_dashboard(body: PlanRequest):
+    try:
+        world = allocator.shifted_world(load_world(), [shift.model_dump() for shift in body.shifts])
+    except ValueError as error:
+        raise HTTPException(404, str(error)) from error
+    return metrics.dashboard_metrics(world, allocator.build_plan(world))

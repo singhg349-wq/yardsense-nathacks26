@@ -22,6 +22,10 @@ export const postPlan = (shifts) => apiRequest('/plan', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ shifts }),
 })
+export const postDashboard = (shifts) => apiRequest('/dashboard', {
+  method: 'POST', headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ shifts }),
+})
 export const recommend = (body) => apiRequest('/recommend', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(body),
