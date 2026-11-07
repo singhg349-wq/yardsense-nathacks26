@@ -4,7 +4,7 @@ from datetime import date
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
-from . import availability, cost_model, db
+from . import allocator, availability, cost_model, db
 
 router = APIRouter()
 
@@ -25,6 +25,15 @@ class CheckoutRequest(BaseModel):
 
 class CheckinRequest(BaseModel):
     checked_in: date
+
+
+class DateShift(BaseModel):
+    project_id: str
+    days: int
+
+
+class PlanRequest(BaseModel):
+    shifts: list[DateShift] = []
 
 
 # The engine reads everything from the database (see db.load_world).
@@ -140,3 +149,16 @@ def patch_assignment(assignment_id: int, body: CheckinRequest):
     if body.checked_in < date.fromisoformat(assignment["checked_out"]):
         raise HTTPException(422, "Check-in cannot precede check-out")
     return db.check_in_assignment(assignment_id, body.checked_in.isoformat())
+
+
+@router.get("/plan")
+def get_plan():
+    return allocator.replan(load_world(), [])
+
+
+@router.post("/plan")
+def post_plan(body: PlanRequest):
+    try:
+        return allocator.replan(load_world(), [shift.model_dump() for shift in body.shifts])
+    except ValueError as error:
+        raise HTTPException(404, str(error)) from error
