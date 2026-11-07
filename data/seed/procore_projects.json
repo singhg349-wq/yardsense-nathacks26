@@ -207,9 +207,9 @@
       {
         "class": "GEN_45KW",
         "qty": 1,
-        "start": "2027-03-17",
-        "finish": "2027-05-31",
-        "phase": "Electrical rough-in (Northgate Electric crew)"
+        "start": "2027-02-01",
+        "finish": "2027-06-06",
+        "phase": "Interiors"
       }
     ]
   },
@@ -282,8 +282,8 @@
       {
         "class": "GEN_45KW",
         "qty": 1,
-        "start": "2027-03-18",
-        "finish": "2027-06-14",
+        "start": "2027-03-29",
+        "finish": "2027-08-29",
         "phase": "Building services"
       }
     ]
@@ -295,7 +295,7 @@
     "company": "NE01",
     "site_id": "S-CAP",
     "start_date": "2026-10-05",
-    "completion_date": "2027-09-24",
+    "completion_date": "2027-10-08",
     "schedule": [
       {
         "task_name": "Civil works",
@@ -305,12 +305,12 @@
       {
         "task_name": "Electrical installation",
         "start": "2027-02-01",
-        "finish": "2027-08-27"
+        "finish": "2027-09-26"
       },
       {
         "task_name": "Energization and testing",
-        "start": "2027-08-30",
-        "finish": "2027-09-24"
+        "start": "2027-09-27",
+        "finish": "2027-10-08"
       }
     ],
     "planned_equipment": [
@@ -338,8 +338,8 @@
       {
         "class": "GEN_45KW",
         "qty": 1,
-        "start": "2027-06-01",
-        "finish": "2027-07-30",
+        "start": "2027-05-24",
+        "finish": "2027-09-26",
         "phase": "Electrical installation"
       }
     ]
