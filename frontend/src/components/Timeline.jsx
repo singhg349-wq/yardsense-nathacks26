@@ -1,7 +1,12 @@
+import { useRef, useState } from 'react'
 import './Timeline.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const OPTION_LABELS = {
+  move_ours: 'move ours', rent_sister: 'sister rental',
+  rent_outside: 'outside rental', buy: 'buy',
+}
 
 // "2026-11-16" -> milliseconds (UTC, so time zones never shift the day)
 function toMs(iso) {
@@ -21,19 +26,23 @@ function needRows(project) {
 }
 
 // Allocator output (placeholder): [{project_id, label, start, finish}]
-function allocationRows(project, allocations) {
+function allocationRows(project, allocations, changedIds) {
   return allocations
     .filter((a) => a.project_id === project.id)
-    .map((a, i) => ({
-      key: `alloc-${i}`,
-      label: a.label,
+    .map((a) => ({
+      key: a.request_id,
+      label: `${a.qty} x ${a.class} · ${OPTION_LABELS[a.option]}`,
       start: a.start,
       finish: a.finish,
       kind: 'allocated',
+      changed: changedIds.has(a.request_id),
     }))
 }
 
-export default function Timeline({ projects, allocations = [], today = '2026-11-16' }) {
+export default function Timeline({ projects, allocations = [], changedIds = new Set(),
+  onShiftProject, today = '2026-11-16' }) {
+  const drag = useRef(null)
+  const [preview, setPreview] = useState(null)
   if (!projects || projects.length === 0) {
     return <p className="tl-empty">No projects to show.</p>
   }
@@ -49,6 +58,26 @@ export default function Timeline({ projects, allocations = [], today = '2026-11-
   const pct = (iso) => ((toMs(iso) - rangeStart) / span) * 100
   const widthPct = (start, finish) => ((toMs(finish) - toMs(start) + DAY_MS) / span) * 100
   const barStyle = (start, finish) => ({ left: `${pct(start)}%`, width: `${widthPct(start, finish)}%` })
+
+  function startDrag(event, projectId) {
+    if (!onShiftProject) return
+    drag.current = { projectId, x: event.clientX, width: event.currentTarget.parentElement.clientWidth }
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  function moveDrag(event, projectId) {
+    if (drag.current?.projectId === projectId) {
+      setPreview({ projectId, pixels: event.clientX - drag.current.x })
+    }
+  }
+
+  function finishDrag(event, projectId) {
+    if (drag.current?.projectId !== projectId) return
+    const days = Math.round((event.clientX - drag.current.x) / drag.current.width * span / DAY_MS)
+    drag.current = null
+    setPreview(null)
+    if (days !== 0) onShiftProject(projectId, days)
+  }
 
   // One label per month across the top.
   const months = []
@@ -85,7 +114,23 @@ export default function Timeline({ projects, allocations = [], today = '2026-11-
               {project.name}
             </div>
             <div className="tl-track">
-              <div className="tl-bar" style={barStyle(project.start_date, project.completion_date)}>
+              <div className={`tl-bar ${onShiftProject ? 'tl-draggable' : ''}`}
+                style={{ ...barStyle(project.start_date, project.completion_date),
+                  transform: preview?.projectId === project.id ? `translateX(${preview.pixels}px)` : undefined }}
+                onPointerDown={(event) => startDrag(event, project.id)}
+                onPointerMove={(event) => moveDrag(event, project.id)}
+                onPointerUp={(event) => finishDrag(event, project.id)}
+                onPointerCancel={() => { drag.current = null; setPreview(null) }}
+                onKeyDown={(event) => {
+                  if (!onShiftProject) return
+                  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+                    event.preventDefault()
+                    onShiftProject(project.id, event.key === 'ArrowRight' ? 7 : -7)
+                  }
+                }}
+                role={onShiftProject ? 'button' : undefined}
+                tabIndex={onShiftProject ? 0 : undefined}
+                aria-label={onShiftProject ? `Move ${project.name} by dragging or arrow keys` : undefined}>
                 {(project.phases ?? []).map((phase, i) => (
                   <div
                     key={phase.task_name}
@@ -102,8 +147,8 @@ export default function Timeline({ projects, allocations = [], today = '2026-11-
             </div>
           </div>
 
-          {[...needRows(project), ...allocationRows(project, allocations)].map((row) => (
-            <div className="tl-row tl-equip" key={row.key}>
+          {[...needRows(project), ...allocationRows(project, allocations, changedIds)].map((row) => (
+            <div className={`tl-row tl-equip ${row.changed ? 'tl-changed' : ''}`} key={row.key}>
               <div className="tl-label tl-equip-name">
                 {row.label} <em>{row.kind}</em>
               </div>
