@@ -86,7 +86,7 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:5173>. The request screen loads Riverside Clinic's three demo needs and ranked options. If it shows an API error, check that the backend is running in terminal 1.
+Open <http://localhost:5173>. The **Requests** tab loads Riverside Clinic's three demo needs and ranked options. On **Timeline**, move Kingsway Lofts six weeks later to see the generator recommendation flip; **Dashboard** tracks accepted savings and projected fleet idle days. If the app shows an API error, check that the backend is running in terminal 1.
 
 ## Troubleshooting
 
