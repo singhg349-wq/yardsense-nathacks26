@@ -85,11 +85,17 @@ def recommend(world, body):
     if body["project_id"] not in projects:
         raise HTTPException(404, "Project not found")
     site = sites[projects[body["project_id"]]["site_id"]]
-    results = []
     for item in body["items"]:
+        if item["class"] not in world["classes"]:
+            raise HTTPException(422, f"Unknown equipment class: {item['class']}")
+    planned = allocator.request_allocations(world, body["project_id"], body["items"])
+    results = []
+    for item, allocation in zip(body["items"], planned):
         cls = item["class"]
-        if cls not in world["classes"]:
-            raise HTTPException(422, f"Unknown equipment class: {cls}")
+        if allocation is not None:
+            results.append({"class": cls, "qty": allocation["qty"],
+                            "options": allocation["options"]})
+            continue
         req = {"class": cls, "qty": item.get("qty", 1),
                "start": date.fromisoformat(item["start"]),
                "finish": date.fromisoformat(item["finish"]),
