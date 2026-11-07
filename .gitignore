@@ -1,11 +1,10 @@
-# Secrets
+# Private: real company numbers and secrets. NEVER commit.
 .env
 .env.*
 !.env.example
 *.pem
 *.key
 
-# Real (non-anonymized) company data: never commit
 data/private/
 
 # Python
@@ -13,6 +12,9 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+env/
+.nathacks2026/
+pyvenv.cfg
 *.egg-info/
 .pytest_cache/
 
@@ -21,14 +23,15 @@ venv/
 *.sqlite3
 *.db
 
-# Node / frontend
+# Node (frontend/ has its own .gitignore too)
 node_modules/
 dist/
 build/
 .vite/
 
-# OS / editor
+# OS / editors
 .DS_Store
 Thumbs.db
-.vscode/
 .idea/
+.vscode/*
+!.vscode/extensions.json

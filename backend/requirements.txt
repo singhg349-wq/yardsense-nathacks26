@@ -1,3 +1,7 @@
+# Pin top-level packages only. Don't paste `pip freeze` output here:
+# it pins macOS/Linux-only packages (e.g. uvloop) that break installs on Windows.
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
 fastapi
 uvicorn
 pytest
