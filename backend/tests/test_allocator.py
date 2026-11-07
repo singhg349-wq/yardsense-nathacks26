@@ -5,6 +5,7 @@ from datetime import date
 from fastapi.testclient import TestClient
 
 from app.main import app
+from yardsense import allocator, api, db
 
 
 def test_plan_never_double_books_a_physical_unit():
@@ -48,3 +49,18 @@ def test_plan_rejects_unknown_project():
     response = TestClient(app).post("/plan", json={"shifts": [
         {"project_id": "missing", "days": 42}]})
     assert response.status_code == 404
+
+
+def test_request_recommendations_match_the_shifted_group_plan():
+    world = allocator.shifted_world(db.load_world(), [{"project_id": "PRJ-KNG", "days": 42}])
+    body = {"project_id": "PRJ-RIV", "items": [
+        {"class": "SCISSOR_19", "qty": 2,
+         "start": "2026-11-23", "finish": "2027-01-31"},
+        {"class": "GEN_45KW", "qty": 1,
+         "start": "2026-11-23", "finish": "2027-01-31"},
+    ]}
+    recommendations = api.recommend(world, body)["items"]
+    plan = allocator.build_plan(world)
+    by_class = {row["class"]: row for row in plan if row["project_id"] == "PRJ-RIV"}
+    for item in recommendations:
+        assert item["options"][0]["option"] == by_class[item["class"]]["option"]
