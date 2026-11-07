@@ -18,3 +18,4 @@ Newest at the bottom. Each entry: what we decided and why. Change a decision by 
 | 12 | Nov 6 | **All-CS team**; interdisciplinary bonus scored 0 of 3 | Decided at team formation |
 | 13 | Nov 6 | **Internal submission deadline Mon 9:30 AM** (official 11:00 AM MT) | Buffer; late submissions aren't accepted |
 | 14 | Nov 7 | **Switched to Python 3.12** (replaces the Python version in #6) | Matches what the team already has installed; no one has to install a new Python mid-hackathon. All our libraries support 3.12 |
+| 15 | Nov 7 | **SQLite from seeded JSON** (replaces the in-memory storage in #7) | The schema and mock SAP/Procore connectors in issue #4 now load a local database that the assignment log can update |
