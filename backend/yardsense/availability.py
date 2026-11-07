@@ -14,7 +14,10 @@ def _assignment_end(assignment, projects, asset_class):
              if need["class"] == asset_class]
     if not needs:
         return None  # There is no schedule evidence that the unit is free.
-    return max(date.fromisoformat(need["finish"]) for need in needs)
+    end = max(date.fromisoformat(need["finish"]) for need in needs)
+    if end < date.fromisoformat(assignment["checked_out"]):
+        return None  # An old phase cannot release a newly checked-out unit.
+    return end
 
 
 def available_units(world, start, finish, asset_class=None):
