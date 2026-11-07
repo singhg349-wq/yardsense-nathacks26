@@ -1,0 +1,17 @@
+[
+  {
+    "code": "NB01",
+    "name": "Northgate Builders",
+    "kind": "gc"
+  },
+  {
+    "code": "NR01",
+    "name": "Northgate Rentals",
+    "kind": "rental"
+  },
+  {
+    "code": "NE01",
+    "name": "Northgate Electric",
+    "kind": "trade"
+  }
+]

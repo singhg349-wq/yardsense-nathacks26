@@ -1,0 +1,347 @@
+[
+  {
+    "id": "PRJ-RIV",
+    "project_number": "NG-2611",
+    "name": "Riverside Clinic",
+    "company": "NB01",
+    "site_id": "S-RIV",
+    "start_date": "2026-11-23",
+    "completion_date": "2027-08-27",
+    "schedule": [
+      {
+        "task_name": "Site prep and enclosure",
+        "start": "2026-11-23",
+        "finish": "2027-01-29"
+      },
+      {
+        "task_name": "Structure",
+        "start": "2027-02-01",
+        "finish": "2027-05-28"
+      },
+      {
+        "task_name": "Interior fit-out",
+        "start": "2027-05-03",
+        "finish": "2027-08-13"
+      },
+      {
+        "task_name": "Closeout",
+        "start": "2027-08-16",
+        "finish": "2027-08-27"
+      }
+    ],
+    "planned_equipment": [
+      {
+        "class": "SCISSOR_19",
+        "qty": 2,
+        "start": "2026-11-23",
+        "finish": "2027-01-31",
+        "phase": "Site prep and enclosure"
+      },
+      {
+        "class": "TELEHANDLER",
+        "qty": 1,
+        "start": "2026-11-23",
+        "finish": "2027-01-31",
+        "phase": "Site prep and enclosure"
+      },
+      {
+        "class": "GEN_45KW",
+        "qty": 1,
+        "start": "2026-11-23",
+        "finish": "2027-01-31",
+        "phase": "Site prep and enclosure"
+      },
+      {
+        "class": "HEATER_400K",
+        "qty": 2,
+        "start": "2026-12-07",
+        "finish": "2027-03-12",
+        "phase": "Structure"
+      }
+    ]
+  },
+  {
+    "id": "PRJ-WGT",
+    "project_number": "NG-2540",
+    "name": "Westgate Tower",
+    "company": "NB01",
+    "site_id": "S-WGT",
+    "start_date": "2026-03-02",
+    "completion_date": "2027-09-30",
+    "schedule": [
+      {
+        "task_name": "Foundations",
+        "start": "2026-03-02",
+        "finish": "2026-05-29"
+      },
+      {
+        "task_name": "Framing",
+        "start": "2026-06-01",
+        "finish": "2026-11-06"
+      },
+      {
+        "task_name": "Envelope and roofing",
+        "start": "2026-10-05",
+        "finish": "2027-03-31"
+      },
+      {
+        "task_name": "Interior fit-out",
+        "start": "2027-01-11",
+        "finish": "2027-08-27"
+      },
+      {
+        "task_name": "Commissioning",
+        "start": "2027-08-30",
+        "finish": "2027-09-30"
+      }
+    ],
+    "planned_equipment": [
+      {
+        "class": "TELEHANDLER",
+        "qty": 1,
+        "start": "2026-06-01",
+        "finish": "2026-11-06",
+        "phase": "Framing"
+      },
+      {
+        "class": "BOOM_60",
+        "qty": 2,
+        "start": "2026-10-05",
+        "finish": "2027-03-31",
+        "phase": "Envelope and roofing"
+      },
+      {
+        "class": "HEATER_400K",
+        "qty": 2,
+        "start": "2026-11-01",
+        "finish": "2027-03-15",
+        "phase": "Envelope and roofing"
+      },
+      {
+        "class": "LIGHT_TOWER",
+        "qty": 1,
+        "start": "2026-10-05",
+        "finish": "2027-03-31",
+        "phase": "Envelope and roofing"
+      },
+      {
+        "class": "SCISSOR_19",
+        "qty": 2,
+        "start": "2027-01-11",
+        "finish": "2027-08-27",
+        "phase": "Interior fit-out"
+      }
+    ]
+  },
+  {
+    "id": "PRJ-KNG",
+    "project_number": "NG-2566",
+    "name": "Kingsway Lofts",
+    "company": "NB01",
+    "site_id": "S-KNG",
+    "start_date": "2026-08-03",
+    "completion_date": "2027-08-27",
+    "schedule": [
+      {
+        "task_name": "Excavation",
+        "start": "2026-08-03",
+        "finish": "2026-10-02"
+      },
+      {
+        "task_name": "Structure",
+        "start": "2026-09-14",
+        "finish": "2027-03-26"
+      },
+      {
+        "task_name": "Interiors",
+        "start": "2027-01-04",
+        "finish": "2027-07-30"
+      },
+      {
+        "task_name": "Electrical rough-in (Northgate Electric crew)",
+        "start": "2027-01-18",
+        "finish": "2027-04-30"
+      },
+      {
+        "task_name": "Finishes",
+        "start": "2027-07-05",
+        "finish": "2027-08-27"
+      }
+    ],
+    "planned_equipment": [
+      {
+        "class": "MINI_EX",
+        "qty": 1,
+        "start": "2026-08-03",
+        "finish": "2026-10-02",
+        "phase": "Excavation"
+      },
+      {
+        "class": "TELEHANDLER",
+        "qty": 1,
+        "start": "2026-09-14",
+        "finish": "2027-03-26",
+        "phase": "Structure"
+      },
+      {
+        "class": "SCISSOR_19",
+        "qty": 2,
+        "start": "2026-10-05",
+        "finish": "2027-03-26",
+        "phase": "Structure"
+      },
+      {
+        "class": "BOOM_60",
+        "qty": 1,
+        "start": "2026-10-05",
+        "finish": "2027-02-26",
+        "phase": "Structure"
+      },
+      {
+        "class": "HEATER_400K",
+        "qty": 2,
+        "start": "2026-11-01",
+        "finish": "2027-03-15",
+        "phase": "Structure"
+      },
+      {
+        "class": "GEN_45KW",
+        "qty": 1,
+        "start": "2027-03-17",
+        "finish": "2027-05-31",
+        "phase": "Electrical rough-in (Northgate Electric crew)"
+      }
+    ]
+  },
+  {
+    "id": "PRJ-WMD",
+    "project_number": "NG-2579",
+    "name": "Whitemud Logistics Hub",
+    "company": "NB01",
+    "site_id": "S-WMD",
+    "start_date": "2026-09-14",
+    "completion_date": "2027-10-29",
+    "schedule": [
+      {
+        "task_name": "Site work",
+        "start": "2026-09-14",
+        "finish": "2027-01-29"
+      },
+      {
+        "task_name": "Structure",
+        "start": "2027-02-01",
+        "finish": "2027-08-27"
+      },
+      {
+        "task_name": "Building services",
+        "start": "2027-03-15",
+        "finish": "2027-09-24"
+      },
+      {
+        "task_name": "Closeout",
+        "start": "2027-09-27",
+        "finish": "2027-10-29"
+      }
+    ],
+    "planned_equipment": [
+      {
+        "class": "MINI_EX",
+        "qty": 2,
+        "start": "2026-09-14",
+        "finish": "2027-01-29",
+        "phase": "Site work"
+      },
+      {
+        "class": "COMPACTOR_PLATE",
+        "qty": 2,
+        "start": "2026-09-14",
+        "finish": "2027-01-29",
+        "phase": "Site work"
+      },
+      {
+        "class": "LIGHT_TOWER",
+        "qty": 2,
+        "start": "2026-09-14",
+        "finish": "2027-03-31",
+        "phase": "Site work"
+      },
+      {
+        "class": "TELEHANDLER",
+        "qty": 2,
+        "start": "2027-02-01",
+        "finish": "2027-08-27",
+        "phase": "Structure"
+      },
+      {
+        "class": "BOOM_60",
+        "qty": 2,
+        "start": "2027-02-01",
+        "finish": "2027-08-27",
+        "phase": "Structure"
+      },
+      {
+        "class": "GEN_45KW",
+        "qty": 1,
+        "start": "2027-03-18",
+        "finish": "2027-06-14",
+        "phase": "Building services"
+      }
+    ]
+  },
+  {
+    "id": "PRJ-CAP",
+    "project_number": "NE-0412",
+    "name": "Capilano Substation Upgrade",
+    "company": "NE01",
+    "site_id": "S-CAP",
+    "start_date": "2026-10-05",
+    "completion_date": "2027-09-24",
+    "schedule": [
+      {
+        "task_name": "Civil works",
+        "start": "2026-10-05",
+        "finish": "2027-01-29"
+      },
+      {
+        "task_name": "Electrical installation",
+        "start": "2027-02-01",
+        "finish": "2027-08-27"
+      },
+      {
+        "task_name": "Energization and testing",
+        "start": "2027-08-30",
+        "finish": "2027-09-24"
+      }
+    ],
+    "planned_equipment": [
+      {
+        "class": "BOOM_60",
+        "qty": 1,
+        "start": "2026-10-05",
+        "finish": "2027-01-29",
+        "phase": "Civil works"
+      },
+      {
+        "class": "LIGHT_TOWER",
+        "qty": 1,
+        "start": "2026-10-05",
+        "finish": "2027-02-26",
+        "phase": "Civil works"
+      },
+      {
+        "class": "SCISSOR_19",
+        "qty": 1,
+        "start": "2027-02-01",
+        "finish": "2027-08-27",
+        "phase": "Electrical installation"
+      },
+      {
+        "class": "GEN_45KW",
+        "qty": 1,
+        "start": "2027-06-01",
+        "finish": "2027-07-30",
+        "phase": "Electrical installation"
+      }
+    ]
+  }
+]
