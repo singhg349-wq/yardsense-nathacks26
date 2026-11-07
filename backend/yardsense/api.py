@@ -2,7 +2,7 @@
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 from . import allocator, availability, cost_model, db
 
@@ -11,9 +11,22 @@ router = APIRouter()
 OWNED_BY_RENTALS = "NR01"
 
 
+class RecommendItem(BaseModel):
+    asset_class: str = Field(alias="class")
+    qty: int = Field(ge=1)
+    start: date
+    finish: date
+
+    @model_validator(mode="after")
+    def dates_in_order(self):
+        if self.finish < self.start:
+            raise ValueError("finish must be on or after start")
+        return self
+
+
 class RecommendRequest(BaseModel):
     project_id: str
-    items: list[dict]
+    items: list[RecommendItem] = Field(min_length=1)
 
 
 class CheckoutRequest(BaseModel):
@@ -68,10 +81,14 @@ def recommend(world, body):
     settings = world["settings"]
     projects = {p["id"]: p for p in world["projects"]}
     sites = {s["id"]: s for s in world["sites"]}
+    if body["project_id"] not in projects:
+        raise HTTPException(404, "Project not found")
     site = sites[projects[body["project_id"]]["site_id"]]
     results = []
     for item in body["items"]:
         cls = item["class"]
+        if cls not in world["classes"]:
+            raise HTTPException(422, f"Unknown equipment class: {cls}")
         req = {"class": cls, "qty": item.get("qty", 1),
                "start": date.fromisoformat(item["start"]),
                "finish": date.fromisoformat(item["finish"]),
@@ -89,8 +106,15 @@ def recommend(world, body):
 @router.post("/recommend")
 def post_recommend(body: RecommendRequest | None = None):
     """Ranked options for a request. No body = the hard-coded Riverside request."""
-    payload = body.model_dump() if body else DEFAULT_REQUEST
+    payload = body.model_dump(by_alias=True, mode="json") if body else DEFAULT_REQUEST
     return recommend(load_world(), payload)
+
+
+@router.get("/classes")
+def get_classes():
+    """Equipment classes and labels for the request form."""
+    return [{"code": code, "label": rates["label"]}
+            for code, rates in load_world()["classes"].items()]
 
 
 @router.get("/projects")
