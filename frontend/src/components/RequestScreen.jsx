@@ -8,6 +8,7 @@ const demoItems = [
   { id: 3, class: 'GEN_45KW', qty: 1, start: '2026-11-23', finish: '2027-01-31' },
 ]
 const money = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })
+const noShifts = []
 const names = {
   move_ours: 'Move ours', rent_sister: 'Rent from Northgate Rentals',
   rent_outside: 'Rent outside', buy: 'Buy through Northgate Rentals',
@@ -40,11 +41,14 @@ function Option({ option, first, accepted, onAccept }) {
   </article>
 }
 
-export default function RequestScreen({ onAccept, onResults }) {
+export default function RequestScreen({ shifts = noShifts, onAccept, onResults }) {
   const [projects, setProjects] = useState([])
   const [classes, setClasses] = useState([])
   const [projectId, setProjectId] = useState('PRJ-RIV')
   const [items, setItems] = useState(demoItems)
+  const [submitted, setSubmitted] = useState({
+    project_id: 'PRJ-RIV', items: demoItems.map(payloadItem),
+  })
   const [results, setResults] = useState(null)
   const [accepted, setAccepted] = useState([])
   const [busy, setBusy] = useState(true)
@@ -52,26 +56,35 @@ export default function RequestScreen({ onAccept, onResults }) {
 
   useEffect(() => {
     let cancelled = false
-    Promise.all([getProjects(), getClasses(), recommend({
-      project_id: 'PRJ-RIV', items: demoItems.map(payloadItem),
-    })]).then(([loadedProjects, loadedClasses, initialResults]) => {
+    Promise.all([getProjects(), getClasses()]).then(([loadedProjects, loadedClasses]) => {
       if (cancelled) return
       setProjects(loadedProjects)
       setClasses(loadedClasses)
-      setResults(initialResults)
-      onResults?.(initialResults)
+    }).catch((err) => {
+      if (!cancelled) setError(err.message)
+    })
+    return () => { cancelled = true }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    recommend({ ...submitted, shifts }).then((data) => {
+      if (cancelled) return
+      setResults(data)
+      setAccepted([])
+      onResults?.(data)
       setBusy(false)
     }).catch((err) => {
       if (!cancelled) { setError(err.message); setBusy(false) }
     })
     return () => { cancelled = true }
-  }, [onResults])
+  }, [submitted, shifts, onResults])
 
   function updateItem(id, field, value) {
     setItems((current) => current.map((item) => item.id === id ? { ...item, [field]: value } : item))
   }
 
-  async function submit(event) {
+  function submit(event) {
     event.preventDefault()
     if (items.some((item) => !item.start || !item.finish || item.finish < item.start || Number(item.qty) < 1)) {
       setError('Check each date range and quantity before requesting a recommendation.')
@@ -79,16 +92,7 @@ export default function RequestScreen({ onAccept, onResults }) {
     }
     setBusy(true)
     setError('')
-    try {
-      const data = await recommend({ project_id: projectId, items: items.map(payloadItem) })
-      setResults(data)
-      setAccepted([])
-      onResults?.(data)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setBusy(false)
-    }
+    setSubmitted({ project_id: projectId, items: items.map(payloadItem) })
   }
 
   function accept(index, item, option) {
