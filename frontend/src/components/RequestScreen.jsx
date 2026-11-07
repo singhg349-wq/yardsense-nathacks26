@@ -97,7 +97,10 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
 
   function accept(index, item, option) {
     setAccepted((current) => [...current, index])
-    onAccept?.({ project_id: results.project_id, item, option })
+    onAccept?.({ project_id: results.project_id,
+      project_name: projects.find((project) => project.id === results.project_id)?.name ?? results.project_id,
+      item,
+      request: submitted.items[index], option })
   }
 
   return <div className="request-layout">
