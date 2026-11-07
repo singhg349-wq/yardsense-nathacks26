@@ -1,6 +1,6 @@
 # plan.md: YardSense (working name)
 
-natHacks 2026 · Construction & Manufacturing track · 80-pt rubric · 15-min presentation + 5-min Q&A · Fri Nov 6, 7 PM → submit Mon Nov 9, 9:30 AM
+natHacks 2026 · Construction & Manufacturing track · 80-pt rubric · 5-min presentation + demo, then 5-min Q&A · Fri Nov 6, 7 PM → submit Mon Nov 9, 9:30 AM
 
 > **Privacy rule:** our target persona is a real company group (a real Edmonton GC group with its own rental company; name kept off the repo). Keep the real names, and every real number the industry helper supplies, **out of the public repo, demo and slides**. The demo uses the fictional **Northgate Group**. Real numbers live in `data/private/` (gitignored) and are used only to tune the mock data.
 
@@ -133,14 +133,18 @@ Work is tracked as user-story issues on GitHub, with one milestone per gate. Lan
 | Interdisciplinary Team | 5 | **0** | All-CS team (decided). The industry helper's input still strengthens Delivery and Commercial |
 | **Total** | **80** | **~44** | The engine and demo upgrades add about +6; the all-CS team costs about −4 to −5 compared with the earlier estimate |
 
-## Presentation (15 min + 5 min Q&A)
+## Presentation (5 min + 5 min Q&A)
+Confirmed with the organizers' handbook (see `DECISIONS.md` #11). The demo shows only the main flow; everything else goes to Q&A.
+
 | Segment | Time | Who |
 |---|---|---|
-| Story: "Monday 7:10 AM" (Dana, Priya, money leaving the group) | 3 min | Pitch owner |
-| Live demo: upload SAP/Procore CSVs → request → answer + route on the map → $ kept → drag a project → flip → fleet advisor | 5 min | Gurshmeer drives, pitch owner narrates |
-| How the engine works: the two cost lenses, the min-cost allocator, transport cost, **backtest result** | 3 min | Gurshmeer |
-| Competitors (Procore, HCSS, Tenna, rental ERPs) + continuation plan | 3 min | Presenter |
-| Team + close | 1 min | Presenter |
+| Story: "Monday 7:10 AM" (Dana, Priya, money leaving the group) | 0:45 | Pitch owner |
+| Live demo: request → four options ranked by group cost → $ kept → slip a project 6 weeks → generator flips | 2:30 | Gurshmeer drives, pitch owner narrates |
+| Why it works: group cost vs project cost, **backtest result** | 0:45 | Gurshmeer |
+| Competitors (Procore, HCSS, Tenna) + one scale slide (connectors → shared tables → more engines) | 0:45 | Presenter |
+| Close | 0:15 | Presenter |
+
+Backup for Q&A, not the main talk: CSV upload, map, fleet advisor, "Why this?" breakdown, continuation plan.
 
 ## Hardware request list
 **None.** This is software only. Backup: run everything on one laptop on `localhost`, plus a recorded demo video, in case Wi-Fi fails.
