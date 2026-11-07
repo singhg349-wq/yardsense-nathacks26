@@ -86,13 +86,13 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:5173>. It should show **Backend: ok**. If it says *unreachable*, the backend isn't running in terminal 1.
+Open <http://localhost:5173>. The request screen loads Riverside Clinic's three demo needs and ranked options. If it shows an API error, check that the backend is running in terminal 1.
 
 ## Troubleshooting
 
 - **`python3.12` / `py -3.12` not found:** Python 3.12 isn't installed or isn't on PATH. Reinstall it from python.org.
 - **Port 5173 or 8000 already in use:** stop the other process (an old `npm run dev` / `uvicorn` in another terminal).
-- **Frontend shows "unreachable":** the backend must be running on port 8000. To point at another URL, copy `frontend/.env.example` to `frontend/.env` and edit `VITE_API_URL`.
+- **Frontend shows an API error:** the backend must be running on port 8000. To point at another URL, copy `frontend/.env.example` to `frontend/.env` and edit `VITE_API_URL`.
 - **`npm install` warns about the Node engine:** you're not on Node 24. Run `nvm use 24`.
 
 ## Adding dependencies

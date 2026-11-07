@@ -97,3 +97,20 @@ def test_recommend_accepts_a_body(client):
     response = client.post("/recommend", json=body)
     assert response.status_code == 200
     assert len(response.json()["items"]) == 1
+
+
+def test_request_form_endpoints_validate_inputs(client):
+    classes = client.get("/classes")
+    assert classes.status_code == 200
+    assert any(item["code"] == "GEN_45KW" for item in classes.json())
+
+    body = {"project_id": "PRJ-RIV", "items": [
+        {"class": "SCISSOR_19", "qty": 0,
+         "start": "2026-11-23", "finish": "2027-01-31"}]}
+    assert client.post("/recommend", json=body).status_code == 422
+    body["items"][0]["qty"] = 1
+    body["items"][0]["finish"] = "2026-11-22"
+    assert client.post("/recommend", json=body).status_code == 422
+    body["items"][0]["finish"] = "2027-01-31"
+    body["project_id"] = "missing"
+    assert client.post("/recommend", json=body).status_code == 404

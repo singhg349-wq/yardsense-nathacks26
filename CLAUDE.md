@@ -12,7 +12,7 @@ A group-level equipment engine for the fictional **Northgate Group** (GC Northga
 
 - Backend: **Python 3.12**, FastAPI, Pydantic. Run with `uvicorn app.main:app --reload` from `backend/`.
 - Frontend: **React + Vite**, **Node 24**.
-- Storage: in-memory, loaded from `data/seed/`. No database unless we decide we need persistence (log it in `DECISIONS.md`).
+- Storage: SQLite, automatically seeded from `data/seed/` on the first data request. Use `python backend/scripts/reset_db.py` from the repo root to restore the demo state.
 - No Docker for development. Native installs on Windows and macOS.
 
 ## Rules

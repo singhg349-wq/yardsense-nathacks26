@@ -1,39 +1,8 @@
-.app {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 48px 16px;
-}
-
-.app h1 {
-  margin: 0 0 4px;
-}
-
-.subtitle {
-  margin: 0 0 32px;
-  color: var(--muted);
-}
-
-.health {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.health .ok {
-  color: var(--ok);
-  font-weight: 600;
-}
-
-.health .error {
-  color: var(--err);
-  font-weight: 600;
-}
-
-.health code {
-  color: var(--muted);
-  font-size: 14px;
-}
-
-.health button {
-  margin-top: 12px;
-}
+.app-shell { min-height: 100vh; }
+.app-header { height: 76px; display: flex; align-items: center; gap: 13px; padding: 0 max(28px, calc((100vw - 1480px) / 2)); background: #122332; color: #fff; }
+.brand-mark { display: grid; place-items: center; width: 39px; height: 39px; border-radius: 11px; background: #2ad1a3; color: #112638; font-size: 24px; font-weight: 900; letter-spacing: -3px; padding-right: 3px; }
+.brand-copy { display: flex; flex-direction: column; line-height: 1.2; }
+.brand-copy strong { font-size: 19px; letter-spacing: -.035em; }
+.brand-copy span { margin-top: 3px; color: #9fb1c0; font-size: 11px; letter-spacing: .055em; text-transform: uppercase; }
+.header-note { margin-left: auto; color: #c7d5de; font-size: 13px; }
+@media (max-width: 700px) { .app-header { padding: 0 18px; } .header-note { display: none; } }
