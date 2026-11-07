@@ -115,6 +115,33 @@ def get_sites():
     return rows
 
 
+def get_assignments():
+    ensure_db()
+    return _rows_of("assignments")
+
+
+def create_assignment(asset_id, project_id, site_id, checked_out):
+    conn = get_conn()
+    with conn:
+        cursor = conn.execute(
+            "INSERT INTO assignments (asset_id, project_id, site_id, checked_out, checked_in)"
+            " VALUES (?, ?, ?, ?, NULL)",
+            (asset_id, project_id, site_id, checked_out))
+        row = conn.execute("SELECT * FROM assignments WHERE id = ?", (cursor.lastrowid,)).fetchone()
+    conn.close()
+    return dict(row)
+
+
+def check_in_assignment(assignment_id, checked_in):
+    conn = get_conn()
+    with conn:
+        conn.execute("UPDATE assignments SET checked_in = ? WHERE id = ?",
+                     (checked_in, assignment_id))
+        row = conn.execute("SELECT * FROM assignments WHERE id = ?", (assignment_id,)).fetchone()
+    conn.close()
+    return dict(row)
+
+
 def load_world():
     """Everything the engine needs, as plain dicts (the same shape as before the DB)."""
     ensure_db()
@@ -138,7 +165,7 @@ def load_world():
     for p in projects:
         p["planned_equipment"] = p["needs"]
     return {"settings": settings, "classes": classes, "companies": _rows_of("companies"),
-            "sites": get_sites(), "assets": get_assets(), "assignments": _rows_of("assignments"),
+            "sites": get_sites(), "assets": get_assets(), "assignments": get_assignments(),
             "projects": projects}
 
 
