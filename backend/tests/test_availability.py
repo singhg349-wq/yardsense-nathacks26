@@ -45,3 +45,12 @@ def test_invalid_availability_dates_and_assignment_links():
                                                   "project_id": "PRJ-RIV",
                                                   "site_id": "S-WGT",
                                                   "checked_out": "2026-11-23"}).status_code == 422
+
+
+def test_past_project_phase_does_not_release_a_new_checkout():
+    client = TestClient(app)
+    response = client.post("/assignments", json={
+        "asset_id": "100017", "project_id": "PRJ-WGT",
+        "site_id": "S-WGT", "checked_out": "2026-11-23"})
+    assert response.status_code == 201
+    assert "100017" not in available(client, "2026-11-24", "2026-11-24")

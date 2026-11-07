@@ -50,9 +50,14 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
     project_id: 'PRJ-RIV', items: demoItems.map(payloadItem),
   })
   const [results, setResults] = useState(null)
+  const [resolvedKey, setResolvedKey] = useState(null)
   const [accepted, setAccepted] = useState([])
   const [busy, setBusy] = useState(true)
   const [error, setError] = useState('')
+  const [loadError, setLoadError] = useState('')
+  const requestKey = JSON.stringify({ submitted, shifts })
+  const pending = resolvedKey !== requestKey
+  const currentResults = pending ? null : results
 
   useEffect(() => {
     let cancelled = false
@@ -61,7 +66,7 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
       setProjects(loadedProjects)
       setClasses(loadedClasses)
     }).catch((err) => {
-      if (!cancelled) setError(err.message)
+      if (!cancelled) setLoadError(err.message)
     })
     return () => { cancelled = true }
   }, [])
@@ -71,14 +76,21 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
     recommend({ ...submitted, shifts }).then((data) => {
       if (cancelled) return
       setResults(data)
+      setResolvedKey(requestKey)
       setAccepted([])
+      setError('')
       onResults?.(data)
       setBusy(false)
     }).catch((err) => {
-      if (!cancelled) { setError(err.message); setBusy(false) }
+      if (!cancelled) {
+        setResults(null)
+        setResolvedKey(requestKey)
+        setError(err.message)
+        setBusy(false)
+      }
     })
     return () => { cancelled = true }
-  }, [submitted, shifts, onResults])
+  }, [submitted, shifts, onResults, requestKey])
 
   function updateItem(id, field, value) {
     setItems((current) => current.map((item) => item.id === id ? { ...item, [field]: value } : item))
@@ -97,8 +109,8 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
 
   function accept(index, item, option) {
     setAccepted((current) => [...current, index])
-    onAccept?.({ project_id: results.project_id,
-      project_name: projects.find((project) => project.id === results.project_id)?.name ?? results.project_id,
+    onAccept?.({ project_id: currentResults.project_id,
+      project_name: projects.find((project) => project.id === currentResults.project_id)?.name ?? currentResults.project_id,
       item,
       request: submitted.items[index], option })
   }
@@ -110,7 +122,7 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
       <p className="section-intro">Compare what the project pays with what actually leaves Northgate Group.</p>
       <form onSubmit={submit}>
         <label className="field-label" htmlFor="project">Project</label>
-        <select id="project" value={projectId} onChange={(event) => setProjectId(event.target.value)} disabled={busy || !projects.length}>
+        <select id="project" value={projectId} onChange={(event) => setProjectId(event.target.value)} disabled={busy || pending || !projects.length}>
           {projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
         </select>
         <div className="item-list-heading"><span>Equipment</span><span>{items.length} item{items.length !== 1 ? 's' : ''}</span></div>
@@ -119,7 +131,7 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
             {items.length > 1 && <button type="button" className="text-button" onClick={() => setItems((current) => current.filter((row) => row.id !== item.id))}>Remove</button>}
           </div>
           <div className="item-fields">
-            <label>Type<select value={item.class} onChange={(event) => updateItem(item.id, 'class', event.target.value)} disabled={busy || !classes.length}>
+            <label>Type<select value={item.class} onChange={(event) => updateItem(item.id, 'class', event.target.value)} disabled={busy || pending || !classes.length}>
               {classes.map((entry) => <option key={entry.code} value={entry.code}>{entry.label}</option>)}
             </select></label>
             <label>Qty<input type="number" min="1" step="1" value={item.qty} onChange={(event) => updateItem(item.id, 'qty', event.target.value)} /></label>
@@ -129,19 +141,19 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
         </div>)}
         <button type="button" className="add-button" onClick={() => setItems((current) => [
           ...current, { ...current[current.length - 1], id: Math.max(...current.map((row) => row.id)) + 1, qty: 1 },
-        ])} disabled={busy || !classes.length}>+ Add equipment</button>
-        {error && <p className="request-error" role="alert">{error}</p>}
-        <button className="submit-button" type="submit" disabled={busy || !projects.length}>
-          {busy ? 'Calculating…' : 'Get recommendations'}
+        ])} disabled={busy || pending || !classes.length}>+ Add equipment</button>
+        {(loadError || (error && !pending)) && <p className="request-error" role="alert">{loadError || error}</p>}
+        <button className="submit-button" type="submit" disabled={busy || pending || !projects.length}>
+          {busy || pending ? 'Calculating…' : 'Get recommendations'}
         </button>
       </form>
     </section>
     <section className="results-panel" aria-live="polite">
       <div className="results-heading"><div><div className="section-kicker">Group recommendation</div><h2>Ranked options</h2></div>
-        {results && <span className="result-count">{results.items.length} equipment need{results.items.length !== 1 ? 's' : ''}</span>}
+        {currentResults && <span className="result-count">{currentResults.items.length} equipment need{currentResults.items.length !== 1 ? 's' : ''}</span>}
       </div>
-      {!results && <p className="results-empty">Submit a request to see the best choice for the whole group.</p>}
-      {results?.items.map((item, index) => <div className="result-group" key={`${item.class}-${index}`}>
+      {!currentResults && <p className="results-empty">{pending ? 'Updating recommendations…' : 'Submit a request to see the best choice for the whole group.'}</p>}
+      {currentResults?.items.map((item, index) => <div className="result-group" key={`${item.class}-${index}`}>
         <div className="result-group-heading"><span className="result-number">{String(index + 1).padStart(2, '0')}</span>
           <h3>{item.qty} × {classes.find((entry) => entry.code === item.class)?.label ?? item.class}</h3></div>
         <div className="option-list">{item.options.map((option, rank) => <Option key={option.option}
