@@ -114,3 +114,6 @@ def test_request_form_endpoints_validate_inputs(client):
     body["items"][0]["finish"] = "2027-01-31"
     body["project_id"] = "missing"
     assert client.post("/recommend", json=body).status_code == 404
+    body["project_id"] = "PRJ-RIV"
+    body["items"][0]["class"] = "UNKNOWN"
+    assert client.post("/recommend", json=body).status_code == 422
