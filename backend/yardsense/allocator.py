@@ -118,6 +118,30 @@ def build_plan(world):
     return allocations
 
 
+def request_allocations(world, project_id, items):
+    """Find each request in the shared plan, adding new needs when necessary."""
+    planning_world = deepcopy(world)
+    project = next(p for p in planning_world["projects"] if p["id"] == project_id)
+    needs = project["planned_equipment"]
+    used = set()
+    request_ids = []
+    for item in items:
+        match = next((index for index, need in enumerate(needs)
+                      if index not in used and need["class"] == item["class"]
+                      and need["qty"] == item.get("qty", 1)
+                      and need["start"] == item["start"]
+                      and need["finish"] == item["finish"]), None)
+        if match is None:
+            match = len(needs)
+            needs.append({"class": item["class"], "qty": item.get("qty", 1),
+                          "start": item["start"], "finish": item["finish"],
+                          "phase": None})
+        used.add(match)
+        request_ids.append(f"{project_id}:{match}")
+    plan = {row["request_id"]: row for row in build_plan(planning_world)}
+    return [plan.get(request_id) for request_id in request_ids]
+
+
 def replan(world, shifts):
     """Return the shifted plan and which choices changed from the baseline."""
     baseline = build_plan(world) if shifts else []

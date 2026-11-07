@@ -69,9 +69,14 @@ def recommend(world, body):
     projects = {p["id"]: p for p in world["projects"]}
     sites = {s["id"]: s for s in world["sites"]}
     site = sites[projects[body["project_id"]]["site_id"]]
+    planned = allocator.request_allocations(world, body["project_id"], body["items"])
     results = []
-    for item in body["items"]:
+    for item, allocation in zip(body["items"], planned):
         cls = item["class"]
+        if allocation is not None:
+            results.append({"class": cls, "qty": allocation["qty"],
+                            "options": allocation["options"]})
+            continue
         req = {"class": cls, "qty": item.get("qty", 1),
                "start": date.fromisoformat(item["start"]),
                "finish": date.fromisoformat(item["finish"]),
