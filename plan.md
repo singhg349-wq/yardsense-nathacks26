@@ -2,7 +2,7 @@
 
 natHacks 2026 · Construction & Manufacturing track · 80-pt rubric · 15-min presentation + 5-min Q&A · Fri Nov 6, 7 PM → submit Mon Nov 9, 9:30 AM
 
-> **Privacy rule:** our target persona is a real company group (a real Edmonton GC group with its own rental company; name kept off the repo). Keep the real names, and every real number the domain lead supplies, **out of the public repo, demo and slides**. The demo uses the fictional **Northgate Group**. Real numbers live in `data/private/` (gitignored) and are used only to tune the mock data.
+> **Privacy rule:** our target persona is a real company group (a real Edmonton GC group with its own rental company; name kept off the repo). Keep the real names, and every real number the industry helper supplies, **out of the public repo, demo and slides**. The demo uses the fictional **Northgate Group**. Real numbers live in `data/private/` (gitignored) and are used only to tune the mock data.
 
 ---
 
@@ -91,7 +91,7 @@ If the company already uses Procore's Equipment tool (still unknown), position Y
 **Dropped (decided)**
 - Monte Carlo buy decisions
 - Text-message / LLM intake
-- Customer interviews (no access by Saturday; we rely on the domain lead's own experience plus public evidence)
+- Customer interviews (no access by Saturday; we rely on the industry helper's experience plus public evidence)
 
 **Won't (this weekend)**
 - Real SAP/Procore/Textura API connections (the swappable connector is the continuation story)
@@ -101,21 +101,23 @@ If the company already uses Procore's Equipment tool (still unknown), position Y
 
 ## Riskiest assumption
 **"Our group-cost numbers match what a real coordinator would do, and the answer isn't obvious."**
-- **Spike (tonight, first 2 hours):** the domain lead and Gurshmeer run 3 items (telehandler, 45 kW generator, 19' scissor lift) through all 4 options in a spreadsheet, under 2 pipelines (normal and one project slipped 6 weeks). Success: the recommendation flips between the pipelines, and the domain lead agrees with both answers.
+- **Spike (tonight, first 2 hours):** Gurshmeer and the data lane run 3 items with the helper's numbers (telehandler, 45 kW generator, 19' scissor lift) through all 4 options in a spreadsheet, under 2 pipelines (normal and one project slipped 6 weeks). Success: the recommendation flips between the pipelines, and the helper agrees with both answers.
 - **Fallback:** a transparent rule-based version (idle internal unit → move; Northgate Rentals has a unit → sister; pipeline demand over the break-even point → rental company buys; else rent outside), with every assumption editable in the UI.
 - **Second risk, the allocator:** greedy ships first (by the Sat 6 PM MVP gate). Min-cost is built on top and swapped in only if it matches or beats greedy on the backtest by **Sun 2 PM**. Otherwise greedy stays, and the flip still works.
 - **Third risk, workload:** this is 5 engine/data features plus 5 screens. Order of build: greedy → transport cost → backtest → upload → fleet advisor → min-cost. Anything not working by **Sun 10 PM code freeze** gets cut from the demo, not patched live.
 
 ## Task split
-Folders: `backend/`, `frontend/`, `data/`, `docs/`, `pitch/`. No `firmware/` or `ml/`. **First tasks are due at the Sat Nov 7, 10:00 AM skeleton gate.**
+**Team (5, all CS):** Gurshmeer, Rakshit, Sreeman, Aarish, Anant. **Industry helper (not a teammate):** someone with construction-company experience who answers questions and checks numbers. Their input is tracked with the `needs:helper` label.
 
-| Person | Owns | First task (due Sat 10 AM) |
+Work is tracked as user-story issues on GitHub, with one milestone per gate. Lanes are picked in the pinned issue #1. Suggested lanes:
+
+| Lane | Owns | Milestone-1 issues (due Sat 10 AM) |
 |---|---|---|
-| **Gurshmeer** (leader, pitch lead) | `backend/engine/`: cost model, greedy → min-cost allocator, transport cost (geospatial), backtest runner | Turn the spike spreadsheet into the cost model. `POST /recommend` returns ranked options for one hard-coded request |
-| **3rd-year dev** (backend) | `backend/connectors/` + `backend/api/`: SAP/Procore mock connectors, **CSV upload + validation**, SQLite schema, check-out/in log | Schema (companies, assets, projects, phases, needs, rates, assignments, sites with lat/lon) + connectors loading seed JSON. `GET /projects`, `GET /assets` working |
-| **Web/full-stack dev** | `frontend/`: request screen, timeline, map (Leaflet), dashboard, fleet advisor | Vite + React app that calls `GET /projects` and renders the group timeline from real API data |
-| **Construction-experienced teammate** (domain lead) | `data/`: Northgate seed dataset **+ 12 months of backtest history**; validates the cost model; co-presents the story | Spike tonight, then fill `data/seed/` (anonymized). Draft realistic past decisions for the backtest. Find out: Procore Equipment tool use? Subs' Textura billing? |
-| **Presenter / business lead** | `docs/` + `pitch/`: README, competitor slide, **pricing slide**, written summary, Q&A prep | README skeleton + competitor slide + story script |
+| **Engine lead** (suggested: Gurshmeer) | Cost model, greedy → min-cost allocator, backtest runner | #5 cost model |
+| **Engine/geo + data** | Seed data, backtest history, road distances, transport cost; works with the helper | #3 seed dataset |
+| **Backend** | FastAPI, SQLite, SAP/Procore connectors, CSV upload, availability log | #2 skeleton, #4 schema + connectors |
+| **Frontend** | Timeline, request screen, drag-to-replan, map, dashboard | #6 timeline |
+| **Frontend + pitch owner** | Fleet advisor UI, "Why this?" view; owns the deck, video and written summary from Sun afternoon | #7 pitch v1 |
 
 ## Rubric map (80)
 | Criterion | Pts | Target | What earns it |
@@ -128,14 +130,14 @@ Folders: `backend/`, `frontend/`, `data/`, `docs/`, `pitch/`. No `firmware/` or 
 | Delivery | 5 | 4 | Story → live demo → engine → competitors; 3+ rehearsals; recorded backup video |
 | Impact | 5 | 4 | **Backtest result:** "$Y of $X would have stayed in the group last year" + idle days; Alberta context ($29B sector, 8.3% of GDP) |
 | Written Summary | 5 | 4 | Drafted Sunday from this plan |
-| Interdisciplinary Team | 5 | **0** | All-CS team (decided). The domain lead's industry experience still helps Delivery and Commercial |
+| Interdisciplinary Team | 5 | **0** | All-CS team (decided). The industry helper's input still strengthens Delivery and Commercial |
 | **Total** | **80** | **~44** | The engine and demo upgrades add about +6; the all-CS team costs about −4 to −5 compared with the earlier estimate |
 
 ## Presentation (15 min + 5 min Q&A)
 | Segment | Time | Who |
 |---|---|---|
-| Story: "Monday 7:10 AM" (Dana, Priya, money leaving the group) | 3 min | Domain lead |
-| Live demo: upload SAP/Procore CSVs → request → answer + route on the map → $ kept → drag a project → flip → fleet advisor | 5 min | Gurshmeer drives, domain lead narrates |
+| Story: "Monday 7:10 AM" (Dana, Priya, money leaving the group) | 3 min | Pitch owner |
+| Live demo: upload SAP/Procore CSVs → request → answer + route on the map → $ kept → drag a project → flip → fleet advisor | 5 min | Gurshmeer drives, pitch owner narrates |
 | How the engine works: the two cost lenses, the min-cost allocator, transport cost, **backtest result** | 3 min | Gurshmeer |
 | Competitors (Procore, HCSS, Tenna, rental ERPs) + continuation plan | 3 min | Presenter |
 | Team + close | 1 min | Presenter |
@@ -147,9 +149,9 @@ Folders: `backend/`, `frontend/`, `data/`, `docs/`, `pitch/`. No `firmware/` or 
 
 ## First steps: tonight
 1. **Now:** create the team GitHub repo, then run `/repo-init` (folders, `.gitignore` with `data/private/` and `.env`, issues from this plan).
-2. **Next 2 hours:** the cost-model spike (domain lead + Gurshmeer): 3 items × 4 options × 2 pipelines, both cost lenses.
+2. **Next 2 hours:** the cost-model spike (Gurshmeer + data lane, using the helper's numbers): 3 items × 4 options × 2 pipelines, both cost lenses.
 3. **In parallel:** the backend dev writes the schema and mock connectors; the web dev builds the React scaffold and timeline; the presenter writes the README and competitor slide.
-4. **Before bed:** the domain lead sends close-to-real rates (outside rental, internal rental, purchase, resale, transport). Gurshmeer anonymizes them into `data/seed/`.
+4. **Before bed:** the industry helper sends close-to-real rates (outside rental, internal rental, purchase, resale, transport). Gurshmeer anonymizes them into `data/seed/`.
 5. Run `/decision-log` to record: group-level selling point, no hardware, the rental company buys, availability = log + schedule, Northgate fictional group.
 
 ## Open items
@@ -159,4 +161,4 @@ Folders: `backend/`, `frontend/`, `data/`, `docs/`, `pitch/`. No `firmware/` or 
 - [ ] Northgate Rentals' internal rate vs market rate (a discount %).
 - [ ] Is the SAP asset register really just a register? (Assumed yes.)
 - [x] Team fields: all CS. Interdisciplinary scored as 0 (decided).
-- [ ] Rough real numbers for the backtest: how many outside rentals per year and typical durations (the domain lead's best estimate is fine).
+- [ ] Rough real numbers for the backtest: how many outside rentals per year and typical durations (the helper's best estimate is fine).
