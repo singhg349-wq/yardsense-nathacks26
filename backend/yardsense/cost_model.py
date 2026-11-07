@@ -90,6 +90,7 @@ def _move_option(name, units, request, cls, s, days, who):
     return _option(
         name, True, rent + trucking, trucking + wear, reason,
         [("Internal rental", rent), ("Transport", trucking)],
+        asset_ids=[unit["asset_id"] for _, unit in chosen],
         group_breakdown=[{"label": "Transport", "amount": round(trucking, 2)},
                          {"label": "Wear", "amount": round(wear, 2)}])
 
