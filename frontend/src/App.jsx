@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import PlannerView from './components/PlannerView'
 import RequestScreen from './components/RequestScreen'
 import Dashboard from './components/Dashboard'
+import MapView from './components/MapView'
 import './App.css'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
       <nav className="app-nav" aria-label="Main navigation">
         <button type="button" className={view === 'request' ? 'active' : ''} onClick={() => setView('request')}>Requests</button>
         <button type="button" className={view === 'timeline' ? 'active' : ''} onClick={() => setView('timeline')}>Timeline</button>
+        <button type="button" className={view === 'map' ? 'active' : ''} onClick={() => setView('map')}>Map</button>
         <button type="button" className={view === 'dashboard' ? 'active' : ''} onClick={() => setView('dashboard')}>Dashboard</button>
       </nav>
     </header>
@@ -35,6 +37,9 @@ function App() {
       </div>
       <div style={{ display: view === 'timeline' ? undefined : 'none' }}>
         <PlannerView shifts={shifts} onSetShift={setShift} />
+      </div>
+      <div style={{ display: view === 'map' ? undefined : 'none' }}>
+        <MapView shifts={shifts} active={view === 'map'} />
       </div>
       <div style={{ display: view === 'dashboard' ? undefined : 'none' }}>
         <Dashboard shifts={shifts} accepted={accepted} />

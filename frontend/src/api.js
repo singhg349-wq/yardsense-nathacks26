@@ -17,6 +17,11 @@ export async function getHealth() {
 
 export const getProjects = () => apiRequest('/projects')
 export const getClasses = () => apiRequest('/classes')
+export const getSites = () => apiRequest('/sites')
+export const getAssignments = () => apiRequest('/assignments')
+export const getAvailableAssets = (from, to) => apiRequest(
+  `/assets/available?${new URLSearchParams({ from, to })}`,
+)
 export const getPlan = () => apiRequest('/plan')
 export const postPlan = (shifts) => apiRequest('/plan', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
