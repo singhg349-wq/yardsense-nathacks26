@@ -1,12 +1,10 @@
 """HTTP routes. Anant's main.py will call app.include_router(router)."""
-import json
 from datetime import date, timedelta
 
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from . import cost_model
-from .config import SEED_DIR, load_rates
+from . import cost_model, db
 
 router = APIRouter()
 
@@ -18,24 +16,9 @@ class RecommendRequest(BaseModel):
     items: list[dict]
 
 
-def _read(name):
-    with open(SEED_DIR / name) as f:
-        return json.load(f)
-
-
+# The engine reads everything from the database (see db.load_world).
 def load_world():
-    """Everything the engine needs, as plain dicts.
-
-    #4 replaces this with a read from the database; the shape stays the same.
-    """
-    rates = load_rates()
-    assets = [{"asset_id": r["ANLN1"], "description": r["TXT50"], "asset_class": r["ANLKL"],
-               "company": r["BUKRS"], "acquired": r["AKTIV"], "cost": r["ANSWL"]}
-              for r in _read("sap_assets.json")]
-    return {"settings": rates["settings"], "classes": rates["classes"],
-            "companies": _read("companies.json"), "sites": _read("sites.json"),
-            "assets": assets, "assignments": _read("assignments.json"),
-            "projects": _read("procore_projects.json")}
+    return db.load_world()
 
 
 # The hard-coded request used when no body is sent (Priya's Monday call).
@@ -123,3 +106,21 @@ def post_recommend(body: RecommendRequest | None = None):
     """Ranked options for a request. No body = the hard-coded Riverside request."""
     payload = body.model_dump() if body else DEFAULT_REQUEST
     return recommend(load_world(), payload)
+
+
+@router.get("/projects")
+def get_projects():
+    """All projects with nested phases and planned equipment needs."""
+    return db.get_projects()
+
+
+@router.get("/assets")
+def get_assets():
+    """The SAP-style asset register, in internal field names."""
+    return db.get_assets()
+
+
+@router.get("/sites")
+def get_sites():
+    """Yards and project sites with coordinates."""
+    return db.get_sites()
