@@ -1,0 +1,373 @@
+[
+  {
+    "asset_id": "100001",
+    "project_id": "PRJ-KNG",
+    "site_id": "S-KNG",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100002",
+    "project_id": "PRJ-KNG",
+    "site_id": "S-KNG",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100005",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100006",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100007",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100008",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100009",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100010",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100011",
+    "project_id": "PRJ-WGT",
+    "site_id": "S-WGT",
+    "checked_out": "2026-06-01",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100012",
+    "project_id": "PRJ-WGT",
+    "site_id": "S-WGT",
+    "checked_out": "2026-06-01",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100013",
+    "project_id": "PRJ-CAP",
+    "site_id": "S-CAP",
+    "checked_out": "2026-10-05",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100014",
+    "project_id": "PRJ-KNG",
+    "site_id": "S-KNG",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100015",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100016",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100017",
+    "project_id": "PRJ-WGT",
+    "site_id": "S-WGT",
+    "checked_out": "2026-06-01",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100018",
+    "project_id": "PRJ-KNG",
+    "site_id": "S-KNG",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100019",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100020",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100021",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100022",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100023",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100024",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100025",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100026",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100027",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100028",
+    "project_id": "PRJ-WGT",
+    "site_id": "S-WGT",
+    "checked_out": "2026-06-01",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100029",
+    "project_id": "PRJ-WGT",
+    "site_id": "S-WGT",
+    "checked_out": "2026-06-01",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100030",
+    "project_id": "PRJ-KNG",
+    "site_id": "S-KNG",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100031",
+    "project_id": "PRJ-KNG",
+    "site_id": "S-KNG",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100032",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100033",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100034",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100035",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100036",
+    "project_id": "PRJ-WGT",
+    "site_id": "S-WGT",
+    "checked_out": "2026-06-01",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100037",
+    "project_id": "PRJ-WMD",
+    "site_id": "S-WMD",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100038",
+    "project_id": "PRJ-CAP",
+    "site_id": "S-CAP",
+    "checked_out": "2026-10-05",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100039",
+    "project_id": "PRJ-WMD",
+    "site_id": "S-WMD",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100040",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100041",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100042",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100043",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100044",
+    "project_id": "PRJ-WMD",
+    "site_id": "S-WMD",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100045",
+    "project_id": "PRJ-WMD",
+    "site_id": "S-WMD",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100046",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100047",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100048",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100049",
+    "project_id": "PRJ-WMD",
+    "site_id": "S-WMD",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100050",
+    "project_id": "PRJ-KNG",
+    "site_id": "S-KNG",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100051",
+    "project_id": "PRJ-WMD",
+    "site_id": "S-WMD",
+    "checked_out": "2026-09-14",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100052",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-08-17",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100053",
+    "project_id": null,
+    "site_id": "S-EX2",
+    "checked_out": "2026-09-08",
+    "checked_in": null
+  },
+  {
+    "asset_id": "100001",
+    "project_id": "PRJ-WGT",
+    "site_id": "S-WGT",
+    "checked_out": "2026-04-06",
+    "checked_in": "2026-05-29"
+  },
+  {
+    "asset_id": "100003",
+    "project_id": null,
+    "site_id": "S-EX1",
+    "checked_out": "2026-06-01",
+    "checked_in": "2026-08-14"
+  }
+]
