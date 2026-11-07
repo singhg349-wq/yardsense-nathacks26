@@ -69,15 +69,15 @@
     "GEN_45KW": {
       "label": "45 kW generator",
       "outside": {
-        "day": 110,
-        "week": 400,
-        "month": 1100
+        "day": 90,
+        "week": 320,
+        "month": 900
       },
-      "outside_delivery_fee": 200,
+      "outside_delivery_fee": 150,
       "internal": {
-        "day": 97,
-        "week": 352,
-        "month": 968
+        "day": 79,
+        "week": 282,
+        "month": 792
       },
       "purchase_price": 52000,
       "resale_pct_per_year": 0.15,
