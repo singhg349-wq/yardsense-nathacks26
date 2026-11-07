@@ -1,10 +1,10 @@
 """HTTP routes. Anant's main.py will call app.include_router(router)."""
-from datetime import date, timedelta
+from datetime import date
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
-from . import cost_model, db
+from . import availability, cost_model, db
 
 router = APIRouter()
 
@@ -14,6 +14,17 @@ OWNED_BY_RENTALS = "NR01"
 class RecommendRequest(BaseModel):
     project_id: str
     items: list[dict]
+
+
+class CheckoutRequest(BaseModel):
+    asset_id: str
+    project_id: str | None = None
+    site_id: str
+    checked_out: date
+
+
+class CheckinRequest(BaseModel):
+    checked_in: date
 
 
 # The engine reads everything from the database (see db.load_world).
@@ -32,40 +43,6 @@ DEFAULT_REQUEST = {
 }
 
 
-def find_idle_units(world, cls, today):
-    """Units of a class that are free right now.
-
-    Idle means: no open check-out in the log, or checked out to a project that has
-    no need of this class on or after today. A unit rented to an outside customer is busy.
-    """
-    sites = {s["id"]: s for s in world["sites"]}
-    projects = {p["id"]: p for p in world["projects"]}
-    yards = {s["company"]: s for s in world["sites"] if s["kind"] == "yard"}
-    open_log = {a["asset_id"]: a for a in world["assignments"] if a["checked_in"] is None}
-    idle = []
-    for asset in world["assets"]:
-        if asset["asset_class"] != cls:
-            continue
-        log = open_log.get(asset["asset_id"])
-        if log is None:
-            site, since = yards[asset["company"]], None
-        else:
-            site, since = sites[log["site_id"]], None
-            project = projects.get(log["project_id"])
-            if project is None:
-                continue  # rented out to a customer
-            needs = [n for n in project["planned_equipment"] if n["class"] == cls]
-            if any(date.fromisoformat(n["finish"]) >= today for n in needs):
-                continue  # project still needs it
-            since = max((date.fromisoformat(n["finish"]) for n in needs), default=None)
-        where = f"at {site['name']}"
-        if since:
-            where = f"at {site['name']} since {since.strftime('%b')} {since.day}"
-        idle.append({"asset_id": asset["asset_id"], "company": asset["company"],
-                     "lat": site["lat"], "lon": site["lon"], "where": where})
-    return idle
-
-
 def pipeline_for(world, cls):
     """(start, finish) for every planned need of this class, repeated per unit of qty."""
     out = []
@@ -80,18 +57,17 @@ def pipeline_for(world, cls):
 def recommend(world, body):
     """Rank the options for every item in the request."""
     settings = world["settings"]
-    today = date.fromisoformat(settings["demo_today"])
     projects = {p["id"]: p for p in world["projects"]}
     sites = {s["id"]: s for s in world["sites"]}
     site = sites[projects[body["project_id"]]["site_id"]]
     results = []
     for item in body["items"]:
         cls = item["class"]
-        idle = find_idle_units(world, cls, today)
         req = {"class": cls, "qty": item.get("qty", 1),
                "start": date.fromisoformat(item["start"]),
                "finish": date.fromisoformat(item["finish"]),
                "dest": (site["lat"], site["lon"])}
+        idle = availability.available_units(world, req["start"], req["finish"], cls)
         options = cost_model.price_options(
             req, world["classes"][cls], settings,
             [u for u in idle if u["company"] != OWNED_BY_RENTALS],
@@ -124,3 +100,43 @@ def get_assets():
 def get_sites():
     """Yards and project sites with coordinates."""
     return db.get_sites()
+
+
+@router.get("/assets/available")
+def get_available_assets(start: date = Query(alias="from"), finish: date = Query(alias="to")):
+    if finish < start:
+        raise HTTPException(422, "'to' must be on or after 'from'")
+    return availability.available_units(load_world(), start, finish)
+
+
+@router.post("/assignments", status_code=201)
+def post_assignment(body: CheckoutRequest):
+    world = load_world()
+    assets = {asset["asset_id"]: asset for asset in world["assets"]}
+    sites = {site["id"]: site for site in world["sites"]}
+    projects = {project["id"]: project for project in world["projects"]}
+    if body.asset_id not in assets or body.site_id not in sites:
+        raise HTTPException(404, "Asset or site not found")
+    if body.project_id is not None:
+        if body.project_id not in projects:
+            raise HTTPException(404, "Project not found")
+        if projects[body.project_id]["site_id"] != body.site_id:
+            raise HTTPException(422, "Project and site do not match")
+    if not any(asset["asset_id"] == body.asset_id for asset in
+               availability.available_units(world, body.checked_out, body.checked_out)):
+        raise HTTPException(409, "Asset is already assigned on that date")
+    return db.create_assignment(body.asset_id, body.project_id, body.site_id,
+                                body.checked_out.isoformat())
+
+
+@router.patch("/assignments/{assignment_id}")
+def patch_assignment(assignment_id: int, body: CheckinRequest):
+    assignment = next((entry for entry in db.get_assignments()
+                       if entry["id"] == assignment_id), None)
+    if assignment is None:
+        raise HTTPException(404, "Assignment not found")
+    if assignment["checked_in"] is not None:
+        raise HTTPException(409, "Asset is already checked in")
+    if body.checked_in < date.fromisoformat(assignment["checked_out"]):
+        raise HTTPException(422, "Check-in cannot precede check-out")
+    return db.check_in_assignment(assignment_id, body.checked_in.isoformat())
