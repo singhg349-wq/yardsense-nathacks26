@@ -2,6 +2,7 @@
 import json
 import os
 import sqlite3
+import threading
 from pathlib import Path
 
 from .config import SEED_DIR, load_rates
@@ -11,6 +12,7 @@ SCHEMA = Path(__file__).with_name("schema.sql")
 DEFAULT_DB = Path(__file__).resolve().parents[1] / "yardsense.db"
 TABLES = ["assignments", "settings", "rates", "needs", "phases", "projects",
           "assets", "sites", "companies"]  # drop order: children first
+_DB_INIT_LOCK = threading.RLock()
 
 
 def get_conn():
@@ -26,7 +28,7 @@ def _seed_json(name):
         return json.load(f)
 
 
-def reset_db():
+def _reset_db():
     """Drop every table, rebuild from schema.sql and load the seed through the connectors."""
     assets = SAPConnector(SEED_DIR / "sap_assets.json").get_assets()
     projects = ProcoreConnector(SEED_DIR / "procore_projects.json").get_projects()
@@ -71,14 +73,21 @@ def reset_db():
     conn.close()
 
 
+def reset_db():
+    """Drop every table, rebuild from schema.sql and load the seed through the connectors."""
+    with _DB_INIT_LOCK:
+        _reset_db()
+
+
 def ensure_db():
     """Build the database from seed if it does not exist yet."""
-    conn = get_conn()
-    has_tables = conn.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='assets'").fetchone()
-    conn.close()
-    if not has_tables:
-        reset_db()
+    with _DB_INIT_LOCK:
+        conn = get_conn()
+        has_tables = conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='assets'").fetchone()
+        conn.close()
+        if not has_tables:
+            reset_db()
 
 
 def _rows(conn, sql, params=()):
