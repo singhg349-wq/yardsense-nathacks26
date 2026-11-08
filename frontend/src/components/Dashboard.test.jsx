@@ -36,4 +36,13 @@ describe('Dashboard comparisons', () => {
     expect(screen.getByText('$123,646')).toBeTruthy()
     expect(screen.getByText(/static comparison/)).toBeTruthy()
   })
+
+  it('marks accepted items changed by a what-if and shows human class names', async () => {
+    const entry = { key: 'k', project_name: 'Riverside', item: { qty: 1, class: 'GEN_45KW' },
+      option: { option: 'buy', kept_in_group: 900 }, stale: true }
+    render(<Dashboard shifts={[]} accepted={[entry]} />)
+    expect(await screen.findByText(/1 × 45 kW generator/)).toBeTruthy()
+    expect(screen.getByText(/changed by what-if/, { selector: '.accepted-row span' })).toBeTruthy()
+    expect(screen.queryByText('GEN_45KW')).toBeNull()
+  })
 })

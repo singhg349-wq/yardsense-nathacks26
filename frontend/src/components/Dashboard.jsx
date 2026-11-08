@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getBacktest, getMincost, postDashboard } from '../api'
+import { className } from './classNames'
 import './Dashboard.css'
 
 const money = new Intl.NumberFormat('en-CA', {
@@ -64,7 +65,9 @@ export default function Dashboard({ shifts, accepted }) {
   const shiftKey = JSON.stringify(shifts)
   const metrics = response?.key === shiftKey ? response.data : null
   const error = response?.key === shiftKey ? response.error : ''
-  const kept = accepted.reduce((total, entry) => total + entry.option.kept_in_group, 0)
+  const live = accepted.filter((entry) => !entry.stale)
+  const staleCount = accepted.length - live.length
+  const kept = live.reduce((total, entry) => total + entry.option.kept_in_group, 0)
 
   useEffect(() => {
     let cancelled = false
@@ -98,11 +101,11 @@ export default function Dashboard({ shifts, accepted }) {
 
   const maxIdle = Math.max(1, ...(metrics?.idle_by_class ?? []).map((entry) => entry.idle_days))
   const maxOutside = Math.max(1, ...(backtest?.by_class ?? []).map((row) => row.outside_spend))
-  const acceptedMix = accepted.reduce((counts, entry) => {
+  const acceptedMix = live.reduce((counts, entry) => {
     counts[entry.option.option] = (counts[entry.option.option] ?? 0) + 1
     return counts
   }, {})
-  const useAccepted = accepted.length > 0
+  const useAccepted = live.length > 0
   const mix = useAccepted ? acceptedMix : (backtest?.option_mix?.recommended ?? {})
   const mixSegments = Object.keys(optionNames).map((key) => ({
     key, name: optionNames[key], value: mix[key] ?? 0, color: optionColors[key] }))
@@ -119,7 +122,7 @@ export default function Dashboard({ shifts, accepted }) {
     </div>
     <div className="kpi-row">
       <Kpi tone="orange" glyph={kpiIcons.coins} hint={accepted.length === 0 ? 'Accept a recommendation on Requests' : null} value={money.format(kept)} label="Kept in the group"
-        sub={`${accepted.length} accepted recommendation${accepted.length !== 1 ? 's' : ''}`} />
+        sub={`${live.length} accepted recommendation${live.length !== 1 ? 's' : ''}${staleCount ? ` · ${staleCount} changed by what-if` : ''}`} />
       <Kpi tone="green" glyph={kpiIcons.trend} value={backtest ? money.format(backtest.outside_spend_avoided) : '—'}
         label="Backtest spend avoided"
         sub={backtest ? `of ${money.format(backtest.outside_spend_actual)} · ${backtest.kept_pct}% (synthetic)` : 'Replaying last year…'} />
@@ -214,9 +217,9 @@ export default function Dashboard({ shifts, accepted }) {
       <article className="card dash-card">
         <header className="dash-head"><h2>Accepted decisions</h2></header>
         {accepted.length === 0 ? <p className="dashboard-empty">Accept a recommendation on the Requests tab to start measuring group savings.</p>
-          : <div className="accepted-list">{accepted.map((entry) => <div className="accepted-row" key={entry.key}>
-            <div><strong>{entry.item.qty} × {entry.item.class}</strong><span>{entry.project_name} · {optionNames[entry.option.option]}</span></div>
-            <b className="num">{money.format(entry.option.kept_in_group)}</b>
+          : <div className="accepted-list">{accepted.map((entry) => <div className={`accepted-row ${entry.stale ? 'accepted-stale' : ''}`} key={entry.key}>
+            <div><strong>{entry.item.qty} × {className(entry.item.class)}</strong><span>{entry.project_name} · {optionNames[entry.option.option]}{entry.stale && ' · changed by what-if'}</span></div>
+            <b className="num">{entry.stale ? '—' : money.format(entry.option.kept_in_group)}</b>
           </div>)}</div>}
       </article>
 

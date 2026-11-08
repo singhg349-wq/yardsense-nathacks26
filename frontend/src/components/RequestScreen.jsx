@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getClasses, getProjects, recommend } from '../api'
+import { acceptKey } from '../acceptKey'
 import './RequestScreen.css'
 
 const demoItems = [
@@ -48,11 +49,18 @@ function Option({ option: rawOption, item, best, maxCost, accepted, onAccept }) 
     </div>
     {option.available && <div className="option-detail">
       <p>{option.reason}</p>
-      {option.breakdown?.length > 0 && <details className="option-why">
+      {(option.breakdown?.length > 0 || option.group_breakdown?.length > 0) && <details className="option-why">
         <summary>Why this?</summary>
-        <ul>{option.breakdown.map((row) => <li key={row.label}>
-          <span>{row.label}</span><b className="num">{money.format(row.amount)}</b>
-        </li>)}</ul>
+        <div className="why-columns">
+          <div><h4>Project pays <b className="num">{money.format(option.project_cost)}</b></h4>
+            <ul>{option.breakdown.map((row) => <li key={row.label}>
+              <span>{row.label}</span><b className="num">{money.format(row.amount)}</b>
+            </li>)}</ul></div>
+          {option.group_breakdown?.length > 0 && <div><h4>Group pays <b className="num">{money.format(option.group_cost)}</b></h4>
+            <ul>{option.group_breakdown.map((row) => <li key={row.label}>
+              <span>{row.label}</span><b className="num">{money.format(row.amount)}</b>
+            </li>)}</ul></div>}
+        </div>
         <p>Group cost is what leaves Northgate Group. Project cost is what the project is charged.</p>
       </details>}
     </div>}
@@ -65,12 +73,13 @@ function Option({ option: rawOption, item, best, maxCost, accepted, onAccept }) 
   </article>
 }
 
-function Summary({ items }) {
+function Summary({ items, acceptedEntries }) {
   const picks = items.map((item) => item.options.find((option) => option.available)).filter(Boolean)
   const sum = (key) => picks.reduce((total, option) => total + (option[key] ?? 0), 0)
   const mix = picks.reduce((counts, option) => ({ ...counts, [option.option]: (counts[option.option] ?? 0) + 1 }), {})
   return <div className="kpi-strip">
-    <div className="kpi kpi-hero"><span>Kept in group</span><strong className="num">{money.format(sum('kept_in_group'))}</strong></div>
+    <div className="kpi kpi-hero"><span>Recommended</span><strong className="num">{money.format(sum('kept_in_group'))} kept</strong>
+      <span className="kpi-accepted">Accepted: <b className="num">{money.format(acceptedEntries.reduce((total, entry) => total + entry.option.kept_in_group, 0))} kept</b> ({acceptedEntries.length} of {items.length})</span></div>
     <div className="kpi"><span>Group cost</span><strong className="num">{money.format(sum('group_cost'))}</strong></div>
     <div className="kpi"><span>Project cost</span><strong className="num">{money.format(sum('project_cost'))}</strong></div>
     <div className="kpi"><span>Option mix</span><div className="kpi-mix">
@@ -79,7 +88,7 @@ function Summary({ items }) {
   </div>
 }
 
-export default function RequestScreen({ shifts = noShifts, onAccept, onResults }) {
+export default function RequestScreen({ shifts = noShifts, accepted: acceptedProp = noShifts, onAccept, onResults }) {
   const [projects, setProjects] = useState([])
   const [classes, setClasses] = useState([])
   const [projectId, setProjectId] = useState('PRJ-RIV')
@@ -89,13 +98,18 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
   })
   const [results, setResults] = useState(null)
   const [resolvedKey, setResolvedKey] = useState(null)
-  const [accepted, setAccepted] = useState([])
   const [busy, setBusy] = useState(true)
   const [error, setError] = useState('')
   const [loadError, setLoadError] = useState('')
   const requestKey = JSON.stringify({ submitted, shifts })
   const pending = resolvedKey !== requestKey
   const currentResults = pending ? null : results
+  const acceptedEntries = currentResults
+    ? currentResults.items.map((_, index) => {
+      const request = submitted.items[index]
+      return request && acceptedProp.find((entry) => !entry.stale && entry.key === acceptKey(currentResults.project_id, request))
+    })
+    : []
 
   useEffect(() => {
     let cancelled = false
@@ -115,7 +129,6 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
       if (cancelled) return
       setResults(data)
       setResolvedKey(requestKey)
-      setAccepted([])
       setError('')
       onResults?.(data)
       setBusy(false)
@@ -146,7 +159,6 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
   }
 
   function accept(index, item, option) {
-    setAccepted((current) => [...current, index])
     onAccept?.({ project_id: currentResults.project_id,
       project_name: projects.find((project) => project.id === currentResults.project_id)?.name ?? currentResults.project_id,
       item,
@@ -191,7 +203,7 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
         {currentResults && <span className="result-count">{currentResults.items.length} equipment need{currentResults.items.length !== 1 ? 's' : ''}</span>}
       </div>
       {!currentResults && <p className="results-empty">{pending ? 'Updating recommendations…' : 'Submit a request to see the best choice for the whole group.'}</p>}
-      {currentResults && <Summary items={currentResults.items} />}
+      {currentResults && <Summary items={currentResults.items} acceptedEntries={acceptedEntries.filter(Boolean)} />}
       {currentResults && <div className="legend">
         <span className="legend-item"><span className="legend-swatch" style={{ background: 'var(--opt-move)' }} />Move ours</span>
         <span className="legend-item"><span className="legend-swatch" style={{ background: 'var(--opt-sister)' }} />Rent from sister</span>
@@ -207,7 +219,7 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
             <h3>{item.qty} × {classes.find((entry) => entry.code === item.class)?.label ?? item.class}</h3>
             {top && <div className="kept"><span>Kept in group</span><strong className="num">{money.format(top.kept_in_group)}</strong></div>}</div>
           <div className="option-list">{item.options.map((option, rank) => <Option key={option.option}
-            option={option} item={item} best={rank === 0 && option.available} maxCost={maxCost} accepted={accepted.includes(index)}
+            option={option} item={item} best={rank === 0 && option.available} maxCost={maxCost} accepted={Boolean(acceptedEntries[index])}
             onAccept={() => accept(index, item, option)} />)}</div>
         </div>
       })}
