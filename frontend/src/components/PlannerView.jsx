@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getPlan, postPlan } from '../api'
 import Timeline from './Timeline'
+import { className } from './classNames'
 import ReplanCard from './ReplanCard'
 import './PlannerView.css'
 
@@ -22,7 +23,10 @@ export default function PlannerView({ shifts, onSetShift }) {
   const [shifted, setShifted] = useState(null)
   const [error, setError] = useState('')
   const shiftKey = JSON.stringify(shifts)
-  const plan = shifts.length === 0 ? baseline : shifted?.key === shiftKey ? shifted.plan : null
+  const fresh = shifts.length === 0 || shifted?.key === shiftKey
+  // Keep the last plan on screen while a new one loads.
+  const plan = shifts.length === 0 ? baseline : (shifted?.key === shiftKey ? shifted.plan : (shifted?.plan ?? baseline))
+  const updating = plan !== null && !fresh && !error
   const busy = plan === null && !error
 
   useEffect(() => {
@@ -74,6 +78,7 @@ export default function PlannerView({ shifts, onSetShift }) {
         {kingswayDays === 42 ? 'Reset Kingsway date' : 'Slip Kingsway 6 weeks'}
       </button>
     </div>
+    {updating && <p className="planner-updating" role="status">updating…</p>}
     {error && <p className="planner-error" role="alert">{error}</p>}
     {plan && <>
       <div className="planner-cards">
@@ -114,11 +119,11 @@ export default function PlannerView({ shifts, onSetShift }) {
         {plan.changed.length ? <>
           <strong>{plan.changed.length} recommendation{plan.changed.length !== 1 ? 's' : ''} changed</strong>
           <ul>{plan.changed.map((change) => <li key={change.request_id}>
-            {names[change.project_id]} · {change.class}: {optionNames[change.from_option]} → <b>{optionNames[change.to_option]}</b>
+            {names[change.project_id]} · {className(change.class)}: {optionNames[change.from_option]} → <b>{optionNames[change.to_option]}</b>
           </li>)}</ul>
         </> : <span>Move a project to see how recommendations change.</span>}
       </div>
-      <div className={`planner-chart ${busy ? 'planner-chart-busy' : ''}`}>
+      <div className={`planner-chart ${updating ? 'planner-chart-busy' : ''}`}>
         <Timeline projects={plan.projects} allocations={plan.allocations}
           changedIds={changedIds} onShiftProject={shiftBy} shifts={shifts} />
       </div>

@@ -18,6 +18,11 @@ const OPTION_KEYS = [
 ]
 const OPTION_CLASS = { move_ours: 'move', rent_sister: 'sister', rent_outside: 'outside', buy: 'buy' }
 
+// Drags move in whole weeks.
+function snapWeeks(days) {
+  return Math.round(days / 7) * 7
+}
+
 // "2026-11-16" -> milliseconds (UTC, so time zones never shift the day)
 function toMs(iso) {
   return Date.parse(iso + 'T00:00:00Z')
@@ -83,13 +88,15 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
 
   function moveDrag(event, projectId) {
     if (drag.current?.projectId === projectId) {
-      setPreview({ projectId, pixels: event.clientX - drag.current.x })
+      const raw = event.clientX - drag.current.x
+      const snapped = snapWeeks(raw / drag.current.width * span / DAY_MS) * DAY_MS / span * drag.current.width
+      setPreview({ projectId, pixels: snapped })
     }
   }
 
   function finishDrag(event, projectId) {
     if (drag.current?.projectId !== projectId) return
-    const days = Math.round((event.clientX - drag.current.x) / drag.current.width * span / DAY_MS)
+    const days = snapWeeks((event.clientX - drag.current.x) / drag.current.width * span / DAY_MS)
     drag.current = null
     setPreview(null)
     if (days !== 0) onShiftProject(projectId, days)
