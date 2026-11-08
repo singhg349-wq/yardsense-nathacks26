@@ -17,6 +17,9 @@ export async function getHealth() {
 
 export const getProjects = () => apiRequest('/projects')
 export const getClasses = () => apiRequest('/classes')
+export const uploadCsv = (source, file) => apiRequest(`/uploads/${source}`, {
+  method: 'POST', headers: { 'Content-Type': 'text/csv' }, body: file,
+})
 export const getSites = () => apiRequest('/sites')
 export const getAssignments = () => apiRequest('/assignments')
 export const getAvailableAssets = (from, to) => apiRequest(

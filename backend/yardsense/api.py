@@ -1,10 +1,12 @@
 """HTTP routes for the seeded equipment planning app."""
 from datetime import date
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, model_validator
 
-from . import allocator, availability, cost_model, db, metrics
+from . import allocator, availability, cost_model, db, metrics, uploads
+from .config import REPO_ROOT
 
 router = APIRouter()
 
@@ -145,6 +147,33 @@ def get_assets():
 def get_sites():
     """Yards and project sites with coordinates."""
     return db.get_sites()
+
+
+@router.post("/uploads/{source}")
+async def post_upload(source: str, request: Request):
+    """Accept a raw UTF-8 CSV body for SAP assets or Procore schedules."""
+    if source not in ("sap", "procore"):
+        raise HTTPException(404, "Upload source must be sap or procore.")
+    if request.headers.get("content-type", "").split(";", 1)[0].strip() not in ("text/csv", "application/csv"):
+        raise HTTPException(415, "Upload a CSV file with Content-Type: text/csv.")
+    content = await request.body()
+    try:
+        if source == "sap":
+            count = db.import_assets(uploads.parse_sap(content))
+        else:
+            count = db.import_projects(uploads.parse_procore(content))
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from error
+    return {"source": source, "imported": count}
+
+
+@router.get("/samples/{source}")
+def get_sample(source: str):
+    names = {"sap": "sap_assets.csv", "procore": "procore_schedule.csv"}
+    if source not in names:
+        raise HTTPException(404, "Sample source must be sap or procore.")
+    path = REPO_ROOT / "data" / "samples" / names[source]
+    return FileResponse(path, media_type="text/csv", filename=names[source])
 
 
 @router.get("/assets/available")

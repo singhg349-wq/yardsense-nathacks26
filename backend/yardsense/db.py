@@ -151,6 +151,71 @@ def check_in_assignment(assignment_id, checked_in):
     return dict(row)
 
 
+def import_assets(assets):
+    """Upsert a validated SAP export; existing check-out records remain valid."""
+    ensure_db()
+    with _DB_INIT_LOCK:
+        conn = get_conn()
+        try:
+            companies = {r[0] for r in conn.execute("SELECT code FROM companies")}
+            classes = {r[0] for r in conn.execute("SELECT asset_class FROM rates")}
+            for asset in assets:
+                if asset["company"] not in companies:
+                    raise ValueError(f"Row {asset['line']}: unknown company {asset['company']}.")
+                if asset["asset_class"] not in classes:
+                    raise ValueError(f"Row {asset['line']}: unknown equipment class {asset['asset_class']}.")
+            with conn:
+                conn.executemany(
+                    "INSERT INTO assets (asset_id, description, asset_class, company, acquired, cost)"
+                    " VALUES (:asset_id, :description, :asset_class, :company, :acquired, :cost)"
+                    " ON CONFLICT(asset_id) DO UPDATE SET description=excluded.description,"
+                    " asset_class=excluded.asset_class, company=excluded.company,"
+                    " acquired=excluded.acquired, cost=excluded.cost", assets)
+        finally:
+            conn.close()
+    return len(assets)
+
+
+def import_projects(projects):
+    """Upsert projects and replace each imported project's phases and needs atomically."""
+    ensure_db()
+    with _DB_INIT_LOCK:
+        conn = get_conn()
+        try:
+            companies = {r[0] for r in conn.execute("SELECT code FROM companies")}
+            sites = {r[0] for r in conn.execute("SELECT id FROM sites")}
+            classes = {r[0] for r in conn.execute("SELECT asset_class FROM rates")}
+            for project in projects:
+                if project["company"] not in companies:
+                    raise ValueError(f"Row {project['line']}: unknown company {project['company']}.")
+                if project["site_id"] not in sites:
+                    raise ValueError(f"Row {project['line']}: unknown site {project['site_id']}.")
+                for need in project["needs"]:
+                    if need["asset_class"] not in classes:
+                        raise ValueError(f"Row {need['line']}: unknown equipment class {need['asset_class']}.")
+            with conn:
+                for project in projects:
+                    conn.execute(
+                        "INSERT INTO projects (id, project_number, name, company, site_id, start_date, completion_date)"
+                        " VALUES (:id, :project_number, :name, :company, :site_id, :start_date, :completion_date)"
+                        " ON CONFLICT(id) DO UPDATE SET project_number=excluded.project_number,"
+                        " name=excluded.name, company=excluded.company, site_id=excluded.site_id,"
+                        " start_date=excluded.start_date, completion_date=excluded.completion_date", project)
+                    conn.execute("DELETE FROM phases WHERE project_id = ?", (project["id"],))
+                    conn.execute("DELETE FROM needs WHERE project_id = ?", (project["id"],))
+                    conn.executemany(
+                        "INSERT INTO phases (project_id, task_name, start, finish) VALUES (?, ?, ?, ?)",
+                        [(project["id"], name, *dates)
+                         for name, dates in project["phases"].items()])
+                    conn.executemany(
+                        "INSERT INTO needs (project_id, asset_class, qty, start, finish, phase)"
+                        " VALUES (:project_id, :asset_class, :qty, :start, :finish, :phase)",
+                        [{**need, "project_id": project["id"]} for need in project["needs"]])
+        finally:
+            conn.close()
+    return len(projects)
+
+
 def load_world():
     """Everything the engine needs, as plain dicts (the same shape as before the DB)."""
     ensure_db()
