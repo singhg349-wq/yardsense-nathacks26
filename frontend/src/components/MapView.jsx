@@ -17,7 +17,7 @@ function loadWorld() {
 
 function Kpi({ label, value, sub, primary }) {
   return <article className={`map-kpi${primary ? ' map-kpi-primary' : ''}`}>
-    <span>{label}</span><strong>{value}</strong><small>{sub}</small>
+    <span>{label}</span><strong className="num">{value}</strong><small>{sub}</small>
   </article>
 }
 
@@ -27,7 +27,7 @@ function FleetCard({ fleet }) {
     ['Rented to outside customers', fleet.rented, 'map-fleet-rented'],
     ['Idle', fleet.idle, 'map-fleet-idle'],
   ]
-  return <section className="map-card map-fleet" aria-labelledby="map-fleet-title">
+  return <section className="card map-fleet" aria-labelledby="map-fleet-title">
     <div className="map-card-heading"><h2 id="map-fleet-title">Fleet status</h2><span>{fleet.total} units</span></div>
     <div className="map-fleet-bar" aria-hidden="true">
       {segments.map(([label, count, className]) => <div key={label} className={className} style={{ flexGrow: count }} />)}
@@ -40,10 +40,27 @@ function FleetCard({ fleet }) {
   </section>
 }
 
+function MoveList({ moves, selectedMoveId, onSelect }) {
+  return <section className="card map-side-moves" aria-labelledby="map-side-moves-title">
+    <div className="map-card-heading"><h2 id="map-side-moves-title">Move queue</h2><span className="num">{moves.length}</span></div>
+    <ul className="map-queue">
+      {moves.map((move) => <li key={move.id}>
+        <button type="button" aria-pressed={move.id === selectedMoveId} aria-label={`Select route ${move.from} to ${move.to}`}
+          className={`map-queue-item${move.id === selectedMoveId ? ' is-selected' : ''}`} onClick={() => onSelect(move.id)}>
+          <span className="map-queue-route">{move.from} <span className="map-arrow-text">→</span> {move.to}</span>
+          <span className={`pill ${move.type === 'rent_sister' ? 'sister' : 'move'}`}>{TYPE_LABELS[move.type]}</span>
+          <span className="map-queue-meta"><span className="num">{move.onSite ? 'On site' : `${Math.round(move.kmEach)} km`}</span>
+            <span className="num">{formatMoney(move.truck)}</span></span>
+        </button>
+      </li>)}
+    </ul>
+  </section>
+}
+
 function SitePanel({ site, fleet, idleUnits, moves, selectedMoveId }) {
   if (!site) return null
   const rented = fleet.rentedBySite[site.id] ?? 0
-  return <section className="map-card map-site-panel" aria-labelledby="map-site-title" aria-live="polite">
+  return <section className="card map-site-panel" aria-labelledby="map-site-title" aria-live="polite">
     <div>
       <span className="map-site-kicker">Selected {site.kind}</span>
       <h2 id="map-site-title">{siteLabel(site)}</h2>
@@ -68,7 +85,7 @@ function MovesTable({ moves, selectedMoveId, onSelect }) {
   const [filter, setFilter] = useState('all')
   const counts = (type) => (type === 'all' ? moves.length : moves.filter((move) => move.type === type).length)
   const rows = moves.filter((move) => filter === 'all' || move.type === filter)
-  return <section className="map-card map-moves" aria-labelledby="map-moves-title">
+  return <section className="card map-moves" aria-labelledby="map-moves-title">
     <div className="map-moves-heading">
       <h2 id="map-moves-title">Recommended moves</h2>
       <div className="map-filters" role="group" aria-label="Filter moves">
@@ -91,7 +108,7 @@ function MovesTable({ moves, selectedMoveId, onSelect }) {
           <span>{formatDate(move.start)} – {formatDate(move.finish)}</span>
           <span>{move.onSite ? 'On site' : `${Math.round(move.kmEach)} km${move.qty > 1 ? ` ×${move.qty}` : ''}`}</span>
           <span>{formatMoney(move.truck)}</span>
-          <strong className="map-kept">{formatMoney(move.kept)}</strong>
+          <strong className="map-kept num">{formatMoney(move.kept)}</strong>
           <span><span className={`map-type-chip map-type-${move.type}`}>{TYPE_LABELS[move.type]}</span></span>
         </button>)}
       </div>
@@ -176,6 +193,7 @@ export default function MapView({ shifts, active = true }) {
           <Kpi label="Trucking cost" value={formatMoney(kpis.truck)} sub={`${Math.round(kpis.km)} km of recommended moves`} />
         </div>
         <FleetCard fleet={fleet} />
+        <MoveList moves={moves} selectedMoveId={selectedMove?.id} onSelect={selectMove} />
         <SitePanel site={site} fleet={fleet} moves={moves} selectedMoveId={selectedMove?.id}
           idleUnits={idle.filter((unit) => unit.site_id === siteId)} />
       </aside>
