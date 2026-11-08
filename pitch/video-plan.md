@@ -22,9 +22,9 @@
 | 0:00–0:05 | Title card: **YardSense** — "The group-level equipment decision engine" | "A construction group rents outside while its own equipment sits idle." |
 | 0:05–0:15 | Requests tab, Riverside Clinic, three items | "Priya needs two scissor lifts, a telehandler and a generator for ten weeks." |
 | 0:15–0:30 | Ranked options; open "Why this?" on the telehandler; accept | "YardSense ranks four options by what the whole group pays: move ours, rent from sister, rent outside, or buy." |
-| 0:30–0:40 | Timeline; drag Kingsway six weeks; banner flips generator | "When a schedule slips, the engine re-runs. The generator flips from buy to rent outside." |
-| 0:40–0:50 | Dashboard backtest + Fleet advisor | "A synthetic year-long replay shows the outside spend avoided; the fleet advisor says what to add and retire." |
-| 0:50–0:60 | Data upload provenance + closing card | "No trackers. It reads SAP, Procore and the check-out log. Synthetic data, labelled; the engine is real." |
+| 0:30–0:40 | Timeline; drag Kingsway six weeks; two recommendations change | "When a schedule slips, the engine re-runs. Kingsway takes the sister-yard lifts, so Riverside's go outside." |
+| 0:40–0:50 | Dashboard backtest + Fleet advisor | "A synthetic year-long replay shows the method, not a forecast; the fleet advisor says what to retire, and it refuses to buy a generator that loses money." |
+| 0:50–0:60 | Data upload provenance + closing card | "No trackers. It reads SAP and Procore exports and a check-out log kept in the app. Synthetic data, labelled; the engine is real." |
 
 **Total narration:** ~135 words. Read at ~140 wpm.
 

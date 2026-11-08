@@ -56,7 +56,7 @@ For every request, rank four options by **group cost**:
 3. **Rent outside**
 4. **Buy** — Northgate Rentals buys and rents internally
 
-**No hardware.** Reads the SAP asset register, Procore schedules and the check-out log the group already has.
+**No hardware.** Reads SAP asset-register and Procore schedule exports, plus a check-out log kept in the app.
 Every option shows **project cost** next to **group cost**, a reason, and a "Why this?" breakdown.
 
 ---
@@ -65,12 +65,12 @@ Every option shows **project cost** next to **group cost**, a reason, and a "Why
 
 Cue the app. The demo path:
 
-1. Requests → Riverside Clinic → ranked options → "Why this?" → accept (scissor → rent from sister; telehandler → move ours, 11 km, $198 truck; generator → buy, break-even month 5).
-2. Timeline → plan snapshot → drag Kingsway six weeks as a what-if (five recommendations change; the generator is the headline).
+1. Requests → Riverside Clinic → ranked options → "Why this?" → accept (scissor → rent from sister; telehandler → move ours, 11 km, $198 truck; generator → rent outside; one more would net -$3,750 a year, so the engine does not buy).
+2. Timeline → plan snapshot → drag Kingsway six weeks as a what-if (two recommendations change: Kingsway takes the two idle sister-yard lifts, so Riverside's and Capilano's scissors go to outside rental).
 3. Map → recommended moves, distances, truck cost.
-4. Dashboard → accepted savings, idle days, backtest.
-5. Fleet advisor → add boom lifts and heaters; retire a mini excavator and compactor.
-6. Data upload → load the slipped Procore schedule → generator flips buy → rent outside.
+4. Dashboard → accepted savings, idle days, backtest, static optimizer comparison.
+5. Fleet advisor → retire one idle mini excavator; hold everything else (no extra unit pays for itself).
+6. Data upload → load the slipped Procore schedule → Riverside's scissors flip rent from sister → rent outside.
 
 Speaker line: "The drag is a what-if. It does not edit the Procore schedule. The real change is the schedule import."
 
@@ -92,21 +92,21 @@ Rate card / roads ──┘                   ├─ availability
 - **Availability:** check-out log + schedule inference (a unit frees when its phase ends).
 - **Cost:** internal vs outside, transport, wear, buy break-even across the pipeline.
 - **Plan:** greedy allocator with physical-unit reservations; re-runs on a what-if or a schedule import.
-- **Exact check:** PuLP/CBC solves the same static snapshot: min-cost $123,646 vs greedy $126,470, $2,825 (2.2%) lower. Today the solver grades the plan; next it re-solves live, locking delivered units and charging a switching cost for any change.
+- **Exact check:** on a static snapshot of 16 requests, PuLP/CBC min-cost is $131,169 vs a greedy pass at $133,993 under the same model: $2,825 (2.1%) lower. It does not grade the live plan ($133,928, a richer model). The Timeline's re-plan card is suggestion-only; it locks started requests and charges a switching cost for any change.
 - **Explainability:** every number has a breakdown; every data source has a confidence label.
 
 ---
 
 ## Slide 8 — Impact: the synthetic backtest
 
-**$137,859 of $275,391 outside spend avoided — 50.1% — across 96 synthetic requests, with 35 rental leaks.**
+**$48,112 of $286,266 outside spend avoided — 16.8% — across 96 synthetic requests, with 15 rental leaks.**
 
-- 12-month replay, deterministic, seed 42.
+- 12-month replay, deterministic, seeded. About 1 in 5 requests had an idle group or sister unit: that rate is our input, so the percentage shows the method, not a forecast.
 - Buy excluded: historical pipeline demand is unknown.
 - It is a **replay**, not a customer result. The dashboard says so.
 - Public analogs: Caltrans found 9 of 32 owned units available while renting; NC DOT found 67% of heavy equipment used less than half the time.
 
-Speaker line: "The point is not the exact number. The point is that the leak is measurable, and the engine can replay it."
+Speaker line: "The availability rate is our input. The point is not the exact number; the leak is measurable, and the engine can replay it."
 
 ---
 
@@ -114,12 +114,10 @@ Speaker line: "The point is not the exact number. The point is that the leak is 
 
 From the 12-month pipeline, for the rental company:
 
-- **Add 2 × 60 ft boom lifts** (peak demand 5 vs 3 owned)
-- **Add 2 × 400k BTU heaters** (peak 6 vs 4 owned)
-- **Retire one mini excavator and one plate compactor** (13.7% utilization)
-- The rest: hold.
+- **Retire one mini excavator** (idle today, surplus to peak demand): +$7,200 a year.
+- **Hold** everything else. Each extra unit is priced on its own demand, net of a year's cost to own, and none pays: the next generator covers 308 days, $10,050 of rent avoided against $13,800 to own (-$3,750); the next boom lift covers 26 days, $3,950 against $21,240.
 
-Every call shows the rule, utilization, break-even and annual impact.
+The fleet advisor and the live plan use the same unit economics, so they agree: the plan buys nothing.
 
 ---
 
@@ -161,9 +159,9 @@ If they use Procore Equipment: we are the group-level planning layer on top, not
 
 | Criterion | Where it shows |
 |---|---|
-| Technical Rigor | Two cost lenses, availability, transport matrix, greedy allocator graded by an exact solver (2.2%), backtest, 59 backend + 89 frontend tests |
-| Functionality | Six live screens, CSV upload, what-if flip, provenance |
-| Creativity | Project-vs-group insight, live schedule flip, fleet advisor |
+| Technical Rigor | Two cost lenses, availability, transport matrix, greedy allocator, static-snapshot exact solver (2.1% below greedy on 16 requests; not a grade of the live plan), backtest, 102 backend + 103 frontend tests |
+| Functionality | Six live screens, CSV upload, what-if re-plan, provenance |
+| Creativity | Project-vs-group insight, a slip that ripples across projects, an engine that refuses a bad buy |
 | Innovation | Group-level future demand, no hardware, SAP/Procore data |
 | Commercial Viability | Buyer structure, Turner proof, pricing direction |
 | Delivery | Story → demo → engine → competitors → close |

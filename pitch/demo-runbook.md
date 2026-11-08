@@ -19,20 +19,20 @@
 |---|---|---|---|
 | 1 | Requests | Wait for the three Riverside items and ranked options (new cost bars) **[re-check UI]** | "Three needs, four options each, ranked by what the whole group pays." |
 | 2 | Requests | Open **Why this?** on the telehandler; close it **[re-check UI: button label]** | "Internal rental plus transport. The project sees a charge; the group sees transport and wear." |
-| 3 | Requests | Accept the scissor, telehandler and generator recommendations **[re-check UI: counter name]** | "The kept-in-group counter rises with each accepted decision. The generator buy breaks even in month five." |
-| 4 | Timeline | Drag **Kingsway Lofts** six weeks right **[re-check UI: banner text "five changes", new legend]** | "This is a what-if. The engine re-runs; five recommendations change. The generator flips from buy to rent outside." |
-| 5 | Map | Point at the telehandler move and the table | "Eleven kilometres, one hundred ninety-eight dollars; the saved road matrix, no live routing." |
-| 6 | Dashboard | Point at accepted savings, idle days, backtest, optimizer | "A synthetic replay: ninety-six requests, thirty-five leaks, one hundred thirty-seven thousand avoided of two hundred seventy-five. The exact solver shows greedy is within 2.2%." |
-| 7 | Fleet advisor | Point at Add 2 boom lifts / Add 2 heaters / Retire 2 **[re-check UI: card labels]** | "The rental arm sees what the next twelve months imply." |
-| 8 | Data upload | Click **Load slipped schedule demo**; wait for "Imported 5 projects"; click **View requests** **[re-check UI: button + toast text]** | "Same flip through the real-data path: Procore sent a revised schedule." |
-| 9 | Requests | Point at generator **Rent outside** **[re-check UI: option label]** | "No one edited the schedule by hand. The engine re-ran." |
+| 3 | Requests | Accept the scissor, telehandler and generator recommendations **[re-check UI: counter name]** | "The kept-in-group counter rises with each accepted decision. The generator is rented outside: one more would lose $3,750 a year, so the engine refuses to buy." |
+| 4 | Timeline | Drag **Kingsway Lofts** six weeks right **[re-check UI: "Changed by what-if" tile shows 2, new legend]** | "This is a what-if. The engine re-runs; two recommendations change. Kingsway's scissor phase now starts first and takes the two idle Northgate Rentals lifts, so Riverside's and one of Capilano's go to outside rental." |
+| 5 | Map | Point at the telehandler move and the table | "Ten point six kilometres, one hundred ninety-eight dollars; the saved road matrix, no live routing." |
+| 6 | Dashboard | Point at accepted savings, idle days, backtest, optimizer | "A synthetic replay: ninety-six requests, fifteen leaks, forty-eight thousand avoided of two hundred eighty-six. The rates are our input: it shows the method, not a forecast. On a static snapshot of sixteen requests, the exact solver is 2.1% below greedy; that does not grade the live plan." |
+| 7 | Fleet advisor | Point at Retire 1 mini excavator; every other class is Hold **[re-check UI: card labels]** | "The rental arm sees what the next twelve months imply: retire one idle unit, add nothing. It agrees with the generator call." |
+| 8 | Data upload | Click **Load slipped schedule demo**; wait for "Imported 5 projects"; click **View requests** **[re-check UI: button + toast text]** | "Same change through the real-data path: Procore sent a revised schedule." |
+| 9 | Requests | Point at the Riverside scissor lifts: **Rent outside** **[re-check UI: option label]** | "No one edited the schedule by hand. The engine re-ran." |
 
 ## Timing
 
 - 0:00–0:55 story
 - 0:55–1:20 insight
 - 1:20–3:40 demo (steps 1–9)
-- 3:40–4:10 engine + exact-solver check + tests
+- 3:40–4:10 engine + static exact-solver check + tests
 - 4:10–4:40 competitors + business
 - 4:40–5:00 close
 
@@ -44,8 +44,8 @@
 | CSV upload fails | Use the Timeline drag only; say the CSV path is in the repo and tested |
 | Map tiles do not load | The map still shows markers and routes; do not mention tiles |
 | Dashboard is slow | Skip step 6; go to Fleet advisor or the backtest slide |
-| Running long | Skip Fleet advisor (step 7) and the provenance scroll; keep the flip |
-| Judge asks for a number | Use the backtest headline, the fleet calls, or the min-cost gap; do not invent |
+| Running long | Skip Fleet advisor (step 7) and the provenance scroll; keep the Kingsway change |
+| Judge asks for a number | Use the backtest headline, the fleet calls, or the static min-cost gap; do not invent |
 
 ## Reset between rehearsals
 

@@ -1,4 +1,4 @@
-# Judge Q&A — 11 hard questions, tight answers
+# Judge Q&A — 12 hard questions, tight answers
 
 **Rule:** answer in 20–40 seconds. Concede the true part, then give the specific defence.
 
@@ -6,7 +6,7 @@
 
 ### 1. "Isn't this a textbook assignment problem?"
 
-The optimization is familiar; the product is not the solver. The hard part is the data model and the decision context: what is actually free, what the group pays versus what the project pays, how future demand changes a buy decision, and how to explain the answer to a project manager. We ship a greedy allocator that is easy to follow, and an exact PuLP/CBC solver grades it: greedy is within 2.2% (see Q11). A textbook assignment problem does not have a check-out log, a sister rental company, or a schedule that moves.
+The optimization is familiar; the product is not the solver. The hard part is the data model and the decision context: what is actually free, what the group pays versus what the project pays, how future demand changes a buy decision, and how to explain the answer to a project manager. We ship a greedy allocator that is easy to follow. On a static snapshot of the 16 upcoming requests, an exact PuLP/CBC solver is 2.1% ($2,825) cheaper than a greedy pass under the same model. The live plan uses a richer model, so it is not graded by that number. (see Q11). A textbook assignment problem does not have a check-out log, a sister rental company, or a schedule that moves.
 
 ### 2. "Procore already has equipment tracking. Why would anyone need this?"
 
@@ -14,11 +14,11 @@ Procore Equipment looks at current usage, one company and one project at a time,
 
 ### 3. "The data is fake. Why should we trust the numbers?"
 
-You should not treat them as a customer result. The data is synthetic, and we say so in the app, the README and the pitch. What is real is the engine: it prices four options, reserves physical units, re-plans on a schedule change and replays a year of decisions. The provenance page labels every number as sourced, derived, placeholder or synthetic. The two market rates we use are sourced; the rest are tuning values. The next step is a pilot with the group's real SAP and Procore export.
+You should not treat them as a customer result. The data is synthetic, and we say so in the app, the README and the pitch. What is real is the engine: it prices four options, reserves physical units, re-plans on a schedule change and replays a year of decisions; the backtest's availability rates are our inputs, so it shows the method, not a forecast. The provenance page labels every number as sourced, derived, placeholder or synthetic. The two market rates we use are sourced; the rest are tuning values. The next step is a pilot with the group's real SAP and Procore export.
 
 ### 4. "How do you know what's idle without trackers?"
 
-Two signals: Dana's check-out and check-in log, and schedule inference. If a unit is checked out to a project and has not been checked in, it is busy. If it has not been checked in, the project's last planned need for that class tells us when the work ends, so the unit is released then. We are not claiming GPS. We know which project the unit went to and when its work should end, and the log creates an audit trail.
+Two signals: Dana's check-out and check-in log (kept in the app), and schedule inference. If a unit is checked out to a project and has not been checked in, it is busy. If it has not been checked in, the project's last planned need for that class tells us when the work ends, so the unit is released then. We are not claiming GPS. We know which project the unit went to and when its work should end, and the log creates an audit trail.
 
 ### 5. "What if the internal unit isn't a true match — wrong attachment, poor condition, no operator?"
 
@@ -34,19 +34,25 @@ The buyer is the group, not the individual project. The value is outside rental 
 
 ### 8. "What's the hardest technical part?"
 
-Availability and allocation. A unit is only bookable if the check-out log and the schedule both say it is free for the whole date range. Physical units cannot be in two places at once, and transport changes the economics, so a per-request ranking is not enough. Then explainability: every recommendation has to show both cost lenses, a reason and a breakdown, or a project manager will not trust it. We chose a greedy allocator first because a working, explainable plan beats an optimal plan nobody can follow. The exact solver then grades the plan: greedy is within 2.2% (see Q11).
+Availability and allocation. A unit is only bookable if the check-out log and the schedule both say it is free for the whole date range. Physical units cannot be in two places at once, and transport changes the economics, so a per-request ranking is not enough. Then explainability: every recommendation has to show both cost lenses, a reason and a breakdown, or a project manager will not trust it. We chose a greedy allocator first because a working, explainable plan beats an optimal plan nobody can follow. On a static snapshot of the 16 upcoming requests, an exact PuLP/CBC solver is 2.1% ($2,825) cheaper than a greedy pass under the same model. The live plan uses a richer model, so it is not graded by that number. (see Q11).
 
 ### 9. "What about security, privacy and access to SAP?"
 
-The connectors are read-only and least-privilege in the design: SAP asset register, Procore schedules, check-out log. The financial data stays local in SQLite, and the check-out log creates an audit trail of where group assets are. The demo has no authentication, no multi-tenant isolation and no live credentials; those are production requirements, not demo features. The target group's real name and numbers never enter the public repo.
+The design is read-only and least-privilege: SAP asset-register and Procore schedule exports, plus the check-out log kept in the app. The demo imports CSV files; it has no live SAP or Procore connection. The financial data stays local in SQLite, and the check-out log creates an audit trail of where group assets are. The demo has no authentication, no multi-tenant isolation and no live credentials; those are production requirements, not demo features. The target group's real name and numbers never enter the public repo.
 
 ### 10. "What did you actually build, and what's next?"
 
-Real code: FastAPI routes, SQLite schema and imports, availability, the cost model, transport, the greedy allocator, the PuLP/CBC static min-cost comparison, the backtest, the fleet advisor, the React screens, the map, CSV upload, provenance, and 148 tests. Mocked or roadmap: live SAP/Procore/Textura APIs, real history, the Textura leak report, live re-solving, auth and mobile. Next is a 60-day read-only pilot on one group's real export, then the leak report and the live re-solve (Q11).
+Real code: FastAPI routes, SQLite schema and imports, availability, the cost model, transport, the greedy allocator, the PuLP/CBC static min-cost comparison, the backtest, the fleet advisor, the React screens, the map, CSV upload, provenance, and 205 tests (102 backend, 103 frontend). Mocked or roadmap: live SAP/Procore/Textura APIs, real history, the Textura leak report, live re-solving, auth and mobile. Next is a 60-day read-only pilot on one group's real export, then the leak report and the live re-solve (Q11).
 
 ### 11. "Your exact solver beats greedy. Why not just ship the optimal plan?"
 
-Today the exact solver grades our plan: greedy is within 2.2%. Next we run it live: when a request comes in or a schedule slips, it re-solves the open requests, locks what's already delivered, and charges a switching cost for any change, so it only recommends moving a machine when the saving beats the extra truck trip. The numbers: on the 16-request static snapshot, min-cost is $123,646 against greedy's $126,470, so $2,825 (2.2%) lower. We don't swap in the static solution because it does not re-price relocation and only allows buy when no unit is free; a live plan also has to respect machines already on trucks. The comparison is on the Dashboard.
+On a static snapshot of the 16 upcoming requests, min-cost is $131,169 against greedy's $133,993 under the same model, so $2,825 (2.1%) lower. The live plan uses a richer model, so that number does not grade it: the live plan costs $133,928, and the static model is not a floor for it. We don't swap in the static solution because it does not re-price relocation and only allows buy when no unit is free; a live plan also has to respect machines already on trucks. The Timeline's re-plan card already runs the exact solver as a suggestion: it locks started requests and charges a switching cost for any change. The comparison is on the Dashboard.
+
+---
+
+### 12. "Your engine has a Buy option, but the demo never buys. Does it work?"
+
+Yes, and the demo shows why. Buy has to pay on one extra unit, not on the whole pipeline. For the generator, one more unit covers 308 days of demand: $10,050 of outside rent avoided against $13,800 a year to own, so it loses $3,750 and the engine rents outside. The fleet advisor uses the same math and agrees. Buy appears when a unit's net is positive; with these rates and this pipeline, none is. The rates are mostly placeholders, so a different rate card could change that.
 
 ---
 
