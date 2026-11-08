@@ -99,7 +99,7 @@ def recommend(world, body):
         req = {"class": cls, "qty": item.get("qty", 1),
                "start": date.fromisoformat(item["start"]),
                "finish": date.fromisoformat(item["finish"]),
-               "dest": (site["lat"], site["lon"])}
+               "site_id": site["id"], "dest": (site["lat"], site["lon"])}
         idle = availability.available_units(world, req["start"], req["finish"], cls)
         options = cost_model.price_options(
             req, world["classes"][cls], settings,
@@ -152,6 +152,12 @@ def get_available_assets(start: date = Query(alias="from"), finish: date = Query
     if finish < start:
         raise HTTPException(422, "'to' must be on or after 'from'")
     return availability.available_units(load_world(), start, finish)
+
+
+@router.get("/assignments")
+def get_assignments():
+    """The check-out/in log: where each unit went and whether it is still out."""
+    return db.get_assignments()
 
 
 @router.post("/assignments", status_code=201)

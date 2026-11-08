@@ -91,6 +91,10 @@ def _move_option(name, units, request, cls, s, days, who):
         name, True, rent + trucking, trucking + wear, reason,
         [("Internal rental", rent), ("Transport", trucking)],
         asset_ids=[unit["asset_id"] for _, unit in chosen],
+        moves=[{"asset_id": unit["asset_id"], "from_site_id": unit["site_id"],
+                "to_site_id": request["site_id"], "km": round(km, 1),
+                "transport_cost": round(transport_cost(km, s), 2)}
+               for km, unit in chosen],
         group_breakdown=[{"label": "Transport", "amount": round(trucking, 2)},
                          {"label": "Wear", "amount": round(wear, 2)}])
 
@@ -152,8 +156,8 @@ def _buy_option(request, cls, s, days, pipeline, idle_exists):
 def price_options(request, cls_rates, settings, idle_owned, idle_sister, pipeline):
     """Return the 4 options (move_ours, rent_sister, rent_outside, buy) for a request.
 
-    request: {class, qty, start, finish (dates), dest: (lat, lon)}
-    idle_owned / idle_sister: idle units as dicts {lat, lon, where}
+    request: {class, qty, start, finish (dates), site_id, dest: (lat, lon)}
+    idle_owned / idle_sister: idle units as dicts {asset_id, site_id, lat, lon, where}
     pipeline: list of (start, finish) needs for this class across all projects
     """
     s = dict(settings)
