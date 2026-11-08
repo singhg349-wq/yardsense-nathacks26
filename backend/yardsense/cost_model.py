@@ -9,6 +9,8 @@ from datetime import date, timedelta
 
 MONTH_DAYS = 28
 WEEK_DAYS = 7
+HORIZON_DAYS = 365
+HORIZON_MONTHS = 12
 
 
 def road_km(lat1, lon1, lat2, lon2, road_factor):
@@ -116,67 +118,134 @@ def _move_option(name, units, request, cls, s, days, who, road_distances):
                          {"label": "Wear", "amount": round(wear, 2)}])
 
 
-def _buy_option(request, cls, s, days, pipeline, idle_exists):
-    """Northgate Rentals buys one, then rents it to every pipeline project."""
+# ---- Owning one extra unit: shared by the per-request buy test and the fleet advisor.
+
+def _runs(active, level):
+    """Lengths of consecutive day runs where demand reaches `level` units."""
+    runs, current = [], 0
+    for quantity in list(active) + [0]:
+        if quantity >= level:
+            current += 1
+        elif current:
+            runs.append(current)
+            current = 0
+    return runs
+
+
+def demand_by_day(spans, today, days=HORIZON_DAYS):
+    """Concurrent units needed on each day of the horizon; spans repeat per unit of qty."""
+    active = [0] * days
+    for start, finish in spans:
+        first = max(0, (start - today).days)
+        last = min(days - 1, (finish - today).days)
+        for index in range(first, last + 1):
+            active[index] += 1
+    return active
+
+
+def carrying_cost(rates):
+    """Twelve months of maintenance and insurance for one unit."""
+    return HORIZON_MONTHS * (rates["maintenance_month"] + rates["insurance_month"])
+
+
+def cost_to_own(rates):
+    """One year of owning one new unit: depreciation plus carrying cost."""
+    return rates["purchase_price"] * rates["resale_pct_per_year"] + carrying_cost(rates)
+
+
+def breakeven_months(rates, net_annual):
+    """Months for the monthly net saving to repay the purchase price, or None."""
+    if net_annual <= 0:
+        return None
+    return math.ceil(rates["purchase_price"] / (net_annual / HORIZON_MONTHS))
+
+
+def marginal_unit(rates, active, supply, k):
+    """Money case for the k-th unit added on top of `supply`.
+
+    The unit only works on days when more than supply + k - 1 units are needed
+    at once; rent avoided is outside rental plus delivery for each run of them.
+    """
+    runs = _runs(active, supply + k)
+    rent = sum(rental_price(days, rates["outside"]) + rates["outside_delivery_fee"]
+               for days in runs)
+    own = cost_to_own(rates)
+    net = round(rent - own, 2)
+    return {"unit": k, "days": sum(runs), "rentals": len(runs),
+            "rent_avoided": round(rent, 2), "cost_to_own": round(own, 2),
+            "net_annual_impact": net, "breakeven_month": breakeven_months(rates, net)}
+
+
+def owning_share(request_days, unit_days):
+    """Fraction of one unit's yearly cost to own carried by a need using it.
+
+    share = the need's days in the 12-month horizon / the unit's planned days
+    there, capped at 1. A unit with no other planned days is fully charged.
+    """
+    if unit_days <= 0:
+        return 1.0
+    return min(1.0, request_days / unit_days)
+
+
+def _buy_option(request, cls, s, days, pipeline, idle_exists, supply):
+    """Northgate Rentals buys the unit(s), judged on each unit's own marginal demand.
+
+    Available only when every extra unit nets a positive annual impact over the
+    next 12 months (the fleet advisor's test). The group cost is this need's
+    share of each unit's yearly cost to own (its days / the unit's planned days);
+    the rest is carried by the later needs that unit covers.
+    """
     label = cls["label"]
     if idle_exists:
         return _unavailable("buy", f"The group already has idle {label} units; no need to buy.")
     today = s["today"]
-    horizon = s["horizon_months"]
-    outside = cls["outside"]
-    fee = cls["outside_delivery_fee"]
-    price = cls["purchase_price"]
-    carry = cls["maintenance_month"] + cls["insurance_month"]
-
-    def cost_to_own(m):
-        resale = price * (1 - cls["resale_pct_per_year"]) ** (m / 12)
-        return price - resale + carry * m
-
-    def savings(m):
-        """Outside rental avoided for pipeline days before the end of month m."""
-        end = today + timedelta(days=30 * m)
-        total = 0.0
-        for start, finish in pipeline:
-            d = _clip_days(start, finish, today, end)
-            if d > 0:
-                total += rental_price(d, outside) + fee
-        return total
-
-    breakeven = None
-    for m in range(1, horizon + 1):
-        if savings(m) >= cost_to_own(m):
-            breakeven = m
-            break
-
-    end = today + timedelta(days=30 * horizon)
-    pipeline_days = sum(_clip_days(a, b, today, end) for a, b in pipeline)
-    request_days = days * request["qty"]
-    share = min(1.0, request_days / pipeline_days) if pipeline_days else 1.0
-    own = cost_to_own(horizon) * share
-    internal = request["qty"] * rental_price(days, cls["internal"])
-    breakdown = [("Purchase price minus resale + carrying cost, this request's share", own)]
-    n_projects = len(pipeline)
-
-    if breakeven is None:
-        reason = f"Does not break even within {horizon} months ({n_projects} pipeline need(s))."
-        ok = False
-    elif breakeven > s["max_breakeven_months"]:
-        reason = (f"Break-even is month {breakeven}, later than the {s['max_breakeven_months']}-month limit "
-                  f"({n_projects} pipeline need(s)).")
-        ok = False
+    qty = request["qty"]
+    active = demand_by_day(pipeline, today)
+    units = [marginal_unit(cls, active, supply, k) for k in range(1, qty + 1)]
+    own = cost_to_own(cls)
+    horizon_end = today + timedelta(days=HORIZON_DAYS - 1)
+    request_days = _clip_days(request["start"], request["finish"], today, horizon_end)
+    shares = [owning_share(request_days, unit["days"]) for unit in units]
+    group = sum(share * own for share in shares)
+    remainder = qty * own - group
+    internal = qty * rental_price(days, cls["internal"])
+    last = units[-1]
+    net = round(sum(unit["net_annual_impact"] for unit in units), 2)
+    sign = "-" if last["net_annual_impact"] < 0 else ""
+    which = f"one more {label}" if qty == 1 else f"the last of {qty} extra {label} units"
+    case = (f"{which} would cover {last['days']} days in 12 months, avoiding "
+            f"${last['rent_avoided']:,.0f} of outside rent against ${own:,.0f} a year to own "
+            f"(nets {sign}${abs(last['net_annual_impact']):,.0f}/yr)")
+    if last["net_annual_impact"] <= 0:
+        ok, breakeven = False, None
+        reason = f"Does not pay: {case}."
     else:
-        reason = f"{n_projects} pipeline need(s) for {label} in {horizon} months; breaks even in month {breakeven}."
         ok = True
-    return _option("buy", ok, internal, own, reason, breakdown, breakeven_month=breakeven)
+        breakeven = breakeven_months(cls, net / qty)
+        reason = f"Buy: {case}; pays back in month {breakeven}."
+    planned = " + ".join(str(unit["days"]) for unit in units)
+    breakdown = [("Internal rental from Northgate Rentals", internal)]
+    return _option("buy", ok, internal, group, reason, breakdown, breakeven_month=breakeven,
+                   net_annual_impact=net, marginal_units=units,
+                   owning_cost=round(qty * own, 2), owning_remainder=round(remainder, 2),
+                   owning_shares=[round(share * own, 2) for share in shares],
+                   group_breakdown=[
+                       {"label": (f"This need's share of {qty} x ${own:,.0f}/yr to own "
+                                  f"({request_days} of {planned} planned unit-days)"),
+                        "amount": round(group, 2)},
+                       {"label": "Not in this cost: carried by later needs the unit covers",
+                        "amount": round(remainder, 2)}])
 
 
 def price_options(request, cls_rates, settings, idle_owned, idle_sister, pipeline,
-                  road_distances=None):
+                  road_distances=None, supply=0):
     """Return the 4 options (move_ours, rent_sister, rent_outside, buy) for a request.
 
     request: {class, qty, start, finish (dates), site_id, dest: (lat, lon)}
     idle_owned / idle_sister: idle units as dicts {asset_id, site_id, lat, lon, where}
     pipeline: list of (start, finish) needs for this class across all projects
+    supply: usable group units of this class (plus units the plan already bought);
+            an extra unit only earns on days demand exceeds it
     """
     s = dict(settings)
     s["today"] = date.fromisoformat(settings["demo_today"])
@@ -195,7 +264,8 @@ def price_options(request, cls_rates, settings, idle_owned, idle_sister, pipelin
                       f"Outside rental for {days} days, delivery included.",
                       [("Outside rental", out_rent), ("Delivery", out_fee)])
 
-    buy = _buy_option(request, cls, s, days, pipeline, bool(idle_owned or idle_sister))
+    buy = _buy_option(request, cls, s, days, pipeline, bool(idle_owned or idle_sister),
+                      supply)
 
     options = [move, sister, outside, buy]
     for o in options:
@@ -207,17 +277,3 @@ def price_options(request, cls_rates, settings, idle_owned, idle_sister, pipelin
 def rank(options):
     """Available options first, cheapest group cost first."""
     return sorted(options, key=lambda o: (not o["available"], o["group_cost"]))
-
-
-def buy_breakeven(cls_rates, settings, pipeline):
-    """Month a new purchase breaks even, ignoring current idle units.
-
-    Used by the fleet advisor to size the rental company's fleet against the
-    forward pipeline. Returns None when it never breaks even in the horizon.
-    """
-    s = dict(settings)
-    s["today"] = date.fromisoformat(settings["demo_today"])
-    probe = {"class": cls_rates["label"], "qty": 1, "start": s["today"],
-             "finish": s["today"], "dest": (0.0, 0.0)}
-    option = _buy_option(probe, cls_rates, s, 1, pipeline, False)
-    return option.get("breakeven_month")

@@ -60,3 +60,16 @@ def available_units(world, start, finish, asset_class=None):
         available.append({**asset, "site_id": site["id"], "lat": site["lat"],
                           "lon": site["lon"], "where": where})
     return available
+
+
+def on_outside_hire(world):
+    """Asset ids checked out to an outside customer with no check-in date."""
+    return {entry["asset_id"] for entry in world["assignments"]
+            if entry["project_id"] is None and entry["checked_in"] is None}
+
+
+def usable_supply(world, asset_class):
+    """Group units of a class that can serve the pipeline (not on open-ended outside hire)."""
+    hired_out = on_outside_hire(world)
+    return sum(1 for asset in world["assets"]
+               if asset["asset_class"] == asset_class and asset["asset_id"] not in hired_out)

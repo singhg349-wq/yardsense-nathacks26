@@ -20,7 +20,9 @@ ASSUMPTIONS = [
     "Static snapshot: every future request is assigned at once.",
     "A unit's origin is its site before the plan; relocation after a move is not re-priced.",
     "A unit can serve non-overlapping requests; overlapping requests are mutually exclusive.",
-    "Buy is offered only when no owned or sister unit is available for that request.",
+    "Buy is offered only when no owned or sister unit is available for that request and one more "
+    "unit nets a positive 12-month impact after owning cost (the fleet advisor's test); its cost "
+    "is the request's share of a year's cost to own.",
     "The shipped plan is the dynamic greedy allocator; this is a comparison, not the live plan.",
     "The live plan can split a multi-unit need and buy the rest once every idle unit is used, "
     "and reuses units it buys; this static model cannot, so the live plan can cost less.",
@@ -96,7 +98,8 @@ def _buy_cost(world, request, settings, road_distances):
     priced_request = {**request, "dest": _dest(world, request), "qty": 1}
     options = cost_model.price_options(
         priced_request, cls, settings, [], [],
-        _pipeline(world, request["class"]), road_distances)
+        _pipeline(world, request["class"]), road_distances,
+        availability.usable_supply(world, request["class"]))
     buy = next(option for option in options if option["option"] == "buy")
     return round(buy["group_cost"], 2) if buy["available"] else None
 

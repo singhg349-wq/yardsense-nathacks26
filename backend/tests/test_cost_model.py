@@ -55,18 +55,22 @@ def test_scissor_lift_rent_sister_first(client):
     assert options[0]["kept_in_group"] > 0
 
 
-def test_generator_buy_first_with_early_breakeven(client):
+def test_generator_rents_outside_because_one_more_unit_loses_money(client):
     options = options_by_class(client.post("/recommend"))["GEN_45KW"]
-    assert options[0]["option"] == "buy"
-    assert options[0]["breakeven_month"] <= 6
+    assert options[0]["option"] == "rent_outside"
+    buy = next(o for o in options if o["option"] == "buy")
+    assert not buy["available"]
+    assert buy["breakeven_month"] is None
+    assert buy["net_annual_impact"] < 0
+    assert "-$3,750/yr" in buy["reason"]
 
 
-def test_generator_flips_to_rent_outside_when_project_slips(client, monkeypatch):
+def test_generator_still_rents_outside_when_project_slips(client, monkeypatch):
     monkeypatch.setattr(api, "load_world", slip_project("PRJ-KNG", 42))
     options = options_by_class(client.post("/recommend"))["GEN_45KW"]
     buy = next(o for o in options if o["option"] == "buy")
     assert not buy["available"]
-    assert buy["breakeven_month"] is None or buy["breakeven_month"] > 6
+    assert buy["breakeven_month"] is None
     assert options[0]["option"] == "rent_outside"
 
 
@@ -129,4 +133,4 @@ def test_recommend_reflects_a_schedule_shift(client):
     response = client.post("/recommend", json=body)
     assert response.status_code == 200
     top = {item["class"]: item["options"][0]["option"] for item in response.json()["items"]}
-    assert top == {"SCISSOR_19": "buy", "GEN_45KW": "rent_outside"}
+    assert top == {"SCISSOR_19": "rent_outside", "GEN_45KW": "rent_outside"}
