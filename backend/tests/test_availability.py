@@ -11,6 +11,36 @@ def available(client, start, finish):
     return {asset["asset_id"]: asset for asset in response.json()}
 
 
+def available_with_shifts(client, start, finish, shifts):
+    response = client.post("/assets/available",
+                           json={"start": start, "finish": finish, "shifts": shifts})
+    assert response.status_code == 200
+    return {asset["asset_id"]: asset for asset in response.json()}
+
+
+def test_shifted_availability_matches_the_baseline_without_shifts():
+    client = TestClient(app)
+    assert available_with_shifts(client, "2026-11-23", "2027-01-31", []) == \
+        available(client, "2026-11-23", "2027-01-31")
+
+
+def test_shifted_availability_follows_a_what_if_schedule():
+    client = TestClient(app)
+    baseline = available_with_shifts(client, "2026-11-23", "2027-01-31", [])
+    shifted = available_with_shifts(client, "2026-11-23", "2027-01-31",
+                                    [{"project_id": "PRJ-WGT", "days": 84}])
+    assert set(shifted) != set(baseline)
+
+
+def test_shifted_availability_validates_dates_and_projects():
+    client = TestClient(app)
+    assert client.post("/assets/available", json={
+        "start": "2026-12-02", "finish": "2026-12-01", "shifts": []}).status_code == 422
+    assert client.post("/assets/available", json={
+        "start": "2026-12-01", "finish": "2026-12-02",
+        "shifts": [{"project_id": "missing", "days": 7}]}).status_code == 404
+
+
 def test_schedule_releases_a_unit_only_after_its_need_ends():
     client = TestClient(app)
     assert "100017" not in available(client, "2026-11-01", "2026-11-30")

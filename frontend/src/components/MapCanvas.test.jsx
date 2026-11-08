@@ -38,16 +38,16 @@ describe('MapCanvas', () => {
     renderCanvas()
     const yard = screen.getByRole('button', { name: /^Northgate Rentals yard/ })
     expect(yard.className).toContain('map-marker-yard')
-    expect(yard.getAttribute('style')).toContain('#a78bfa')
+    expect(yard.getAttribute('style')).toContain('#1f8a5b')
     const electric = screen.getByRole('button', { name: /^Capilano/ })
     expect(electric.className).toContain('map-marker-site')
-    expect(electric.getAttribute('style')).toContain('#6cb6ff')
+    expect(electric.getAttribute('style')).toContain('#2f6fb3')
   })
 
   it('shows amber idle badges only where units are idle', () => {
     const { container } = renderCanvas()
     expect([...container.querySelectorAll('.map-marker-badge')].map((badge) => badge.textContent).sort())
-      .toEqual(['1 idle', '1 idle', '2 idle'])
+      .toEqual(['1', '1', '2'])
   })
 
   it('rings the selected marker and reports it to screen readers', () => {
@@ -81,7 +81,7 @@ describe('MapCanvas', () => {
     expect(paths(container)).toHaveLength(5)
     const glow = paths(container).filter((path) => path.getAttribute('stroke-width') === '12')
     expect(glow).toHaveLength(1)
-    expect(glow[0].getAttribute('stroke')).toBe('#2ad1a3')
+    expect(glow[0].getAttribute('stroke')).toBe('#f47a1f')
   })
 
   it('selects a move when its arc is clicked', () => {
@@ -95,7 +95,7 @@ describe('MapCanvas', () => {
     const { container } = renderCanvas()
     const arcs = paths(container).filter((path) => path.getAttribute('stroke-width') === '2.5')
     expect(arcs).toHaveLength(3)
-    expect(arcs.every((arc) => arc.getAttribute('stroke') === '#a78bfa')).toBe(true)
+    expect(arcs.every((arc) => arc.getAttribute('stroke') === '#1f8a5b')).toBe(true)
     expect(arcs.every((arc) => arc.getAttribute('stroke-opacity') === '0.5')).toBe(true)
     expect(arcs.map((arc) => arc.getAttribute('stroke-dasharray'))).toEqual([null, '7 7', '7 7'])
   })

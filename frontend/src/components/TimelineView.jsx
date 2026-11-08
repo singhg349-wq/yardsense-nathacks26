@@ -34,9 +34,9 @@ export default function TimelineView() {
   if (projects === null) return <p>Loading timeline...</p>
 
   return (
-    <section>
+    <section className="card tl-standalone">
       <h2>Group timeline</h2>
-      {usingSample && <p>API not reachable: showing sample data.</p>}
+      {usingSample && <p className="pill muted">API not reachable: showing sample data.</p>}
       <Timeline projects={projects} today={sampleToday} />
     </section>
   )

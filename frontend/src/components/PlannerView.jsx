@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
 import { getPlan, postPlan } from '../api'
 import Timeline from './Timeline'
+import ReplanCard from './ReplanCard'
 import './PlannerView.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
+const money = new Intl.NumberFormat('en-CA', {
+  style: 'currency', currency: 'CAD', maximumFractionDigits: 0,
+})
 const optionNames = {
   move_ours: 'Move ours', rent_sister: 'Rent from sister',
   rent_outside: 'Rent outside', buy: 'Buy',
@@ -54,17 +58,52 @@ export default function PlannerView({ shifts, onSetShift }) {
   const kingswayDays = shifts.find((shift) => shift.project_id === 'PRJ-KNG')?.days ?? 0
   const names = Object.fromEntries((plan?.projects ?? []).map((project) => [project.id, project.name]))
   const changedIds = new Set((plan?.changed ?? []).map((change) => change.request_id))
+  const optionCounts = (plan?.allocations ?? []).reduce((counts, row) => {
+    counts[row.option] = (counts[row.option] ?? 0) + 1
+    return counts
+  }, {})
+
+  const mixOptions = [['move_ours', 'Move ours', 'move'], ['rent_sister', 'Sister', 'sister'],
+    ['rent_outside', 'Outside', 'outside'], ['buy', 'Buy', 'buy']]
+  const mixTotal = mixOptions.reduce((sum, [key]) => sum + (optionCounts[key] ?? 0), 0)
 
   return <section className="planner-view">
     <div className="planner-heading">
-      <div><div className="section-kicker">Forward plan</div><h1>Group timeline</h1>
-        <p>Drag a project bar or edit its start date. YardSense re-runs the group plan.</p></div>
+      <div><div className="section-kicker">Forward plan · what-if</div><h1>Group timeline</h1></div>
       <button className="demo-slip-button" type="button" onClick={() => onSetShift('PRJ-KNG', kingswayDays === 42 ? 0 : 42)}>
         {kingswayDays === 42 ? 'Reset Kingsway date' : 'Slip Kingsway 6 weeks'}
       </button>
     </div>
     {error && <p className="planner-error" role="alert">{error}</p>}
     {plan && <>
+      <div className="planner-cards">
+        <div className="planner-tile card planner-tile-cost">
+          <span className="planner-tile-label">Group cost</span>
+          <strong className="num">{money.format(plan.totals?.group_cost ?? 0)}</strong>
+          <small>what leaves the group for this plan</small>
+        </div>
+        <div className="planner-tile card planner-tile-kept">
+          <span className="planner-tile-label">Kept in group</span>
+          <strong className="num">{money.format(plan.totals?.kept_in_group ?? 0)}</strong>
+          <small>versus renting everything outside</small>
+        </div>
+        <div className="planner-tile card planner-tile-mix">
+          <span className="planner-tile-label">Option mix · {mixTotal} allocations</span>
+          <div className="planner-mixbar" role="img" aria-label="Option mix">
+            {mixOptions.map(([key, , cls]) => (optionCounts[key] ?? 0) > 0 &&
+              <i key={key} className={`tl-opt-${cls}`} style={{ flexGrow: optionCounts[key] }} />)}
+          </div>
+          <div className="planner-mixlist">
+            {mixOptions.map(([key, label, cls]) => <span key={key} className="legend-item">
+              <i className={`legend-swatch tl-opt-${cls}`} />{label} <b className="num">{optionCounts[key] ?? 0}</b></span>)}
+          </div>
+        </div>
+        <div className="planner-tile card">
+          <span className="planner-tile-label">Changed by what-if</span>
+          <strong className="num">{plan.changed.length}</strong>
+          <small>{shifts.length ? `${shifts.length} project${shifts.length !== 1 ? 's' : ''} shifted` : 'no project shifted'}</small>
+        </div>
+      </div>
       <div className="planner-date-controls">
         {plan.projects.map((project) => <label key={project.id}>{project.name}
           <input type="date" value={project.start_date}
@@ -81,9 +120,10 @@ export default function PlannerView({ shifts, onSetShift }) {
       </div>
       <div className={`planner-chart ${busy ? 'planner-chart-busy' : ''}`}>
         <Timeline projects={plan.projects} allocations={plan.allocations}
-          changedIds={changedIds} onShiftProject={shiftBy} />
+          changedIds={changedIds} onShiftProject={shiftBy} shifts={shifts} />
       </div>
     </>}
     {!plan && busy && <p className="planner-loading">Loading the group plan…</p>}
+    <ReplanCard shifts={shifts} />
   </section>
 }

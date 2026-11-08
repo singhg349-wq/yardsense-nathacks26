@@ -207,3 +207,17 @@ def price_options(request, cls_rates, settings, idle_owned, idle_sister, pipelin
 def rank(options):
     """Available options first, cheapest group cost first."""
     return sorted(options, key=lambda o: (not o["available"], o["group_cost"]))
+
+
+def buy_breakeven(cls_rates, settings, pipeline):
+    """Month a new purchase breaks even, ignoring current idle units.
+
+    Used by the fleet advisor to size the rental company's fleet against the
+    forward pipeline. Returns None when it never breaks even in the horizon.
+    """
+    s = dict(settings)
+    s["today"] = date.fromisoformat(settings["demo_today"])
+    probe = {"class": cls_rates["label"], "qty": 1, "start": s["today"],
+             "finish": s["today"], "dest": (0.0, 0.0)}
+    option = _buy_option(probe, cls_rates, s, 1, pipeline, False)
+    return option.get("breakeven_month")

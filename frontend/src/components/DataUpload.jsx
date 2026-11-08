@@ -1,6 +1,11 @@
-import { useState } from 'react'
-import { API_URL, uploadCsv } from '../api'
+import { useEffect, useState } from 'react'
+import { API_URL, getSources, uploadCsv } from '../api'
 import './DataUpload.css'
+
+const money = new Intl.NumberFormat('en-CA', {
+  style: 'currency', currency: 'CAD', maximumFractionDigits: 0,
+})
+const valueLabel = (value) => (typeof value === 'number' ? money.format(value) : value)
 
 const sources = [
   { id: 'sap', name: 'SAP asset register', columns: 'ANLN1, TXT50, ANLKL, BUKRS, AKTIV, ANSWL',
@@ -33,10 +38,38 @@ function UploadCard({ source, onUploaded, onViewRequests }) {
     }
   }
 
-  return <article className="upload-card">
-    <h2>{source.name}</h2>
+  async function loadSample() {
+    setBusy(true)
+    setError('')
+    setResult(null)
+    try {
+      const response = await fetch(`${API_URL}/samples/${source.sample}`)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const blob = await response.blob()
+      const sampleFile = new File([blob], `${source.sample}_sample.csv`, { type: 'text/csv' })
+      const result = await uploadCsv(source.id, sampleFile)
+      setResult(result)
+      onUploaded()
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const status = result ? ['sister', 'Imported'] : busy ? ['buy', 'Importing'] : error ? ['outside', 'Error'] : ['muted', 'Awaiting file']
+
+  return <article className="card upload-card">
+    <div className="upload-card-head">
+      <h2>{source.name}</h2>
+      <span className="upload-badge num">.CSV</span>
+      <span className={`pill ${status[0]}`}>{status[1]}</span>
+    </div>
     <p>Expected columns: {source.columns}.</p>
     <p className="upload-sample">Try the synthetic sample: <a href={`${API_URL}/samples/${source.sample}`} download>{source.id === 'sap' ? 'sap_assets.csv' : 'procore_schedule.csv'}</a></p>
+    <button className={`upload-demo-button${source.id === 'procore' ? ' upload-demo-primary' : ''}`} type="button" onClick={loadSample} disabled={busy}>
+      {source.id === 'procore' ? 'Load slipped schedule demo' : 'Load sample asset register'}
+    </button>
     <form onSubmit={submit}>
       <label htmlFor={`upload-${source.id}`}>Choose a CSV file</label>
       <input id={`upload-${source.id}`} type="file" accept=".csv,text/csv"
@@ -51,12 +84,70 @@ function UploadCard({ source, onUploaded, onViewRequests }) {
   </article>
 }
 
+function Provenance({ data }) {
+  return <section className="provenance" aria-labelledby="provenance-title">
+    <div className="provenance-head">
+      <div>
+        <div className="section-kicker">Data & assumptions</div>
+        <h2 id="provenance-title">Where these numbers come from</h2>
+        <p>The demo is synthetic. Rates marked sourced come from public market listings; everything else is a labelled placeholder or a stated assumption.</p>
+      </div>
+    </div>
+    <div className="provenance-sources">
+      {data.sources.map((source) => <article className="card provenance-card" key={source.id}>
+        <div className="provenance-card-head"><h3>{source.name}</h3>
+          <span className={`provenance-mode provenance-mode-${source.mode}`}>{source.mode}</span></div>
+        <p>{source.shape}</p>
+        <small>{source.notes}</small>
+      </article>)}
+    </div>
+    <div className="provenance-rates">
+      <h3>Rates and confidence</h3>
+      <div className="provenance-table">
+        <div className="provenance-row provenance-row-head">
+          <span>Class</span><span>Field</span><span>Value</span><span>Basis</span><span>Confidence</span><span>Source</span>
+        </div>
+        {data.rates.map((row, index) => <div className="provenance-row" key={`${row.class}-${row.field}-${index}`}>
+          <span>{row.label ?? row.class}</span>
+          <span>{row.field}</span>
+          <span>{valueLabel(row.value)}</span>
+          <span>{row.basis}</span>
+          <span><span className={`pill provenance-confidence provenance-confidence-${row.confidence}`}>{row.confidence}</span></span>
+          <span>{row.citation ? (row.source_url
+            ? <a href={row.source_url} target="_blank" rel="noreferrer">{row.citation}</a>
+            : row.citation) : '—'}</span>
+        </div>)}
+      </div>
+    </div>
+    <div className="provenance-assumptions">
+      <h3>Assumptions</h3>
+      <ul>{data.assumptions.map((line) => <li key={line}>{line}</li>)}</ul>
+    </div>
+  </section>
+}
+
 export default function DataUpload({ onUploaded, onViewRequests }) {
+  const [provenance, setProvenance] = useState(null)
+  const [provenanceError, setProvenanceError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+    getSources().then((data) => {
+      if (!cancelled) { setProvenance(data); setProvenanceError('') }
+    }).catch((err) => {
+      if (!cancelled) setProvenanceError(err.message)
+    })
+    return () => { cancelled = true }
+  }, [])
+
   return <section className="upload-view">
+    <div className="upload-banner" role="note"><b>Synthetic demo data</b><span>Nothing here is a client record. Only rates marked sourced come from public listings.</span></div>
     <div className="section-kicker">Connected data</div>
     <h1>Upload equipment and schedule exports.</h1>
     <p>CSV imports update the local planning database. An upload can update known assets or projects and add new ones using existing company, site and equipment class codes.</p>
     <div className="upload-grid">{sources.map((source) => <UploadCard key={source.id} source={source}
       onUploaded={onUploaded} onViewRequests={onViewRequests} />)}</div>
+    {provenanceError && <p className="upload-error" role="alert">Couldn't load the data provenance ({provenanceError}).</p>}
+    {provenance && <Provenance data={provenance} />}
   </section>
 }

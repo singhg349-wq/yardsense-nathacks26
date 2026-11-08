@@ -1,6 +1,6 @@
-# CLAUDE.md: house rules for YardSense
+# Contributing: house rules for YardSense
 
-Read this before working in the repo. It applies to humans and AI assistants alike. Decisions and their reasons live in `DECISIONS.md`; the full plan is in `plan.md`.
+Read this before working in the repo. It applies to everyone on the team. Decisions and their reasons live in `DECISIONS.md`; the full plan is in `plan.md`.
 
 ## What we're building
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getAssignments, getAvailableAssets, getClasses, getSites, postPlan } from '../api'
+import { getAssignments, getClasses, getSites, postAvailableAssets, postPlan } from '../api'
 import MapCanvas from './MapCanvas'
 import {
   addDays, buildMoves, COMPANIES, DEMO_TODAY, defaultMove, fleetStatus, formatDate, formatLongDate,
@@ -11,15 +11,13 @@ const FILTERS = [['all', 'All'], ['move_ours', TYPE_LABELS.move_ours], ['rent_si
 const IDLE_WINDOW_DAYS = 7
 
 function loadWorld() {
-  return Promise.all([
-    getSites(), getAssignments(), getClasses(),
-    getAvailableAssets(DEMO_TODAY, addDays(DEMO_TODAY, IDLE_WINDOW_DAYS)),
-  ]).then(([sites, assignments, classes, idle]) => ({ sites, assignments, classes, idle }))
+  return Promise.all([getSites(), getAssignments(), getClasses()])
+    .then(([sites, assignments, classes]) => ({ sites, assignments, classes }))
 }
 
 function Kpi({ label, value, sub, primary }) {
   return <article className={`map-kpi${primary ? ' map-kpi-primary' : ''}`}>
-    <span>{label}</span><strong>{value}</strong><small>{sub}</small>
+    <span>{label}</span><strong className="num">{value}</strong><small>{sub}</small>
   </article>
 }
 
@@ -29,7 +27,7 @@ function FleetCard({ fleet }) {
     ['Rented to outside customers', fleet.rented, 'map-fleet-rented'],
     ['Idle', fleet.idle, 'map-fleet-idle'],
   ]
-  return <section className="map-card map-fleet" aria-labelledby="map-fleet-title">
+  return <section className="card map-fleet" aria-labelledby="map-fleet-title">
     <div className="map-card-heading"><h2 id="map-fleet-title">Fleet status</h2><span>{fleet.total} units</span></div>
     <div className="map-fleet-bar" aria-hidden="true">
       {segments.map(([label, count, className]) => <div key={label} className={className} style={{ flexGrow: count }} />)}
@@ -42,10 +40,27 @@ function FleetCard({ fleet }) {
   </section>
 }
 
+function MoveList({ moves, selectedMoveId, onSelect }) {
+  return <section className="card map-side-moves" aria-labelledby="map-side-moves-title">
+    <div className="map-card-heading"><h2 id="map-side-moves-title">Move queue</h2><span className="num">{moves.length}</span></div>
+    <ul className="map-queue">
+      {moves.map((move) => <li key={move.id}>
+        <button type="button" aria-pressed={move.id === selectedMoveId} aria-label={`Select route ${move.from} to ${move.to}`}
+          className={`map-queue-item${move.id === selectedMoveId ? ' is-selected' : ''}`} onClick={() => onSelect(move.id)}>
+          <span className="map-queue-route">{move.from} <span className="map-arrow-text">→</span> {move.to}</span>
+          <span className={`pill ${move.type === 'rent_sister' ? 'sister' : 'move'}`}>{TYPE_LABELS[move.type]}</span>
+          <span className="map-queue-meta"><span className="num">{move.onSite ? 'On site' : `${Math.round(move.kmEach)} km`}</span>
+            <span className="num">{formatMoney(move.truck)}</span></span>
+        </button>
+      </li>)}
+    </ul>
+  </section>
+}
+
 function SitePanel({ site, fleet, idleUnits, moves, selectedMoveId }) {
   if (!site) return null
   const rented = fleet.rentedBySite[site.id] ?? 0
-  return <section className="map-card map-site-panel" aria-labelledby="map-site-title" aria-live="polite">
+  return <section className="card map-site-panel" aria-labelledby="map-site-title" aria-live="polite">
     <div>
       <span className="map-site-kicker">Selected {site.kind}</span>
       <h2 id="map-site-title">{siteLabel(site)}</h2>
@@ -70,7 +85,7 @@ function MovesTable({ moves, selectedMoveId, onSelect }) {
   const [filter, setFilter] = useState('all')
   const counts = (type) => (type === 'all' ? moves.length : moves.filter((move) => move.type === type).length)
   const rows = moves.filter((move) => filter === 'all' || move.type === filter)
-  return <section className="map-card map-moves" aria-labelledby="map-moves-title">
+  return <section className="card map-moves" aria-labelledby="map-moves-title">
     <div className="map-moves-heading">
       <h2 id="map-moves-title">Recommended moves</h2>
       <div className="map-filters" role="group" aria-label="Filter moves">
@@ -93,7 +108,7 @@ function MovesTable({ moves, selectedMoveId, onSelect }) {
           <span>{formatDate(move.start)} – {formatDate(move.finish)}</span>
           <span>{move.onSite ? 'On site' : `${Math.round(move.kmEach)} km${move.qty > 1 ? ` ×${move.qty}` : ''}`}</span>
           <span>{formatMoney(move.truck)}</span>
-          <strong className="map-kept">{formatMoney(move.kept)}</strong>
+          <strong className="map-kept num">{formatMoney(move.kept)}</strong>
           <span><span className={`map-type-chip map-type-${move.type}`}>{TYPE_LABELS[move.type]}</span></span>
         </button>)}
       </div>
@@ -104,6 +119,7 @@ function MovesTable({ moves, selectedMoveId, onSelect }) {
 
 export default function MapView({ shifts, active = true }) {
   const [world, setWorld] = useState(null)
+  const [idle, setIdle] = useState(null)
   const [worldError, setWorldError] = useState('')
   const [planResponse, setPlanResponse] = useState(null)
   const [selectedMoveId, setSelectedMoveId] = useState(null)
@@ -126,6 +142,14 @@ export default function MapView({ shifts, active = true }) {
 
   useEffect(() => {
     let cancelled = false
+    postAvailableAssets(DEMO_TODAY, addDays(DEMO_TODAY, IDLE_WINDOW_DAYS), shifts)
+      .then((units) => { if (!cancelled) setIdle(units) })
+      .catch((err) => { if (!cancelled) setWorldError(err.message) })
+    return () => { cancelled = true }
+  }, [shifts, shiftKey])
+
+  useEffect(() => {
+    let cancelled = false
     postPlan(shifts).then((data) => {
       if (!cancelled) setPlanResponse({ key: shiftKey, allocations: data.allocations, error: '' })
     }).catch((err) => {
@@ -138,9 +162,8 @@ export default function MapView({ shifts, active = true }) {
   const moves = useMemo(() => (world && allocations ? buildMoves(allocations, world.classes, world.sites) : []),
     [world, allocations])
   const kpis = useMemo(() => moveKpis(moves), [moves])
-  // Known gap: /assets/available has no shifts input, so idle units, badges and the fleet card
-  // stay on the unshifted schedule when a project is dragged. Arcs, table and move KPIs do update.
-  const fleet = useMemo(() => (world ? fleetStatus(world.assignments, world.idle) : null), [world])
+  const fleet = useMemo(() => (world && idle ? fleetStatus(world.assignments, idle) : null),
+    [world, idle])
 
   const selectedMove = moves.find((move) => move.id === selectedMoveId) ?? defaultMove(moves)
   const siteId = selectedSiteId ?? selectedMove?.fromId ?? world?.sites[0]?.id
@@ -160,8 +183,8 @@ export default function MapView({ shifts, active = true }) {
     {error && <p className="map-error" role="alert">
       Couldn't load the map data ({error}). Check that the backend is running, then reload the page.
     </p>}
-    {(!world || !allocations) && !error && <p className="map-loading">Loading the map…</p>}
-    {world && allocations && <div className={`map-layout${replanning ? ' is-busy' : ''}`}>
+    {(!world || !allocations || !idle) && !error && <p className="map-loading">Loading the map…</p>}
+    {world && allocations && idle && <div className={`map-layout${replanning ? ' is-busy' : ''}`}>
       <aside className="map-side">
         <div className="map-kpis">
           <Kpi primary label="Kept in group by moving" value={formatMoney(kpis.kept)} sub="vs renting the same units outside" />
@@ -170,8 +193,9 @@ export default function MapView({ shifts, active = true }) {
           <Kpi label="Trucking cost" value={formatMoney(kpis.truck)} sub={`${Math.round(kpis.km)} km of recommended moves`} />
         </div>
         <FleetCard fleet={fleet} />
+        <MoveList moves={moves} selectedMoveId={selectedMove?.id} onSelect={selectMove} />
         <SitePanel site={site} fleet={fleet} moves={moves} selectedMoveId={selectedMove?.id}
-          idleUnits={world.idle.filter((unit) => unit.site_id === siteId)} />
+          idleUnits={idle.filter((unit) => unit.site_id === siteId)} />
       </aside>
       <div className="map-main">
         {opened && <MapCanvas active={active} sites={world.sites} moves={moves} kpis={kpis}

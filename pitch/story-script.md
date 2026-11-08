@@ -1,5 +1,7 @@
 # Story script: "Monday 7:10 AM" (3 min)
 
+> For the 5-minute presentation, use `script-5min.md`. This file is the 3-minute opening story.
+
 Speaker: pitch owner. Pace: about 130 words a minute. Illustrative numbers only; the group is the fictional Northgate Group.
 
 ---

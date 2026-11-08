@@ -6,14 +6,14 @@ import MapView from './MapView'
 
 vi.mock('../api', () => ({
   getSites: vi.fn(), getAssignments: vi.fn(), getClasses: vi.fn(),
-  getAvailableAssets: vi.fn(), postPlan: vi.fn(),
+  postAvailableAssets: vi.fn(), postPlan: vi.fn(),
 }))
 
 beforeEach(() => {
   vi.mocked(api.getSites).mockResolvedValue(sites)
   vi.mocked(api.getAssignments).mockResolvedValue(assignments)
   vi.mocked(api.getClasses).mockResolvedValue(classes)
-  vi.mocked(api.getAvailableAssets).mockReset().mockResolvedValue(idle)
+  vi.mocked(api.postAvailableAssets).mockReset().mockResolvedValue(idle)
   vi.mocked(api.postPlan).mockReset().mockResolvedValue({ allocations })
 })
 
@@ -29,7 +29,7 @@ const sitePanel = () => within(screen.getByRole('region', { name: /Westgate|Rent
 describe('MapView', () => {
   it('asks for idle units from demo today to a week later', async () => {
     await renderLoaded()
-    expect(api.getAvailableAssets).toHaveBeenCalledWith('2026-11-16', '2026-11-23')
+    expect(api.postAvailableAssets).toHaveBeenCalledWith('2026-11-16', '2026-11-23', [])
     expect(api.postPlan).toHaveBeenCalledWith([])
   })
 
@@ -163,11 +163,14 @@ describe('MapView', () => {
     expect(row(/^Telehandler, Westgate/).getAttribute('aria-pressed')).toBe('true')
   })
 
-  it('does not refetch idle units on a re-plan (known gap, see DECISIONS #16)', async () => {
-    const { rerender } = await renderLoaded()
-    rerender(<MapView shifts={[{ project_id: 'PRJ-KNG', days: 42 }]} />)
-    await act(async () => {})
-    expect(api.getAvailableAssets).toHaveBeenCalledTimes(1)
+  it('refetches idle units when the what-if shifts change', async () => {
+    const { container, rerender } = await renderLoaded()
+    vi.mocked(api.postAvailableAssets).mockResolvedValue(idle.slice(0, 3))
+    const shifts = [{ project_id: 'PRJ-KNG', days: 42 }]
+    rerender(<MapView shifts={shifts} />)
+    await waitFor(() => expect(api.postAvailableAssets).toHaveBeenLastCalledWith(
+      '2026-11-16', '2026-11-23', shifts))
+    await waitFor(() => expect(container.querySelectorAll('.map-kpi')[2].textContent).toContain('3'))
   })
 
   it('shows a clear message when the backend is unreachable', async () => {
