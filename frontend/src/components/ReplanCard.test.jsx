@@ -6,7 +6,7 @@ import ReplanCard from './ReplanCard'
 vi.mock('../api', () => ({ postReplan: vi.fn() }))
 
 const saving = {
-  greedy_cost: 126470.48, replan_cost: 123645.83, switching_cost: 354.26,
+  greedy_cost: 133993.34, replan_cost: 131168.69, switching_cost: 354.26,
   net_saving: 2470.39, locked_count: 21, recommend: true,
   changes: [
     { request_id: 'PRJ-RIV:0', project: 'Riverside Clinic', class: 'SCISSOR_19',

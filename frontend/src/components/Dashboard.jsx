@@ -180,7 +180,7 @@ export default function Dashboard({ shifts, accepted }) {
         {mincost ? <>
           <p className="mincost-headline">Min-cost saves <strong>{money.format(mincost.delta.group_cost)}</strong> on the same {mincost.requests}-request snapshot.</p>
           <div className="cmp">
-            <div className="cmp-row"><span>Greedy</span>
+            <div className="cmp-row"><span>Greedy (static model)</span>
               <div className="cmp-track"><div className="cmp-fill cmp-greedy" style={{ width: `${mincost.greedy_static.group_cost / gMax * 100}%` }} /></div>
               <b className="num">{money.format(mincost.greedy_static.group_cost)}</b></div>
             <div className="cmp-row"><span>Min-cost</span>
@@ -190,7 +190,7 @@ export default function Dashboard({ shifts, accepted }) {
           <div className="cmp-gap"><span>Gap</span><b className="num">{money.format(mincost.delta.group_cost)} ({mincost.delta.pct}%)</b>
             <small>solved in {mincost.runtime_ms} ms</small></div>
           <p className="mincost-note">Live plan stays greedy for explainability.</p>
-          <p className="mincost-note">PuLP / CBC exact assignment on a like-for-like static comparison.</p>
+          <p className="mincost-note">PuLP / CBC exact assignment on the same static snapshot. It does not grade the live plan.</p>
           <details className="mincost-assumptions">
             <summary>Assumptions</summary>
             <ul>{mincost.assumptions.map((line) => <li key={line}>{line}</li>)}</ul>
