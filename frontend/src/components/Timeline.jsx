@@ -8,6 +8,15 @@ const OPTION_LABELS = {
   rent_outside: 'outside rental', buy: 'buy',
 }
 
+const CURRENCY = new Intl.NumberFormat('en-CA', {
+  style: 'currency', currency: 'CAD', maximumFractionDigits: 0,
+})
+const OPTION_KEYS = [
+  ['move_ours', 'Move ours', 'move'], ['rent_sister', 'Sister rental', 'sister'],
+  ['rent_outside', 'Outside rental', 'outside'], ['buy', 'Buy', 'buy'],
+]
+const OPTION_CLASS = { move_ours: 'move', rent_sister: 'sister', rent_outside: 'outside', buy: 'buy' }
+
 // "2026-11-16" -> milliseconds (UTC, so time zones never shift the day)
 function toMs(iso) {
   return Date.parse(iso + 'T00:00:00Z')
@@ -22,6 +31,7 @@ function needRows(project) {
     start: n.start,
     finish: n.finish,
     kind: 'planned',
+    tip: `Planned: ${n.qty} x ${n.class} · ${n.start} to ${n.finish} (before allocation)`,
   }))
 }
 
@@ -35,12 +45,15 @@ function allocationRows(project, allocations, changedIds) {
       start: a.start,
       finish: a.finish,
       kind: 'allocated',
+      option: a.option,
+      tip: `${a.qty} x ${a.class} · ${OPTION_LABELS[a.option]} · group cost ${
+        a.group_cost == null ? 'n/a' : CURRENCY.format(a.group_cost)} · ${a.start} to ${a.finish}`,
       changed: changedIds.has(a.request_id),
     }))
 }
 
 export default function Timeline({ projects, allocations = [], changedIds = new Set(),
-  onShiftProject, today = '2026-11-16' }) {
+  onShiftProject, shifts = [], today = '2026-11-16' }) {
   const drag = useRef(null)
   const [preview, setPreview] = useState(null)
   if (!projects || projects.length === 0) {
@@ -92,9 +105,26 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
   }
 
   const todayLine = <div className="tl-today" style={{ left: `${pct(today)}%` }} title={`Today: ${today}`} />
+  const grid = months.map((m) => <i key={m.key} className="tl-grid" style={{ left: `${m.left}%` }} />)
+  const shiftDays = (id) => shifts.find((shift) => shift.project_id === id)?.days ?? 0
+  const weeks = (days) => `${days > 0 ? '+' : '-'}${Math.round(Math.abs(days) / 7)} wk`
 
   return (
     <div className="tl">
+      <div className="tl-intro">
+        <p><strong>Each row is a project; bars are phases; equipment markers show what the group plan assigns.</strong>
+          {onShiftProject && ' Drag a project to test a slip; this does not edit the Procore schedule.'}</p>
+        <div className="legend tl-legend" aria-label="Timeline legend">
+          <span className="legend-item"><i className="tl-key tl-key-phase" />Project phases (bar = project span)</span>
+          <span className="legend-item"><i className="tl-key tl-planned" />Planned need</span>
+          <span className="legend-item"><i className="tl-key tl-key-alloc" />Allocated by the group plan:</span>
+          {OPTION_KEYS.map(([key, name, cls]) => <span className="legend-item" key={key}>
+            <i className={`tl-key tl-opt-${cls}`} />{name}</span>)}
+          <span className="legend-item"><i className="tl-key tl-key-today" />Today</span>
+          {onShiftProject && <span className="legend-item"><i className="tl-key tl-key-shift" />What-if shifted <b className="tl-badge tl-badge-inline">+6 wk</b></span>}
+          <span className="legend-item"><i className="tl-key tl-key-changed" />Recommendation changed</span>
+        </div>
+      </div>
       <div className="tl-row tl-header">
         <div className="tl-label" />
         <div className="tl-track">
@@ -104,6 +134,7 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
             </span>
           ))}
           {todayLine}
+          <span className="tl-today-tag" style={{ left: `${pct(today)}%` }}>Today</span>
         </div>
       </div>
 
@@ -111,10 +142,12 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
         <div className="tl-project" key={project.id}>
           <div className="tl-row">
             <div className="tl-label tl-project-name" title={project.name}>
-              {project.name}
+              <span>{project.name}</span>
+              <small>{project.site_name ?? project.site_id}</small>
             </div>
             <div className="tl-track">
-              <div className={`tl-bar ${onShiftProject ? 'tl-draggable' : ''}`}
+              {grid}
+              <div className={`tl-bar ${onShiftProject ? 'tl-draggable' : ''} ${shiftDays(project.id) ? 'tl-shifted' : ''}`}
                 style={{ ...barStyle(project.start_date, project.completion_date),
                   transform: preview?.projectId === project.id ? `translateX(${preview.pixels}px)` : undefined }}
                 onPointerDown={(event) => startDrag(event, project.id)}
@@ -142,6 +175,7 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
                     title={`${phase.task_name}: ${phase.start} to ${phase.finish}`}
                   />
                 ))}
+                {shiftDays(project.id) !== 0 && <span className="tl-badge">{weeks(shiftDays(project.id))}</span>}
               </div>
               {todayLine}
             </div>
@@ -153,7 +187,9 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
                 {row.label} <em>{row.kind}</em>
               </div>
               <div className="tl-track">
-                <div className={`tl-equip-bar tl-${row.kind}`} style={barStyle(row.start, row.finish)} />
+                {grid}
+                <div className={`tl-equip-bar tl-${row.kind} ${row.option ? `tl-opt-${OPTION_CLASS[row.option]}` : ''}`}
+                  style={barStyle(row.start, row.finish)} title={row.tip} />
                 {todayLine}
               </div>
             </div>
