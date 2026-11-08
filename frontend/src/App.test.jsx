@@ -2,8 +2,15 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App'
 
-vi.mock('./components/RequestScreen', () => ({ default: () => <p>requests</p> }))
-vi.mock('./components/Dashboard', () => ({ default: () => <p>dashboard</p> }))
+vi.mock('./components/RequestScreen', () => ({
+  default: ({ onAccept }) => <button type="button" onClick={() => onAccept({
+    project_id: 'PRJ-RIV', request: { class: 'TELEHANDLER', qty: 1,
+      start: '2026-11-23', finish: '2027-01-31' }, option: { kept_in_group: 100 },
+  })}>accept demo request</button>,
+}))
+vi.mock('./components/Dashboard', () => ({
+  default: ({ accepted }) => <p>dashboard accepted={accepted.length}</p>,
+}))
 vi.mock('./components/FleetAdvisor', () => ({ default: () => <p>fleet advisor</p> }))
 vi.mock('./components/DataUpload', () => ({ default: () => <p>data upload</p> }))
 vi.mock('./components/PlannerView', () => ({
@@ -33,5 +40,13 @@ describe('App navigation', () => {
     render(<App />)
     fireEvent.click(screen.getByText('slip'))
     expect(screen.getByText(/^map /).textContent).toContain('{"project_id":"PRJ-KNG","days":42}')
+  })
+
+  it('drops accepted savings when a timeline edit changes the plan', () => {
+    render(<App />)
+    fireEvent.click(screen.getByText('accept demo request'))
+    expect(screen.getByText('dashboard accepted=1')).toBeTruthy()
+    fireEvent.click(screen.getByText('slip'))
+    expect(screen.getByText('dashboard accepted=0')).toBeTruthy()
   })
 })
