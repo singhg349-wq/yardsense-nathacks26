@@ -32,7 +32,35 @@ beforeEach(() => {
   vi.mocked(api.recommend).mockResolvedValue(recommendation)
 })
 
+const splitRecommendation = {
+  project_id: 'PRJ-WMD',
+  items: [{
+    class: 'TELEHANDLER', qty: 2,
+    options: [{
+      option: 'split', available: true, project_cost: 76116, group_cost: 19264, kept_in_group: 67576,
+      reason: 'Split 1 x move ours + 1 x buy: only 1 of 2 Telehandler idle in the group.',
+      breakdown: [{ label: '1 x move ours: transport', amount: 224 }],
+      units: [
+        { option: 'move_ours', qty: 1, group_cost: 8544 },
+        { option: 'buy', qty: 1, group_cost: 10720 },
+      ],
+    }, {
+      option: 'rent_outside', available: true, project_cost: 86840, group_cost: 86840, kept_in_group: 0,
+      reason: 'Outside rental for 208 days, delivery included.', breakdown: [],
+    }],
+  }],
+}
+
 describe('RequestScreen', () => {
+  it('shows a split need as one pill per source', async () => {
+    vi.mocked(api.recommend).mockResolvedValue(splitRecommendation)
+    render(<RequestScreen />)
+    expect(await screen.findByLabelText('Split')).toBeTruthy()
+    expect(screen.getAllByText('1 × Move ours').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('1 × Buy').length).toBeGreaterThan(0)
+    expect(screen.getByText(/only 1 of 2 Telehandler idle/)).toBeTruthy()
+  })
+
   it('shows the why-this cost breakdown for an available option', async () => {
     render(<RequestScreen />)
     expect((await screen.findAllByText('Why this?')).length).toBeGreaterThan(0)

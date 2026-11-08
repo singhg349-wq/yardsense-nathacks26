@@ -3,6 +3,7 @@ import { getPlan, postPlan } from '../api'
 import Timeline from './Timeline'
 import { className } from './classNames'
 import ReplanCard from './ReplanCard'
+import { countSources } from './optionParts'
 import './PlannerView.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -11,7 +12,7 @@ const money = new Intl.NumberFormat('en-CA', {
 })
 const optionNames = {
   move_ours: 'Move ours', rent_sister: 'Rent from sister',
-  rent_outside: 'Rent outside', buy: 'Buy',
+  rent_outside: 'Rent outside', buy: 'Buy', split: 'Split',
 }
 
 function dayDifference(after, before) {
@@ -62,14 +63,12 @@ export default function PlannerView({ shifts, onSetShift }) {
   const kingswayDays = shifts.find((shift) => shift.project_id === 'PRJ-KNG')?.days ?? 0
   const names = Object.fromEntries((plan?.projects ?? []).map((project) => [project.id, project.name]))
   const changedIds = new Set((plan?.changed ?? []).map((change) => change.request_id))
-  const optionCounts = (plan?.allocations ?? []).reduce((counts, row) => {
-    counts[row.option] = (counts[row.option] ?? 0) + 1
-    return counts
-  }, {})
+  // A split allocation counts once for each source it uses.
+  const optionCounts = countSources(plan?.allocations ?? [])
 
   const mixOptions = [['move_ours', 'Move ours', 'move'], ['rent_sister', 'Sister', 'sister'],
     ['rent_outside', 'Outside', 'outside'], ['buy', 'Buy', 'buy']]
-  const mixTotal = mixOptions.reduce((sum, [key]) => sum + (optionCounts[key] ?? 0), 0)
+  const mixTotal = plan?.allocations?.length ?? 0
 
   return <section className="planner-view">
     <div className="planner-heading">

@@ -101,7 +101,8 @@ def test_moves_sum_to_transport_and_use_real_sites():
 
 def test_non_move_allocations_have_no_moves():
     allocations = TestClient(app).get("/plan").json()["allocations"]
-    others = [row for row in allocations if row["option"] not in MOVE_OPTIONS]
+    others = [row for row in allocations
+              if row["option"] not in MOVE_OPTIONS and row["option"] != "split"]
     assert others
     assert all(row["moves"] == [] for row in others)
 

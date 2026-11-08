@@ -22,6 +22,8 @@ ASSUMPTIONS = [
     "A unit can serve non-overlapping requests; overlapping requests are mutually exclusive.",
     "Buy is offered only when no owned or sister unit is available for that request.",
     "The shipped plan is the dynamic greedy allocator; this is a comparison, not the live plan.",
+    "The live plan can split a multi-unit need and buy the rest once every idle unit is used, "
+    "and reuses units it buys; this static model cannot, so the live plan can cost less.",
 ]
 
 
@@ -232,7 +234,9 @@ def compare(world):
     engine_plan = allocator.build_plan(world)
     engine_mix = {"move_ours": 0, "rent_sister": 0, "rent_outside": 0, "buy": 0}
     for row in engine_plan:
-        engine_mix[row["option"]] += row["qty"]
+        # Count physical units per source, so a split need adds to each source.
+        for part in row["units"]:
+            engine_mix[part["option"]] += part["qty"]
     engine_greedy = {"group_cost": round(sum(row["group_cost"] for row in engine_plan), 2),
                      "option_mix": engine_mix,
                      "requests": sum(row["qty"] for row in engine_plan)}

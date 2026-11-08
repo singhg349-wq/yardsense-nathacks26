@@ -80,18 +80,28 @@ export function buildMoves(allocations, classes, sites) {
   const sitesById = Object.fromEntries(sites.map((site) => [site.id, site]))
   const rows = []
   for (const allocation of allocations) {
-    if (!MOVE_OPTIONS.has(allocation.option) || !allocation.moves?.length) continue
+    const split = allocation.option === 'split'
+    if ((!split && !MOVE_OPTIONS.has(allocation.option)) || !allocation.moves?.length) continue
+    // A split need (e.g. 1 move ours + 1 buy) draws only its moved units, each in its own source's colour.
+    const parts = split ? allocation.units ?? [] : []
+    const partOf = (assetId) => parts.find((part) => part.asset_ids?.includes(assetId))
     const byOrigin = new Map()
     for (const move of allocation.moves) {
-      if (!byOrigin.has(move.from_site_id)) byOrigin.set(move.from_site_id, [])
-      byOrigin.get(move.from_site_id).push(move)
+      const type = split ? partOf(move.asset_id)?.option : allocation.option
+      const key = `${type}:${move.from_site_id}`
+      if (!byOrigin.has(key)) byOrigin.set(key, { type, fromId: move.from_site_id, units: [] })
+      byOrigin.get(key).units.push(move)
     }
-    for (const [fromId, units] of byOrigin) {
+    // Outside-rental cost of one unit, so a split credits each moved unit with what it really kept.
+    const outsideEach = (allocation.kept_in_group + allocation.group_cost) / allocation.qty
+    for (const { type, fromId, units } of byOrigin.values()) {
+      if (!MOVE_OPTIONS.has(type)) continue
       const qty = units.length
       const label = labels[allocation.class] ?? allocation.class
+      const part = partOf(units[0].asset_id)
       rows.push({
-        id: `${allocation.request_id}:${fromId}`,
-        type: allocation.option,
+        id: split ? `${allocation.request_id}:${type}:${fromId}` : `${allocation.request_id}:${fromId}`,
+        type,
         qty,
         unit: qty > 1 ? `${qty} × ${label}` : label,
         ids: unitIdsLabel(units.map((unit) => unit.asset_id)),
@@ -104,7 +114,9 @@ export function buildMoves(allocations, classes, sites) {
         kmEach: units[0].km,
         km: units.reduce((total, unit) => total + unit.km, 0),
         truck: units.reduce((total, unit) => total + unit.transport_cost, 0),
-        kept: allocation.kept_in_group * (qty / allocation.moves.length),
+        kept: split && part
+          ? (outsideEach * part.qty - part.group_cost) * (qty / part.qty)
+          : allocation.kept_in_group * (qty / allocation.moves.length),
         soon: toMs(allocation.start) <= toMs(DEMO_TODAY) + SOON_DAYS * DAY_MS,
         onSite: fromId === allocation.site_id,
       })
