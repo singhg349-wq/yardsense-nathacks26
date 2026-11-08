@@ -10,6 +10,8 @@ engine plan. Both baselines use the same request set, candidate units and costs.
 """
 import time
 from datetime import date
+import os
+import shutil
 
 import pulp
 
@@ -159,13 +161,28 @@ def solve(requests, candidates, outside, buy, fixed=None):
     for rid, key in (fixed or {}).items():
         if (rid, key) in use:
             problem += use[(rid, key)] == 1
-    problem.solve(pulp.PULP_CBC_CMD(msg=False, timeLimit=60))
+    problem.solve(_cbc_solver())
     runtime_ms = round((time.perf_counter() - started) * 1000, 1)
     choices = {}
     for (rid, key), variable in use.items():
         if rid not in choices and variable.value() and variable.value() > 0.5:
             choices[rid] = key
     return pulp.LpStatus[problem.status], runtime_ms, choices
+
+
+def _cbc_solver():
+    """Return a CBC solver that is compatible with the current machine."""
+    configured_path = os.environ.get("YARDSENSE_CBC_PATH")
+    system_path = configured_path or shutil.which("cbc")
+    if system_path:
+        return pulp.COIN_CMD(path=system_path, msg=False, timeLimit=60)
+
+    bundled_path = pulp.PULP_CBC_CMD().path
+    raise RuntimeError(
+        "No compatible CBC solver was found. Install CBC and ensure `cbc` is "
+        "on PATH (macOS: `brew install cbc`), or set YARDSENSE_CBC_PATH to "
+        f"the executable path. PuLP's bundled solver is at {bundled_path}."
+    )
 
 
 def _build_problem(requests, candidates, outside, buy):
