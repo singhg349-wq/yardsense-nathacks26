@@ -30,6 +30,8 @@ A group-level equipment engine for the fictional **Northgate Group** (GC Northga
 
 - Work comes from GitHub issues (user stories), one milestone per gate. Lanes are in issue #1.
 - Branch per issue (`<issue#>-short-name`), small PRs into `main`, someone else glances at it before merging. Keep `main` runnable.
+- **`main` is protected** (ruleset "Protect main"): no direct pushes, every change goes through a PR with **1 approval from someone else** and **all 4 CI checks passing** (Backend and Frontend on Windows and macOS). Force-pushing or deleting `main` is blocked. Only the repo admin can bypass, for emergencies.
+- Start every branch from the latest `main` (`git fetch origin && git checkout -b <branch> origin/main`). A branch cut from an older `main` can drag old commits into its PR.
 - Agree on API shapes (Pydantic models) before building both sides; change them only with a heads-up in Discord.
 - Record any decision that changes scope, stack or data in `DECISIONS.md`.
 
