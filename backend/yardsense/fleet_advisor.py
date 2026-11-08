@@ -13,13 +13,12 @@ Two ideas keep the math honest:
   unit only works on days when more than supply + k - 1 units are needed at
   the same time, so overlapping needs are never all credited to one unit.
 """
-import math
 from datetime import date, timedelta
 
 from . import allocator, availability, cost_model
 
-HORIZON_DAYS = 365
-HORIZON_MONTHS = 12
+HORIZON_DAYS = cost_model.HORIZON_DAYS
+HORIZON_MONTHS = cost_model.HORIZON_MONTHS
 MAX_ADD = 2
 
 RULES = [
@@ -37,69 +36,26 @@ RULES = [
 
 def _active_by_day(world, asset_class, today, end):
     """Concurrent planned quantity of this class for each day in the horizon."""
-    needs = [(date.fromisoformat(need["start"]), date.fromisoformat(need["finish"]), need["qty"])
-             for project in world["projects"] for need in project["planned_equipment"]
-             if need["class"] == asset_class]
-    active = []
-    day = today
-    while day <= end:
-        active.append(sum(qty for start, finish, qty in needs if start <= day <= finish))
-        day += timedelta(days=1)
-    return active
+    return cost_model.demand_by_day(allocator._pipeline(world, asset_class), today,
+                                    (end - today).days + 1)
 
 
-def _runs(active, level):
-    """Lengths of consecutive day runs where demand reaches `level` units."""
-    runs, current = [], 0
-    for quantity in active + [0]:
-        if quantity >= level:
-            current += 1
-        elif current:
-            runs.append(current)
-            current = 0
-    return runs
-
-
-def carrying_cost(rates):
-    """Twelve months of maintenance and insurance for one unit."""
-    return HORIZON_MONTHS * (rates["maintenance_month"] + rates["insurance_month"])
-
-
-def cost_to_own(rates):
-    """One year of owning one new unit: depreciation plus carrying cost."""
-    return rates["purchase_price"] * rates["resale_pct_per_year"] + carrying_cost(rates)
-
-
-def breakeven_months(rates, net_annual):
-    """Months for the monthly net saving to repay the purchase price, or None."""
-    if net_annual <= 0:
-        return None
-    return math.ceil(rates["purchase_price"] / (net_annual / HORIZON_MONTHS))
-
-
-def marginal_unit(rates, active, supply, k):
-    """Money case for the k-th unit added on top of `supply`."""
-    runs = _runs(active, supply + k)
-    rent = sum(cost_model.rental_price(days, rates["outside"]) + rates["outside_delivery_fee"]
-               for days in runs)
-    own = cost_to_own(rates)
-    net = round(rent - own, 2)
-    return {"unit": k, "days": sum(runs), "rentals": len(runs),
-            "rent_avoided": round(rent, 2), "cost_to_own": round(own, 2),
-            "net_annual_impact": net, "breakeven_month": breakeven_months(rates, net)}
-
-
-def _on_outside_hire(world):
-    """Asset ids checked out to an outside customer with no check-in date."""
-    return {entry["asset_id"] for entry in world["assignments"]
-            if entry["project_id"] is None and entry["checked_in"] is None}
+# The money case for one extra unit lives in cost_model, so the per-request buy
+# test and this advisor use exactly the same numbers.
+carrying_cost = cost_model.carrying_cost
+cost_to_own = cost_model.cost_to_own
+breakeven_months = cost_model.breakeven_months
+marginal_unit = cost_model.marginal_unit
+_on_outside_hire = availability.on_outside_hire
 
 
 def _plan_purchases(plan):
+    """Units the live plan buys per class, including the bought part of a split."""
     counts = {}
     for row in plan:
-        if row["option"] == "buy":
-            counts[row["class"]] = counts.get(row["class"], 0) + len(row["asset_ids"])
+        for part in row.get("units") or [row]:
+            if part["option"] == "buy":
+                counts[row["class"]] = counts.get(row["class"], 0) + len(part["asset_ids"])
     return counts
 
 

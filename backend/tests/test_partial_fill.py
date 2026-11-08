@@ -25,8 +25,9 @@ def test_whitemud_uses_the_idle_unit_and_covers_only_the_rest(plan, asset_class)
     row = row_for(plan, "PRJ-WMD", asset_class)
     assert row["qty"] == 2
     assert row["option"] == "split"
+    # One more unit would not pay for itself over the year, so the rest is rented.
     assert [(part["option"], part["qty"]) for part in row["units"]] == [
-        ("move_ours", 1), ("buy", 1)]
+        ("move_ours", 1), ("rent_outside", 1)]
     split = row["options"][0]
     assert split["option"] == "split" and split["available"]
     # The split beats renting both units outside, which the old plan chose.
@@ -37,10 +38,9 @@ def test_whitemud_uses_the_idle_unit_and_covers_only_the_rest(plan, asset_class)
     assert split["group_cost"] == pytest.approx(sum(p["group_cost"] for p in split["units"]))
     assert split["project_cost"] == pytest.approx(sum(p["project_cost"] for p in split["units"]))
     assert row["asset_ids"] == [asset for part in row["units"] for asset in part["asset_ids"]]
-    assert len(row["asset_ids"]) == 2
+    assert len(row["asset_ids"]) == 1
     assert [move["asset_id"] for move in row["moves"]] == row["units"][0]["asset_ids"]
-    assert row["units"][1]["asset_ids"][0].startswith(f"BUY-{asset_class}-")
-    assert "1 x move ours + 1 x buy" in split["reason"]
+    assert "1 x move ours + 1 x rent outside" in split["reason"]
     # The single-source options stay listed, unavailable, with their own reasons.
     names = [option["option"] for option in row["options"]]
     assert sorted(names) == ["buy", "move_ours", "rent_outside", "rent_sister", "split"]
@@ -115,6 +115,6 @@ def test_recommend_returns_the_split_for_whitemud():
     top = item["options"][0]
     assert top["option"] == "split"
     assert [(part["option"], part["qty"]) for part in top["units"]] == [
-        ("move_ours", 1), ("buy", 1)]
+        ("move_ours", 1), ("rent_outside", 1)]
     assert {"option", "qty", "group_cost", "project_cost", "reason",
             "breakdown", "asset_ids", "moves"} <= set(top["units"][0])

@@ -20,7 +20,7 @@ def test_plan_never_double_books_a_physical_unit():
                  if row["project_id"] == "PRJ-RIV"}
     assert riverside["SCISSOR_19"]["option"] == "rent_sister"
     assert riverside["TELEHANDLER"]["option"] == "move_ours"
-    assert riverside["GEN_45KW"]["option"] == "buy"
+    assert riverside["GEN_45KW"]["option"] == "rent_outside"
     bookings = {}
     for row in allocations:
         for asset_id in row["asset_ids"]:
@@ -30,18 +30,18 @@ def test_plan_never_double_books_a_physical_unit():
             bookings.setdefault(asset_id, []).append((start, finish))
 
 
-def test_six_week_slip_flips_riverside_generator():
+def test_six_week_slip_flips_riverside_scissors():
     client = TestClient(app)
     baseline = client.get("/plan").json()
     shifted = client.post("/plan", json={"shifts": [
         {"project_id": "PRJ-KNG", "days": 42}]}).json()
-    def generator(plan):
+    def scissors(plan):
         return next(row for row in plan["allocations"]
-                    if row["project_id"] == "PRJ-RIV" and row["class"] == "GEN_45KW")
-    assert generator(baseline)["option"] == "buy"
-    assert generator(shifted)["option"] == "rent_outside"
-    assert any(change["request_id"] == generator(shifted)["request_id"]
-               and change["from_option"] == "buy"
+                    if row["project_id"] == "PRJ-RIV" and row["class"] == "SCISSOR_19")
+    assert scissors(baseline)["option"] == "rent_sister"
+    assert scissors(shifted)["option"] == "rent_outside"
+    assert any(change["request_id"] == scissors(shifted)["request_id"]
+               and change["from_option"] == "rent_sister"
                and change["to_option"] == "rent_outside"
                for change in shifted["changed"])
     assert next(project for project in shifted["projects"]
@@ -84,7 +84,7 @@ def transport_amount(option):
 
 def test_moves_sum_to_transport_and_use_real_sites():
     allocations = move_allocations(TestClient(app).get("/plan").json())
-    assert len(allocations) == 4
+    assert len(allocations) == 3
     for row in allocations:
         chosen = next(option for option in row["options"] if option["option"] == row["option"])
         assert [move["asset_id"] for move in row["moves"]] == row["asset_ids"]
@@ -105,15 +105,6 @@ def test_non_move_allocations_have_no_moves():
               if row["option"] not in MOVE_OPTIONS and row["option"] != "split"]
     assert others
     assert all(row["moves"] == [] for row in others)
-
-
-def test_bought_unit_moves_from_the_site_it_was_at():
-    allocations = TestClient(app).get("/plan").json()["allocations"]
-    kingsway = next(row for row in allocations
-                    if row["project_id"] == "PRJ-KNG" and row["class"] == "GEN_45KW")
-    assert kingsway["moves"][0]["asset_id"] == "BUY-GEN_45KW-1"
-    assert kingsway["moves"][0]["from_site_id"] == "S-RIV"
-    assert kingsway["moves"][0]["to_site_id"] == "S-KNG"
 
 
 def test_a_unit_moved_twice_leaves_from_its_previous_booking():
