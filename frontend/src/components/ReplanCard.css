@@ -11,3 +11,4 @@
 .replan-saving { color: var(--green-600); font-weight: 700; }
 .replan-saving.is-loss { color: var(--ink-muted); }
 .replan-muted { margin: 0; font-size: 12px; color: var(--ink-muted); }
+.replan-reason { display: block; margin-top: 2px; font-size: 12px; color: var(--ink-muted); }
