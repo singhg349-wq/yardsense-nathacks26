@@ -36,7 +36,7 @@ The scissor lifts come from Northgate Rentals. The telehandler is moved from Wes
 
 I accept the recommendations. The kept-in-group counter rises.
 
-Now the Timeline. This is the plan management sees: two lenses, a plan snapshot, and the option mix. I can drag Kingsway six weeks later as a what-if. The engine re-runs, and the generator flips from buy to rent outside. This is a what-if; it does not edit the Procore schedule. The real change is a revised schedule import, which we can also show.
+Now the Timeline. This is the plan management sees: two lenses, a plan snapshot, and the option mix. I can drag Kingsway six weeks later as a what-if. The engine re-runs, and the generator flips from buy to rent outside. The banner shows five changes on the seed; the generator is the headline. The whole plan re-runs, not just one line. This is a what-if; it does not edit the Procore schedule. The real change is a revised schedule import, which we can also show.
 
 The Map shows the moves, the driving distances and the truck cost. The Dashboard shows accepted savings, idle days, and the synthetic backtest: one hundred thirty-seven thousand dollars of outside spend avoided out of two hundred seventy-five thousand, about fifty percent, with thirty-five rental leaks.
 

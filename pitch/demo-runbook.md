@@ -18,7 +18,7 @@
 | 1 | Requests | Wait for the three Riverside items and ranked options | "Three needs, four options each, ranked by what the whole group pays." |
 | 2 | Requests | Open **Why this?** on the telehandler; close it | "Internal rental plus transport. The project sees a charge; the group sees transport and wear." |
 | 3 | Requests | Accept the scissor, telehandler and generator recommendations | "The kept-in-group counter rises with each accepted decision." |
-| 4 | Timeline | Drag **Kingsway Lofts** six weeks right | "This is a what-if. The engine re-runs; the generator flips from buy to rent outside." |
+| 4 | Timeline | Drag **Kingsway Lofts** six weeks right | "This is a what-if. The engine re-runs; five recommendations change. The generator flips from buy to rent outside." |
 | 5 | Map | Point at the telehandler move and the table | "Eleven kilometres, one hundred ninety-eight dollars; the saved road matrix, no live routing." |
 | 6 | Dashboard | Point at accepted savings, idle days, backtest, optimizer | "A synthetic replay: one hundred thirty-seven thousand avoided; the optimizer is 2.2% below greedy." |
 | 7 | Fleet advisor | Point at Add 2 boom lifts / Add 2 heaters / Retire 2 | "The rental arm sees what the next twelve months imply." |

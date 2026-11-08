@@ -66,7 +66,7 @@ Every option shows **project cost** next to **group cost**, a reason, and a "Why
 Cue the app. The demo path:
 
 1. Requests → Riverside Clinic → ranked options → "Why this?" → accept.
-2. Timeline → plan snapshot → drag Kingsway six weeks as a what-if.
+2. Timeline → plan snapshot → drag Kingsway six weeks as a what-if (five recommendations change; the generator is the headline).
 3. Map → recommended moves, distances, truck cost.
 4. Dashboard → accepted savings, idle days, backtest.
 5. Fleet advisor → add boom lifts and heaters; retire a mini excavator and compactor.
