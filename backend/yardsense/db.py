@@ -130,15 +130,47 @@ def get_assignments():
 
 
 def create_assignment(asset_id, project_id, site_id, checked_out):
-    conn = get_conn()
-    with conn:
-        cursor = conn.execute(
-            "INSERT INTO assignments (asset_id, project_id, site_id, checked_out, checked_in)"
-            " VALUES (?, ?, ?, ?, NULL)",
-            (asset_id, project_id, site_id, checked_out))
-        row = conn.execute("SELECT * FROM assignments WHERE id = ?", (cursor.lastrowid,)).fetchone()
-    conn.close()
-    return dict(row)
+    """Reserve a unit through its inferred release date, or return None on conflict."""
+    ensure_db()
+    with _DB_INIT_LOCK:
+        conn = get_conn()
+        try:
+            conn.execute("BEGIN IMMEDIATE")
+            asset_class = conn.execute(
+                "SELECT asset_class FROM assets WHERE asset_id = ?", (asset_id,)).fetchone()[0]
+
+            def assignment_end(project, start):
+                if project is None:
+                    return None
+                row = conn.execute(
+                    "SELECT MAX(finish) FROM needs WHERE project_id = ? AND asset_class = ?",
+                    (project, asset_class)).fetchone()
+                return row[0] if row[0] is not None and row[0] >= start else None
+
+            new_end = assignment_end(project_id, checked_out) or "9999-12-31"
+            existing = conn.execute(
+                "SELECT project_id, checked_out, checked_in FROM assignments WHERE asset_id = ?",
+                (asset_id,)).fetchall()
+            for booking in existing:
+                end = (booking["checked_in"] or
+                       assignment_end(booking["project_id"], booking["checked_out"]) or
+                       "9999-12-31")
+                if booking["checked_out"] <= new_end and end >= checked_out:
+                    conn.rollback()
+                    return None
+
+            cursor = conn.execute(
+                "INSERT INTO assignments (asset_id, project_id, site_id, checked_out, checked_in)"
+                " VALUES (?, ?, ?, ?, NULL)",
+                (asset_id, project_id, site_id, checked_out))
+            row = conn.execute("SELECT * FROM assignments WHERE id = ?", (cursor.lastrowid,)).fetchone()
+            conn.commit()
+            return dict(row)
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 
 
 def check_in_assignment(assignment_id, checked_in):
