@@ -16,6 +16,7 @@ function App() {
     .map(([project_id, days]) => ({ project_id, days })), [shiftMap])
   const setShift = useCallback((projectId, days) => {
     setShiftMap((current) => ({ ...current, [projectId]: days }))
+    setAccepted([])
   }, [])
   const acceptRecommendation = useCallback((entry) => {
     const { project_id, request } = entry
