@@ -8,10 +8,12 @@ allocator: it reserves units as it walks the plan and lets purchases create new
 units. This module is the technical comparison, not a replacement for the
 engine plan. Both baselines use the same request set, candidate units and costs.
 """
-import time
 from datetime import date
 import os
+import platform
 import shutil
+import sys
+import time
 
 import pulp
 
@@ -177,7 +179,15 @@ def _cbc_solver():
     if system_path:
         return pulp.COIN_CMD(path=system_path, msg=False, timeLimit=60)
 
-    bundled_path = pulp.PULP_CBC_CMD().path
+    bundled_solver = pulp.PULP_CBC_CMD(msg=False, timeLimit=60)
+    bundled_path = bundled_solver.path
+    if not (
+        sys.platform == "darwin"
+        and platform.machine().lower() in {"arm64", "aarch64"}
+        and "/osx/i64/" in bundled_path
+    ):
+        return bundled_solver
+
     raise RuntimeError(
         "No compatible CBC solver was found. Install CBC and ensure `cbc` is "
         "on PATH (macOS: `brew install cbc`), or set YARDSENSE_CBC_PATH to "
