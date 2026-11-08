@@ -3,7 +3,7 @@
 Run from the backend/ folder:
     uvicorn app.main:app --reload
 """
-
+import os
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -20,7 +20,8 @@ app.include_router(router)
 # Allow the Vite dev server to call the API.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173",
+                  *[u for u in os.environ.get("FRONTEND_URLS", "").split(",") if u]],
     allow_methods=["*"],
     allow_headers=["*"],
 )
