@@ -79,6 +79,7 @@ def _price_request(world, request, sites):
         owned,
         sister,
         [],  # buy excluded: no historical pipeline
+        world.get("road_distances"),
     )
     return cost_model.rank(options)
 
