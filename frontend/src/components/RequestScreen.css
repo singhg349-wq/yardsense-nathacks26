@@ -35,6 +35,12 @@
 .option-main { display: flex; align-items: start; justify-content: space-between; gap: 20px; padding: 14px 16px; }
 .option-title { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: #203c4e; font-size: 13px; }
 .option p { margin: 5px 0 0; color: #718390; font-size: 11px; line-height: 1.4; }
+.option-why { margin-top: 9px; border-top: 1px dashed #d9e5e8; padding-top: 8px; }
+.option-why summary { color: #087e70; cursor: pointer; font-size: 11px; font-weight: 800; }
+.option-why ul { display: grid; gap: 4px; margin: 8px 0 0; padding: 0; list-style: none; }
+.option-why li { display: flex; justify-content: space-between; gap: 16px; color: #526b79; font-size: 11px; }
+.option-why li b { color: #173144; font-variant-numeric: tabular-nums; }
+.option-why p { margin-top: 7px; color: #8195a0; }
 .recommendation-tag, .unavailable-tag { border-radius: 20px; padding: 3px 7px; font-size: 9px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
 .recommendation-tag { color: #08725f; background: #dcefe9; }
 .unavailable-tag { color: #7b8992; background: #edf1f2; }

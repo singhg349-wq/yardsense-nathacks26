@@ -26,6 +26,13 @@ function Option({ option, first, accepted, onAccept }) {
           {!option.available && <span className="unavailable-tag">Unavailable</span>}
         </div>
         <p>{option.reason}</p>
+        {option.available && option.breakdown?.length > 0 && <details className="option-why">
+          <summary>Why this?</summary>
+          <ul>{option.breakdown.map((row) => <li key={row.label}>
+            <span>{row.label}</span><b>{money.format(row.amount)}</b>
+          </li>)}</ul>
+          <p>Group cost is what leaves Northgate Group. Project cost is what the project is charged.</p>
+        </details>}
       </div>
       {option.available && <div className="option-costs">
         <div><span>Group cost</span><strong>{money.format(option.group_cost)}</strong></div>

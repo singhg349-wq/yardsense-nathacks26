@@ -23,10 +23,29 @@
 .idle-row strong { color: #173144; }
 .idle-track { height: 6px; border-radius: 6px; background: #e8f0ef; overflow: hidden; }
 .idle-track > div { height: 100%; border-radius: 6px; background: #19a78c; }
-.dashboard-backtest { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 14px; background: #f8fafb; }
+.dashboard-backtest { display: block; margin-top: 14px; background: #f8fafb; }
 .dashboard-backtest h2 { margin: 7px 0 5px; }
-.dashboard-backtest p { margin: 0; }
-.backtest-placeholder { border: 1px dashed #bacbd1; border-radius: 8px; padding: 16px; color: #8195a0; font-size: 11px; font-weight: 700; text-align: center; }
+.backtest-heading { display: flex; flex-direction: column; gap: 4px; }
+.backtest-headline { margin: 8px 0 0; color: #173144; font-size: 15px; line-height: 1.45; }
+.backtest-headline strong { color: #087e70; }
+.backtest-pct { color: #087e70; font-weight: 800; }
+.backtest-sub { margin: 2px 0 0; color: #718592; font-size: 11px; }
+.backtest-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px; margin-top: 18px; }
+.backtest-table { display: grid; gap: 7px; align-content: start; }
+.backtest-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr .5fr; gap: 8px; align-items: center; border-bottom: 1px solid #e7edef; padding-bottom: 7px; color: #526b79; font-size: 11px; }
+.backtest-row:last-child { border-bottom: 0; }
+.backtest-head { color: #173144; font-weight: 800; }
+.backtest-row b { color: #087e70; }
+.backtest-leaks { display: grid; gap: 9px; align-content: start; }
+.backtest-leaks h3 { margin: 0 0 2px; color: #173144; font-size: 12px; }
+.backtest-leak { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid #e7edef; padding-bottom: 8px; font-size: 11px; }
+.backtest-leak:last-child { border-bottom: 0; }
+.backtest-leak div { display: flex; flex-direction: column; gap: 3px; }
+.backtest-leak span { color: #718592; }
+.backtest-leak b { color: #087e70; white-space: nowrap; }
+.backtest-assumptions { margin-top: 16px; border-top: 1px solid #e7edef; padding-top: 12px; color: #526b79; font-size: 11px; }
+.backtest-assumptions summary { color: #173144; cursor: pointer; font-weight: 700; }
+.backtest-assumptions ul { display: grid; gap: 4px; margin: 8px 0 0 18px; padding: 0; }
 .dashboard-error { color: #a72e36; font-size: 12px; }
 @media (max-width: 900px) { .dashboard-stat-grid, .dashboard-details { grid-template-columns: 1fr; } }
 @media (max-width: 650px) { .dashboard-view { padding: 20px 12px 40px; } .dashboard-backtest { flex-direction: column; align-items: stretch; } }

@@ -3,6 +3,13 @@
 .planner-heading h1 { margin: 8px 0 7px; font-size: 30px; letter-spacing: -.045em; color: #10293c; }
 .planner-heading p { margin: 0; color: #607281; font-size: 13px; }
 .demo-slip-button { flex-shrink: 0; border: 0; border-radius: 9px; padding: 12px 17px; background: #098b76; color: white; font-size: 12px; font-weight: 800; }
+.planner-summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 16px; border: 1px solid #dce6ea; border-radius: 12px; padding: 16px 20px; background: #fff; box-shadow: 0 7px 28px rgba(23, 47, 59, .045); }
+.planner-summary-main { display: flex; flex-direction: column; gap: 3px; }
+.planner-summary-main strong { color: #087e70; font-size: 25px; letter-spacing: -.04em; }
+.planner-summary-main span { color: #718592; font-size: 11px; }
+.planner-summary-mix { display: flex; flex-wrap: wrap; gap: 8px; }
+.planner-summary-mix span { border-radius: 16px; padding: 6px 10px; background: #eef3f5; color: #526b79; font-size: 11px; font-weight: 700; }
+.planner-summary-mix b { color: #173144; }
 .planner-date-controls { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
 .planner-date-controls label { display: flex; flex-direction: column; gap: 8px; min-width: 0; border: 1px solid #dce6ea; border-radius: 9px; padding: 10px; background: #fff; color: #344d5d; font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .planner-date-controls input { width: 100%; min-width: 0; border: 1px solid #cddadf; border-radius: 6px; padding: 6px; background: #fff; color: #173144; font-size: 12px; }

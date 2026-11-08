@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { postDashboard } from '../api'
+import { getBacktest, postDashboard } from '../api'
 import './Dashboard.css'
 
 const money = new Intl.NumberFormat('en-CA', {
@@ -12,6 +12,8 @@ const optionNames = {
 
 export default function Dashboard({ shifts, accepted }) {
   const [response, setResponse] = useState(null)
+  const [backtest, setBacktest] = useState(null)
+  const [backtestError, setBacktestError] = useState('')
   const shiftKey = JSON.stringify(shifts)
   const metrics = response?.key === shiftKey ? response.data : null
   const error = response?.key === shiftKey ? response.error : ''
@@ -26,6 +28,16 @@ export default function Dashboard({ shifts, accepted }) {
     })
     return () => { cancelled = true }
   }, [shifts, shiftKey])
+
+  useEffect(() => {
+    let cancelled = false
+    getBacktest().then((data) => {
+      if (!cancelled) { setBacktest(data); setBacktestError('') }
+    }).catch((err) => {
+      if (!cancelled) setBacktestError(err.message)
+    })
+    return () => { cancelled = true }
+  }, [])
 
   const maxIdle = Math.max(1, ...(metrics?.idle_by_class ?? []).map((entry) => entry.idle_days))
 
@@ -64,9 +76,35 @@ export default function Dashboard({ shifts, accepted }) {
       </article>
     </div>
     <article className="dashboard-panel dashboard-backtest">
-      <div><div className="section-kicker">Historical comparison</div><h2>Last year, with YardSense</h2>
-        <p>Past requests and decisions will appear here when the backtest is ready.</p></div>
-      <div className="backtest-placeholder">Backtest result pending</div>
+      <div className="backtest-heading">
+        <div className="section-kicker">Synthetic replay · last 12 months</div>
+        <h2>Last year, with YardSense</h2>
+        {backtest ? <>
+          <p className="backtest-headline">Of <strong>{money.format(backtest.outside_spend_actual)}</strong> spent outside the group, YardSense would have avoided <strong>{money.format(backtest.outside_spend_avoided)}</strong><span className="backtest-pct"> ({backtest.kept_pct}%)</span>.</p>
+          <p className="backtest-sub">{backtest.requests} synthetic requests · {backtest.leaks} rental leaks · {backtest.changed_decisions} decisions would change. Replay, not actual performance.</p>
+        </> : !backtestError && <p>Replaying last year…</p>}
+        {backtestError && <p className="dashboard-error" role="alert">Backtest unavailable: {backtestError}</p>}
+      </div>
+      {backtest && <div className="backtest-grid">
+        <div className="backtest-table" aria-label="Outside spend avoided by equipment class">
+          <div className="backtest-row backtest-head"><span>Class</span><span>Outside spend</span><span>Avoided</span><span>Leaks</span></div>
+          {backtest.by_class.slice(0, 5).map((row) => <div className="backtest-row" key={row.class}>
+            <span>{row.label}</span><span>{money.format(row.outside_spend)}</span>
+            <b>{money.format(row.avoided)}</b><span>{row.leaks}</span>
+          </div>)}
+        </div>
+        <div className="backtest-leaks" aria-label="Largest rental leaks">
+          <h3>Largest leaks</h3>
+          {backtest.top_leaks.slice(0, 3).map((row) => <div className="backtest-leak" key={row.request_id}>
+            <div><strong>{row.project_name}</strong><span>{row.label} · {optionNames[row.actual]} → {optionNames[row.recommended]}</span></div>
+            <b>{money.format(row.saved)}</b>
+          </div>)}
+        </div>
+      </div>}
+      {backtest && <details className="backtest-assumptions">
+        <summary>How this is calculated</summary>
+        <ul>{backtest.assumptions.map((line) => <li key={line}>{line}</li>)}</ul>
+      </details>}
     </article>
   </section>
 }

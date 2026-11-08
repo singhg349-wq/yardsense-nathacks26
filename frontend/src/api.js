@@ -25,6 +25,10 @@ export const getAssignments = () => apiRequest('/assignments')
 export const getAvailableAssets = (from, to) => apiRequest(
   `/assets/available?${new URLSearchParams({ from, to })}`,
 )
+export const postAvailableAssets = (start, finish, shifts) => apiRequest('/assets/available', {
+  method: 'POST', headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ start, finish, shifts }),
+})
 export const getPlan = () => apiRequest('/plan')
 export const postPlan = (shifts) => apiRequest('/plan', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -34,6 +38,9 @@ export const postDashboard = (shifts) => apiRequest('/dashboard', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ shifts }),
 })
+export const getBacktest = () => apiRequest('/backtest')
+export const getFleetAdvisor = () => apiRequest('/fleet-advisor')
+export const getSources = () => apiRequest('/sources')
 export const recommend = (body) => apiRequest('/recommend', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(body),

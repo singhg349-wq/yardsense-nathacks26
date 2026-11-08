@@ -4,6 +4,8 @@ import App from './App'
 
 vi.mock('./components/RequestScreen', () => ({ default: () => <p>requests</p> }))
 vi.mock('./components/Dashboard', () => ({ default: () => <p>dashboard</p> }))
+vi.mock('./components/FleetAdvisor', () => ({ default: () => <p>fleet advisor</p> }))
+vi.mock('./components/DataUpload', () => ({ default: () => <p>data upload</p> }))
 vi.mock('./components/PlannerView', () => ({
   default: ({ onSetShift }) => <button type="button" onClick={() => onSetShift('PRJ-KNG', 42)}>slip</button>,
 }))
@@ -14,9 +16,9 @@ vi.mock('./components/MapView', () => ({
 const tabs = () => screen.getAllByRole('button').filter((button) => button.closest('nav'))
 
 describe('App navigation', () => {
-  it('orders the tabs Requests, Timeline, Map, Dashboard, Data upload', () => {
+  it('orders the tabs Requests, Timeline, Map, Dashboard, Fleet advisor, Data upload', () => {
     render(<App />)
-    expect(tabs().map((tab) => tab.textContent)).toEqual(['Requests', 'Timeline', 'Map', 'Dashboard', 'Data upload'])
+    expect(tabs().map((tab) => tab.textContent)).toEqual(['Requests', 'Timeline', 'Map', 'Dashboard', 'Fleet advisor', 'Data upload'])
   })
 
   it('tells the map when its tab is open', () => {

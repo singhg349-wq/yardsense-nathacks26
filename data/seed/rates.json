@@ -12,15 +12,15 @@
     "SCISSOR_19": {
       "label": "19 ft scissor lift",
       "outside": {
-        "day": 150,
-        "week": 450,
-        "month": 1300
+        "day": 104,
+        "week": 312,
+        "month": 900
       },
       "outside_delivery_fee": 175,
       "internal": {
-        "day": 132,
-        "week": 396,
-        "month": 1144
+        "day": 92,
+        "week": 275,
+        "month": 792
       },
       "purchase_price": 24000,
       "resale_pct_per_year": 0.15,
@@ -50,15 +50,15 @@
     "TELEHANDLER": {
       "label": "Telehandler",
       "outside": {
-        "day": 380,
-        "week": 1150,
-        "month": 3400
+        "day": 644,
+        "week": 1960,
+        "month": 5600
       },
       "outside_delivery_fee": 300,
       "internal": {
-        "day": 334,
-        "week": 1012,
-        "month": 2992
+        "day": 567,
+        "week": 1725,
+        "month": 4928
       },
       "purchase_price": 150000,
       "resale_pct_per_year": 0.12,

@@ -5,7 +5,8 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, model_validator
 
-from . import allocator, availability, cost_model, db, metrics, uploads
+from . import (allocator, availability, backtest, cost_model, db, fleet_advisor,
+               metrics, sources, uploads)
 from .config import REPO_ROOT
 
 router = APIRouter()
@@ -46,6 +47,18 @@ class CheckoutRequest(BaseModel):
 
 class CheckinRequest(BaseModel):
     checked_in: date
+
+
+class AvailabilityRequest(BaseModel):
+    start: date
+    finish: date
+    shifts: list[DateShift] = []
+
+    @model_validator(mode="after")
+    def dates_in_order(self):
+        if self.finish < self.start:
+            raise ValueError("finish must be on or after start")
+        return self
 
 
 class PlanRequest(BaseModel):
@@ -183,6 +196,17 @@ def get_available_assets(start: date = Query(alias="from"), finish: date = Query
     return availability.available_units(load_world(), start, finish)
 
 
+@router.post("/assets/available")
+def post_available_assets(body: AvailabilityRequest):
+    """Availability on a what-if schedule, so Map idle counts follow Timeline drags."""
+    try:
+        world = allocator.shifted_world(load_world(),
+                                        [shift.model_dump() for shift in body.shifts])
+    except ValueError as error:
+        raise HTTPException(404, str(error)) from error
+    return availability.available_units(world, body.start, body.finish)
+
+
 @router.get("/assignments")
 def get_assignments():
     """The check-out/in log: where each unit went and whether it is still out."""
@@ -242,3 +266,21 @@ def post_dashboard(body: PlanRequest):
     except ValueError as error:
         raise HTTPException(404, str(error)) from error
     return metrics.dashboard_metrics(world, allocator.build_plan(world))
+
+
+@router.get("/backtest")
+def get_backtest():
+    """Synthetic 12-month replay of past equipment requests."""
+    return backtest.run_backtest(load_world())
+
+
+@router.get("/fleet-advisor")
+def get_fleet_advisor():
+    """Rule-based add/retire calls for the Northgate Rentals fleet."""
+    return fleet_advisor.advise(load_world())
+
+
+@router.get("/sources")
+def get_sources():
+    """Where the demo data comes from, and how confident each number is."""
+    return sources.load_sources()

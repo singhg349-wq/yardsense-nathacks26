@@ -6,6 +6,8 @@
 .upload-card h2 { margin: 0 0 12px; color: #10293c; font-size: 21px; }
 .upload-card p { color: #607281; font-size: 13px; line-height: 1.5; }
 .upload-card a { color: #087e70; font-weight: 700; }
+.upload-demo-button { margin-top: 10px; border: 1px solid #2eac92; border-radius: 9px; padding: 9px 12px; background: #f2fbf7; color: #087e70; font-size: 12px; font-weight: 800; }
+.upload-demo-button:disabled { opacity: .55; cursor: default; }
 .upload-card form { display: grid; gap: 11px; margin-top: 24px; }
 .upload-card label { color: #344d5d; font-size: 12px; font-weight: 800; }
 .upload-card input { min-width: 0; max-width: 100%; color: #344d5d; font-size: 12px; }
@@ -14,4 +16,32 @@
 .upload-error { color: #a72e36 !important; }
 .upload-success { margin-top: 17px; padding: 12px; background: #e9f6f1; border-radius: 9px; color: #08725f; font-size: 13px; line-height: 1.5; }
 .upload-success button { display: block; margin-top: 10px; padding: 8px 11px; }
-@media (max-width: 700px) { .upload-view { padding: 20px 12px 40px; } .upload-grid { grid-template-columns: 1fr; } }
+.provenance { margin-top: 34px; border-top: 1px solid #dce6ea; padding-top: 26px; }
+.provenance-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.provenance-head h2 { margin: 8px 0 6px; color: #10293c; font-size: 24px; letter-spacing: -.035em; }
+.provenance-head p { max-width: 720px; margin: 0; color: #607281; font-size: 13px; line-height: 1.55; }
+.provenance-badge { border-radius: 20px; padding: 7px 12px; background: #eef3f5; color: #526b79; font-size: 10px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+.provenance-sources { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+.provenance-card { border: 1px solid #dce6ea; border-radius: 12px; padding: 16px; background: #fff; }
+.provenance-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.provenance-card h3 { margin: 0; color: #173144; font-size: 13px; }
+.provenance-card p { margin: 8px 0 6px; color: #526b79; font-size: 11px; line-height: 1.45; }
+.provenance-card small { color: #8195a0; font-size: 10px; line-height: 1.45; }
+.provenance-mode { border-radius: 16px; padding: 3px 8px; background: #eef3f5; color: #526b79; font-size: 9px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
+.provenance-mode-sourced { background: #e2f6ef; color: #087e70; }
+.provenance-mode-mixed { background: #fbeedd; color: #9b5d1f; }
+.provenance-rates { margin-top: 24px; }
+.provenance-rates h3, .provenance-assumptions h3 { margin: 0 0 10px; color: #173144; font-size: 14px; }
+.provenance-table { display: grid; gap: 5px; overflow-x: auto; }
+.provenance-row { display: grid; grid-template-columns: 1.1fr 1.1fr 1fr .7fr .8fr 2fr; gap: 10px; align-items: center; border-bottom: 1px solid #e7edef; padding-bottom: 6px; color: #526b79; font-size: 11px; min-width: 820px; }
+.provenance-row:last-child { border-bottom: 0; }
+.provenance-row-head { color: #173144; font-weight: 800; }
+.provenance-row a { color: #087e70; }
+.provenance-confidence { border-radius: 14px; padding: 2px 8px; background: #eef3f5; color: #526b79; font-size: 9px; font-weight: 900; text-transform: uppercase; }
+.provenance-confidence-medium { background: #e2f6ef; color: #087e70; }
+.provenance-confidence-low-medium { background: #fbeedd; color: #9b5d1f; }
+.provenance-confidence-placeholder, .provenance-confidence-assumption { background: #f1f4f5; color: #718592; }
+.provenance-assumptions { margin-top: 24px; border: 1px solid #dce6ea; border-radius: 12px; padding: 18px 20px; background: #f8fafb; }
+.provenance-assumptions ul { display: grid; gap: 6px; margin: 0 0 0 18px; padding: 0; color: #526b79; font-size: 11px; line-height: 1.5; }
+@media (max-width: 900px) { .provenance-sources { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 700px) { .upload-view { padding: 20px 12px 40px; } .upload-grid, .provenance-sources { grid-template-columns: 1fr; } .provenance-head { flex-direction: column; } }

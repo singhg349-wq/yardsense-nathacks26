@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getAssignments, getAvailableAssets, getClasses, getSites, postPlan } from '../api'
+import { getAssignments, getClasses, getSites, postAvailableAssets, postPlan } from '../api'
 import MapCanvas from './MapCanvas'
 import {
   addDays, buildMoves, COMPANIES, DEMO_TODAY, defaultMove, fleetStatus, formatDate, formatLongDate,
@@ -11,10 +11,8 @@ const FILTERS = [['all', 'All'], ['move_ours', TYPE_LABELS.move_ours], ['rent_si
 const IDLE_WINDOW_DAYS = 7
 
 function loadWorld() {
-  return Promise.all([
-    getSites(), getAssignments(), getClasses(),
-    getAvailableAssets(DEMO_TODAY, addDays(DEMO_TODAY, IDLE_WINDOW_DAYS)),
-  ]).then(([sites, assignments, classes, idle]) => ({ sites, assignments, classes, idle }))
+  return Promise.all([getSites(), getAssignments(), getClasses()])
+    .then(([sites, assignments, classes]) => ({ sites, assignments, classes }))
 }
 
 function Kpi({ label, value, sub, primary }) {
@@ -104,6 +102,7 @@ function MovesTable({ moves, selectedMoveId, onSelect }) {
 
 export default function MapView({ shifts, active = true }) {
   const [world, setWorld] = useState(null)
+  const [idle, setIdle] = useState(null)
   const [worldError, setWorldError] = useState('')
   const [planResponse, setPlanResponse] = useState(null)
   const [selectedMoveId, setSelectedMoveId] = useState(null)
@@ -126,6 +125,14 @@ export default function MapView({ shifts, active = true }) {
 
   useEffect(() => {
     let cancelled = false
+    postAvailableAssets(DEMO_TODAY, addDays(DEMO_TODAY, IDLE_WINDOW_DAYS), shifts)
+      .then((units) => { if (!cancelled) setIdle(units) })
+      .catch((err) => { if (!cancelled) setWorldError(err.message) })
+    return () => { cancelled = true }
+  }, [shifts, shiftKey])
+
+  useEffect(() => {
+    let cancelled = false
     postPlan(shifts).then((data) => {
       if (!cancelled) setPlanResponse({ key: shiftKey, allocations: data.allocations, error: '' })
     }).catch((err) => {
@@ -138,9 +145,8 @@ export default function MapView({ shifts, active = true }) {
   const moves = useMemo(() => (world && allocations ? buildMoves(allocations, world.classes, world.sites) : []),
     [world, allocations])
   const kpis = useMemo(() => moveKpis(moves), [moves])
-  // Known gap: /assets/available has no shifts input, so idle units, badges and the fleet card
-  // stay on the unshifted schedule when a project is dragged. Arcs, table and move KPIs do update.
-  const fleet = useMemo(() => (world ? fleetStatus(world.assignments, world.idle) : null), [world])
+  const fleet = useMemo(() => (world && idle ? fleetStatus(world.assignments, idle) : null),
+    [world, idle])
 
   const selectedMove = moves.find((move) => move.id === selectedMoveId) ?? defaultMove(moves)
   const siteId = selectedSiteId ?? selectedMove?.fromId ?? world?.sites[0]?.id
@@ -160,8 +166,8 @@ export default function MapView({ shifts, active = true }) {
     {error && <p className="map-error" role="alert">
       Couldn't load the map data ({error}). Check that the backend is running, then reload the page.
     </p>}
-    {(!world || !allocations) && !error && <p className="map-loading">Loading the map…</p>}
-    {world && allocations && <div className={`map-layout${replanning ? ' is-busy' : ''}`}>
+    {(!world || !allocations || !idle) && !error && <p className="map-loading">Loading the map…</p>}
+    {world && allocations && idle && <div className={`map-layout${replanning ? ' is-busy' : ''}`}>
       <aside className="map-side">
         <div className="map-kpis">
           <Kpi primary label="Kept in group by moving" value={formatMoney(kpis.kept)} sub="vs renting the same units outside" />
@@ -171,7 +177,7 @@ export default function MapView({ shifts, active = true }) {
         </div>
         <FleetCard fleet={fleet} />
         <SitePanel site={site} fleet={fleet} moves={moves} selectedMoveId={selectedMove?.id}
-          idleUnits={world.idle.filter((unit) => unit.site_id === siteId)} />
+          idleUnits={idle.filter((unit) => unit.site_id === siteId)} />
       </aside>
       <div className="map-main">
         {opened && <MapCanvas active={active} sites={world.sites} moves={moves} kpis={kpis}
