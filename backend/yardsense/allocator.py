@@ -91,7 +91,7 @@ def build_plan(world):
             world["classes"][request["class"]], world["settings"],
             [unit for unit in candidates if unit["company"] != OWNED_BY_RENTALS],
             [unit for unit in candidates if unit["company"] == OWNED_BY_RENTALS],
-            _pipeline(world, request["class"]))
+            _pipeline(world, request["class"]), world.get("road_distances"))
         options = cost_model.rank(quoted)
         chosen = options[0]
         asset_ids = chosen.get("asset_ids", [])

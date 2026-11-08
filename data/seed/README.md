@@ -12,6 +12,14 @@ The demo "today" is **2026-11-16** (`settings.demo_today` in `rates.json`).
 | `procore_projects.json` | 5 projects with schedule tasks and planned equipment needs | Procore project schedule |
 | `assignments.json` | Dana's check-out/in log: where each unit is now. `checked_in: null` means still out. | our app |
 | `rates.json` | settings, outside and internal rate cards, purchase price, resale %, upkeep, wear, transport | rate cards |
+| `road_distances.json` | Directed driving distances between all 9 seed locations, precomputed 2026-11-07 | [OSRM Table service](https://project-osrm.org/docs/v5.24.0/api/#table-service) using OpenStreetMap roads |
+
+The saved road matrix is used for both move and sister-rental trucking. Unknown
+site pairs fall back to straight-line distance × 1.3. No routing service is
+called when the app runs. The site names and addresses are fictional; the
+coordinates were routed on OpenStreetMap roads. Road data ©
+[OpenStreetMap contributors](https://www.openstreetmap.org/copyright) (ODbL),
+routing by [OSRM](https://project-osrm.org/).
 
 ## What the data is built to show
 - Westgate Tower's framing ended 2026-11-06, so its telehandler is idle.

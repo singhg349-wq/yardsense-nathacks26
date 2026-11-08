@@ -12,3 +12,12 @@ def load_rates(path=None):
     path = path or os.environ.get("YARDSENSE_RATES") or SEED_DIR / "rates.json"
     with open(path) as f:
         return json.load(f)
+
+
+def load_road_distances():
+    """Saved OSRM distances; an absent matrix leaves the engine on its fallback."""
+    try:
+        with open(SEED_DIR / "road_distances.json") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
