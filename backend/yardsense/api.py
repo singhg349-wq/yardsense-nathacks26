@@ -226,11 +226,11 @@ def post_assignment(body: CheckoutRequest):
             raise HTTPException(404, "Project not found")
         if projects[body.project_id]["site_id"] != body.site_id:
             raise HTTPException(422, "Project and site do not match")
-    if not any(asset["asset_id"] == body.asset_id for asset in
-               availability.available_units(world, body.checked_out, body.checked_out)):
-        raise HTTPException(409, "Asset is already assigned on that date")
-    return db.create_assignment(body.asset_id, body.project_id, body.site_id,
-                                body.checked_out.isoformat())
+    assignment = db.create_assignment(body.asset_id, body.project_id, body.site_id,
+                                      body.checked_out.isoformat())
+    if assignment is None:
+        raise HTTPException(409, "Asset is already assigned during that period")
+    return assignment
 
 
 @router.patch("/assignments/{assignment_id}")
