@@ -6,4 +6,5 @@ export default defineConfig({
   plugins: [react()],
   // Fixed port: the backend's CORS settings allow http://localhost:5173.
   server: { port: 5173, strictPort: true },
+  test: { environment: 'jsdom', setupFiles: './src/test/setup.js' },
 })

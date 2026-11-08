@@ -111,6 +111,7 @@ def build_plan(world):
         allocations.append({**request, "start": request["start"].isoformat(),
                             "finish": request["finish"].isoformat(),
                             "option": chosen["option"], "asset_ids": asset_ids,
+                            "moves": chosen.get("moves", []),
                             "project_cost": chosen["project_cost"],
                             "group_cost": chosen["group_cost"],
                             "kept_in_group": chosen["kept_in_group"],
