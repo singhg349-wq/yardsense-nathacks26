@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { className } from './classNames'
 import './Timeline.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -27,11 +28,12 @@ function needRows(project) {
   const needs = project.needs ?? project.planned_equipment ?? []
   return needs.map((n) => ({
     key: `${n.class}-${n.start}`,
-    label: `${n.qty} x ${n.class}`,
+    label: `${n.qty} × ${className(n.class)}`,
+    tag: 'planned',
     start: n.start,
     finish: n.finish,
     kind: 'planned',
-    tip: `Planned: ${n.qty} x ${n.class} · ${n.start} to ${n.finish} (before allocation)`,
+    tip: `Planned: ${n.qty} × ${className(n.class)} · ${n.start} to ${n.finish} (before allocation)`,
   }))
 }
 
@@ -41,12 +43,13 @@ function allocationRows(project, allocations, changedIds) {
     .filter((a) => a.project_id === project.id)
     .map((a) => ({
       key: a.request_id,
-      label: `${a.qty} x ${a.class} · ${OPTION_LABELS[a.option]}`,
+      label: `${a.qty} × ${className(a.class)}`,
+      tag: OPTION_LABELS[a.option],
       start: a.start,
       finish: a.finish,
       kind: 'allocated',
       option: a.option,
-      tip: `${a.qty} x ${a.class} · ${OPTION_LABELS[a.option]} · group cost ${
+      tip: `${a.qty} × ${className(a.class)} · ${OPTION_LABELS[a.option]} · group cost ${
         a.group_cost == null ? 'n/a' : CURRENCY.format(a.group_cost)} · ${a.start} to ${a.finish}`,
       changed: changedIds.has(a.request_id),
     }))
@@ -92,15 +95,20 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
     if (days !== 0) onShiftProject(projectId, days)
   }
 
-  // One label per month across the top.
+  // One tick per month; the year sits on a second line for January and the first tick.
+  // Labels closer than MIN_GAP (% of the axis) are dropped so they never overlap.
+  const MIN_GAP = 4.2
   const months = []
+  let lastShown = -Infinity
   for (let d = new Date(rangeStart); d.getTime() < rangeEnd; d = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1))) {
     const ms = d.getTime()
     const month = d.getUTCMonth()
+    const left = ((ms - rangeStart) / span) * 100
+    const show = left - lastShown >= MIN_GAP
+    if (show) lastShown = left
     months.push({
-      key: ms,
-      left: ((ms - rangeStart) / span) * 100,
-      text: month === 0 || months.length === 0 ? `${MONTHS[month]} ${d.getUTCFullYear()}` : MONTHS[month],
+      key: ms, left, text: show ? MONTHS[month] : null,
+      year: show && (month === 0 || !months.some((m) => m.text)) ? d.getUTCFullYear() : null,
     })
   }
 
@@ -112,7 +120,7 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
   return (
     <div className="tl">
       <div className="tl-intro">
-        <p><strong>Each row is a project; bars are phases; equipment markers show what the group plan assigns.</strong>
+        <p><strong>Grey bars are project phases; coloured bars are the group plan's equipment.</strong>
           {onShiftProject && ' Drag a project to test a slip; this does not edit the Procore schedule.'}</p>
         <div className="legend tl-legend" aria-label="Timeline legend">
           <span className="legend-item"><i className="tl-key tl-key-phase" />Project phases (bar = project span)</span>
@@ -129,8 +137,8 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
         <div className="tl-label" />
         <div className="tl-track">
           {months.map((m) => (
-            <span key={m.key} className="tl-month" style={{ left: `${m.left}%` }}>
-              {m.text}
+            m.text && <span key={m.key} className="tl-month" style={{ left: `${m.left}%` }}>
+              {m.text}{m.year && <small>{m.year}</small>}
             </span>
           ))}
           {todayLine}
@@ -184,7 +192,8 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
           {[...needRows(project), ...allocationRows(project, allocations, changedIds)].map((row) => (
             <div className={`tl-row tl-equip ${row.changed ? 'tl-changed' : ''}`} key={row.key}>
               <div className="tl-label tl-equip-name">
-                {row.label} <em>{row.kind}</em>
+                <span className="tl-equip-text">{row.label}</span>
+                <em className={`tl-tag ${row.option ? `tl-tag-${OPTION_CLASS[row.option]}` : ''}`}>{row.tag}</em>
               </div>
               <div className="tl-track">
                 {grid}

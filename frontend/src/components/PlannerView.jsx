@@ -69,8 +69,7 @@ export default function PlannerView({ shifts, onSetShift }) {
 
   return <section className="planner-view">
     <div className="planner-heading">
-      <div><div className="section-kicker">Forward plan · what-if</div><h1>Group timeline</h1>
-        <p>Drag a project bar or edit its start date to see how the group plan changes. This is a what-if; it does not edit the Procore schedule.</p></div>
+      <div><div className="section-kicker">Forward plan · what-if</div><h1>Group timeline</h1></div>
       <button className="demo-slip-button" type="button" onClick={() => onSetShift('PRJ-KNG', kingswayDays === 42 ? 0 : 42)}>
         {kingswayDays === 42 ? 'Reset Kingsway date' : 'Slip Kingsway 6 weeks'}
       </button>
