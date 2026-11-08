@@ -41,6 +41,7 @@ export const postDashboard = (shifts) => apiRequest('/dashboard', {
 export const getBacktest = () => apiRequest('/backtest')
 export const getFleetAdvisor = () => apiRequest('/fleet-advisor')
 export const getSources = () => apiRequest('/sources')
+export const getMincost = () => apiRequest('/mincost')
 export const recommend = (body) => apiRequest('/recommend', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(body),

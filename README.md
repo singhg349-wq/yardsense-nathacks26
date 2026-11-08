@@ -2,7 +2,7 @@
 
 **natHacks 2026 · Construction & Manufacturing track**
 
-Equipment decisions in a group of companies are made project by project, by phone, so rental money leaves the group while the group's own equipment sits idle. YardSense tells the equipment coordinator what to do for each request: **move a unit the group owns**, **rent from the group's rental company**, **rent outside**, or **have the rental company buy it**. It picks the cheapest option for the *whole group*, looking across every upcoming project. No trackers: it reads the SAP, Procore and Textura data a contractor already has.
+Equipment decisions in a group of companies are made project by project, by phone, so rental money leaves the group while the group's own equipment sits idle. YardSense tells the equipment coordinator what to do for each request: **move a unit the group owns**, **rent from the group's rental company**, **rent outside**, or **have the rental company buy it**. It picks the cheapest option for the *whole group*, looking across every upcoming project. No trackers: it reads the SAP asset register and Procore schedules a contractor already has. A Textura leak report is on the roadmap.
 
 > All project code is written during natHacks 2026 (Nov 6–9). The demo uses a fictional company group (**Northgate Group**) and synthetic data.
 
@@ -29,11 +29,32 @@ Install Python from [python.org](https://www.python.org/downloads/) (on Windows,
 ## Team
 | Name | Role |
 |---|---|
-| Gurshmeer Singh | TBD |
-| Rakshit | TBD |
-| Sreeman | TBD |
-| Aarish | TBD |
-| Anant | TBD |
+| Gurshmeer Singh | Team lead, engine, integration |
+| Rakshit | Team |
+| Sreeman | Backend, engine, data |
+| Aarish | Team |
+| Anant | Frontend, map, infrastructure |
+
+## How it works
+
+- **Inputs:** SAP asset register, Procore schedules, Dana's check-out/in log, rate cards, saved OSRM road distances.
+- **Availability:** the check-out log plus schedule inference — a unit frees when its project phase ends.
+- **Engine:** four options, two cost lenses (project vs group), transport and wear, buy break-even across the pipeline, and a greedy allocator that reserves physical units across overlapping dates. An exact PuLP/CBC static comparison measures the greedy gap.
+- **Screens:** Requests, Timeline (a what-if drag; it does not edit Procore), Map, Dashboard (synthetic backtest + optimizer comparison), Fleet advisor, and Data upload with provenance.
+- **APIs:** `/recommend`, `/plan`, `/dashboard`, `/backtest`, `/fleet-advisor`, `/sources`, `/mincost`, `/uploads/{sap|procore}`, `/assets/available` (GET and POST with shifts), `/assignments`.
+- **Storage:** SQLite seeded from `data/seed/`; reset with `python backend/scripts/reset_db.py`.
+
+## Tests
+
+```bash
+cd backend && python -m pytest -q          # 59 tests
+cd frontend && npm test                    # 89 tests
+cd frontend && npm run lint && npm run build
+```
+
+## Data and limitations
+
+The demo is synthetic and labelled. The 4-week outside rates for the 19 ft scissor lift and the telehandler are sourced from public listings; most other rates are placeholders. `data/seed/sources.json` and the Data upload tab show the mix, citations and assumptions. The backtest is a synthetic replay, not customer performance. The min-cost panel is an exact static comparison, not the live plan; the live plan is the greedy engine. Live SAP/Procore/Textura APIs, authentication, multi-tenancy, mobile and the Textura leak report are roadmap items; the CSV connectors are real code in the systems' shapes.
 
 ## Run
 

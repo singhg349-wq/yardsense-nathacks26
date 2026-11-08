@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, model_validator
 
 from . import (allocator, availability, backtest, cost_model, db, fleet_advisor,
-               metrics, sources, uploads)
+               metrics, mincost, sources, uploads)
 from .config import REPO_ROOT
 
 router = APIRouter()
@@ -284,3 +284,9 @@ def get_fleet_advisor():
 def get_sources():
     """Where the demo data comes from, and how confident each number is."""
     return sources.load_sources()
+
+
+@router.get("/mincost")
+def get_mincost():
+    """Exact static assignment versus the greedy baseline."""
+    return mincost.compare(load_world())

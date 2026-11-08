@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getBacktest, postDashboard } from '../api'
+import { getBacktest, getMincost, postDashboard } from '../api'
 import './Dashboard.css'
 
 const money = new Intl.NumberFormat('en-CA', {
@@ -14,6 +14,8 @@ export default function Dashboard({ shifts, accepted }) {
   const [response, setResponse] = useState(null)
   const [backtest, setBacktest] = useState(null)
   const [backtestError, setBacktestError] = useState('')
+  const [mincost, setMincost] = useState(null)
+  const [mincostError, setMincostError] = useState('')
   const shiftKey = JSON.stringify(shifts)
   const metrics = response?.key === shiftKey ? response.data : null
   const error = response?.key === shiftKey ? response.error : ''
@@ -35,6 +37,16 @@ export default function Dashboard({ shifts, accepted }) {
       if (!cancelled) { setBacktest(data); setBacktestError('') }
     }).catch((err) => {
       if (!cancelled) setBacktestError(err.message)
+    })
+    return () => { cancelled = true }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    getMincost().then((data) => {
+      if (!cancelled) { setMincost(data); setMincostError('') }
+    }).catch((err) => {
+      if (!cancelled) setMincostError(err.message)
     })
     return () => { cancelled = true }
   }, [])
@@ -105,6 +117,26 @@ export default function Dashboard({ shifts, accepted }) {
         <summary>How this is calculated</summary>
         <ul>{backtest.assumptions.map((line) => <li key={line}>{line}</li>)}</ul>
       </details>}
+    </article>
+    <article className="dashboard-panel dashboard-mincost">
+      <div className="mincost-heading">
+        <div className="section-kicker">Optimizer comparison · static snapshot</div>
+        <h2>Greedy vs min-cost</h2>
+        {mincost ? <>
+          <p className="mincost-headline">Min-cost saves <strong>{money.format(mincost.delta.group_cost)}</strong> ({mincost.delta.pct}%) on the same {mincost.requests}-request snapshot.</p>
+          <div className="mincost-grid">
+            <div><span>Greedy</span><strong>{money.format(mincost.greedy_static.group_cost)}</strong></div>
+            <div><span>Min-cost</span><strong>{money.format(mincost.mincost.group_cost)}</strong></div>
+            <div><span>Solved in</span><strong>{mincost.runtime_ms} ms</strong></div>
+          </div>
+          <p className="mincost-note">PuLP / CBC exact assignment. The live plan still uses the dynamic greedy engine; this is a like-for-like static comparison.</p>
+          <details className="mincost-assumptions">
+            <summary>Assumptions</summary>
+            <ul>{mincost.assumptions.map((line) => <li key={line}>{line}</li>)}</ul>
+          </details>
+        </> : !mincostError && <p>Solving the static assignment…</p>}
+        {mincostError && <p className="dashboard-error" role="alert">Min-cost comparison unavailable: {mincostError}</p>}
+      </div>
     </article>
   </section>
 }
