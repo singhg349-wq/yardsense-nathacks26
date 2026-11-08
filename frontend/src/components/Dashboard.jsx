@@ -34,13 +34,23 @@ function Donut({ segments, centre, sub, label }) {
   </svg>
 }
 
-function Kpi({ tone, glyph, value, label, sub }) {
+const iconProps = { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+  strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }
+const kpiIcons = {
+  coins: <svg {...iconProps}><ellipse cx="12" cy="6" rx="7" ry="3" /><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6" /><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" /></svg>,
+  trend: <svg {...iconProps}><path d="M3 7l6 6 4-4 8 8" /><path d="M15 17h6v-6" /></svg>,
+  warn: <svg {...iconProps}><path d="M10.3 3.9L1.800 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /><path d="M12 9v4M12 17h.01" /></svg>,
+  gauge: <svg {...iconProps}><path d="M4.9 19a9 9 0 1 1 14.2 0" /><path d="M12 14l4-5" /><circle cx="12" cy="14" r="1" /></svg>,
+}
+
+function Kpi({ tone, glyph, value, label, sub, hint }) {
   return <article className={`kpi card kpi-${tone}`}>
     <span className="kpi-icon" aria-hidden="true">{glyph}</span>
     <div className="kpi-body">
       <strong className="num">{value}</strong>
       <span className="kpi-label">{label}</span>
       <small>{sub}</small>
+      {hint && <small className="kpi-hint">{hint}</small>}
     </div>
   </article>
 }
@@ -108,14 +118,14 @@ export default function Dashboard({ shifts, accepted }) {
       <span className="pill muted">Synthetic data</span>
     </div>
     <div className="kpi-row">
-      <Kpi tone="orange" glyph="$" value={money.format(kept)} label="Kept in the group"
+      <Kpi tone="orange" glyph={kpiIcons.coins} hint={accepted.length === 0 ? 'Accept a recommendation on Requests' : null} value={money.format(kept)} label="Kept in the group"
         sub={`${accepted.length} accepted recommendation${accepted.length !== 1 ? 's' : ''}`} />
-      <Kpi tone="green" glyph="↓" value={backtest ? money.format(backtest.outside_spend_avoided) : '—'}
+      <Kpi tone="green" glyph={kpiIcons.trend} value={backtest ? money.format(backtest.outside_spend_avoided) : '—'}
         label="Backtest spend avoided"
         sub={backtest ? `of ${money.format(backtest.outside_spend_actual)} · ${backtest.kept_pct}% (synthetic)` : 'Replaying last year…'} />
-      <Kpi tone="red" glyph="!" value={backtest ? backtest.leaks : '—'} label="Rental leaks"
+      <Kpi tone="red" glyph={kpiIcons.warn} value={backtest ? backtest.leaks : '—'} label="Rental leaks"
         sub={backtest ? `${backtest.changed_decisions} of ${backtest.requests} decisions would change` : 'Replaying last year…'} />
-      <Kpi tone="blue" glyph="%" value={metrics ? `${metrics.utilization_pct}%` : '—'} label="Fleet utilization"
+      <Kpi tone="blue" glyph={kpiIcons.gauge} value={metrics ? `${metrics.utilization_pct}%` : '—'} label="Fleet utilization"
         sub={metrics ? `${metrics.idle_days.toLocaleString()} idle days · ${metrics.fleet_assets} units · ${metrics.horizon_start} to ${metrics.horizon_finish}` : 'Loading fleet plan…'} />
     </div>
     {error && <p className="dashboard-error" role="alert">{error}</p>}

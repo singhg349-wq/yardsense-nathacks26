@@ -10,6 +10,8 @@ import { arcGeometry } from './mapGeometry'
 const TILES = basemap(import.meta.env.VITE_CARTO_KEY)
 const FIT_OPTIONS = { paddingTopLeft: [70, 72], paddingBottomRight: [80, 56] }
 const MARKER_RADIUS_PX = 22
+// Where each route's price pill sits along its arc, staggered so neighbouring pills don't stack.
+const PILL_ALONG = [0.5, 0.33, 0.67]
 
 // Hand-placed so these names don't sit on top of an arc in the seed layout. Default is 'right'.
 const LABEL_SIDES = { 'S-WGT': 'below', 'S-KNG': 'left', 'S-WMD': 'below' }
@@ -20,7 +22,7 @@ function siteIcon(site, idleCount, selected) {
   const name = siteLabel(site)
   const color = COMPANIES[site.company]?.color ?? '#4b647b'
   const aria = `${name}, ${site.kind}${idleCount ? `, ${idleCount} idle` : ''}`
-  const badge = idleCount ? `<span class="map-marker-badge">${idleCount} idle</span>` : ''
+  const badge = idleCount ? `<span class="map-marker-badge" title="${idleCount} idle" aria-hidden="true">${idleCount}</span>` : ''
   return L.divIcon({
     className: 'map-marker-anchor',
     iconSize: [0, 0],
@@ -72,7 +74,7 @@ function MoveArcs({ moves, sitesById, selectedMoveId, onSelectMove, onFocusKey }
       selected,
       color,
       positions: geometry.points.map(toLatLng),
-      midpoint: toLatLng(geometry.mid),
+      midpoint: toLatLng(geometry.points[Math.round(PILL_ALONG[index % PILL_ALONG.length] * (geometry.points.length - 1))] ?? geometry.mid),
       end: toLatLng(geometry.end),
       pill: pillIcon(move, selected),
       arrow: arrowIcon(geometry.angle, color, selected ? 1 : 0.5),

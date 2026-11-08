@@ -47,7 +47,7 @@ describe('MapCanvas', () => {
   it('shows amber idle badges only where units are idle', () => {
     const { container } = renderCanvas()
     expect([...container.querySelectorAll('.map-marker-badge')].map((badge) => badge.textContent).sort())
-      .toEqual(['1 idle', '1 idle', '2 idle'])
+      .toEqual(['1', '1', '2'])
   })
 
   it('rings the selected marker and reports it to screen readers', () => {

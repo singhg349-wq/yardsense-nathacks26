@@ -15,7 +15,21 @@ const payloadItem = (item) => ({ class: item.class, qty: Number(item.qty),
 const pillClass = { move_ours: 'move', rent_sister: 'sister', rent_outside: 'outside', buy: 'buy' }
 const shortNames = { move_ours: 'Move ours', rent_sister: 'Rent from sister', rent_outside: 'Rent outside', buy: 'Buy' }
 
-function Option({ option, best, maxCost, accepted, onAccept }) {
+const classLabels = { SCISSOR_19: '19 ft scissor lifts', TELEHANDLER: 'telehandlers', GEN_45KW: '45 kW generators' }
+
+// Friendlier wording for the "Only 0 idle ..." reason; other reasons pass through.
+function friendlyReason(reason, item) {
+  if (typeof reason !== 'string') return reason
+  const shown = reason.replace(/NB01\/NE01|NB01|NE01/g, 'Northgate')
+  if (!shown.startsWith('Only 0 idle')) return shown
+  const need = shown.match(/need (\d+)/)?.[1] ?? item?.qty
+  const noun = classLabels[item?.class] ?? shown.match(/^Only 0 idle (.+?) unit\(s\)/)?.[1]
+  if (!noun || !need) return shown
+  return `No idle ${noun} in the group (need ${need})`
+}
+
+function Option({ option: rawOption, item, best, maxCost, accepted, onAccept }) {
+  const option = { ...rawOption, reason: friendlyReason(rawOption.reason, item) }
   const kind = pillClass[option.option] ?? 'muted'
   const width = maxCost > 0 ? Math.max(3, (option.group_cost / maxCost) * 100) : 0
   return <article className={`option ${best ? 'option-first' : ''} ${!option.available ? 'option-unavailable' : ''}`}>
@@ -193,7 +207,7 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
             <h3>{item.qty} × {classes.find((entry) => entry.code === item.class)?.label ?? item.class}</h3>
             {top && <div className="kept"><span>Kept in group</span><strong className="num">{money.format(top.kept_in_group)}</strong></div>}</div>
           <div className="option-list">{item.options.map((option, rank) => <Option key={option.option}
-            option={option} best={rank === 0 && option.available} maxCost={maxCost} accepted={accepted.includes(index)}
+            option={option} item={item} best={rank === 0 && option.available} maxCost={maxCost} accepted={accepted.includes(index)}
             onAccept={() => accept(index, item, option)} />)}</div>
         </div>
       })}

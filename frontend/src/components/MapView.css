@@ -66,7 +66,7 @@
 .map-marker-site { border-radius: 50%; background: #fff; color: var(--navy-900); border: 3px solid var(--co, var(--navy-500)); }
 .map-marker.is-selected { box-shadow: 0 0 0 4px var(--navy-950), 0 0 0 7px var(--orange-500); }
 .map-marker:focus-visible, .map-pill:focus-visible { outline: 2px solid #fff; outline-offset: 7px; }
-.map-marker-badge { position: absolute; left: 8px; top: -30px; border-radius: 999px; padding: 2px 7px; background: var(--orange-500); color: #fff; font-family: var(--font-num); font-size: 11px; font-weight: 700; white-space: nowrap; pointer-events: none; }
+.map-marker-badge { position: absolute; left: 10px; top: -28px; z-index: 2; display: grid; place-items: center; min-width: 18px; height: 18px; box-sizing: border-box; border-radius: 999px; padding: 0 5px; background: var(--orange-500); color: #fff; box-shadow: 0 0 0 2px var(--navy-950); font-family: var(--font-num); font-size: 11px; font-weight: 700; line-height: 1; white-space: nowrap; pointer-events: none; }
 .map-marker-name { position: absolute; color: #d9e5ee; font-size: 12px; font-weight: 600; white-space: nowrap; text-shadow: 0 1px 2px var(--navy-950), 0 0 6px var(--navy-950); pointer-events: none; }
 .map-marker-name-right { left: 24px; top: -9px; }
 .map-marker-name-left { right: 24px; top: -9px; }

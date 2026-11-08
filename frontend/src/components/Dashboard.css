@@ -9,7 +9,9 @@
 .kpi-green { --kpi: var(--green-600); --kpi-bg: var(--green-100); }
 .kpi-red { --kpi: var(--red-600); --kpi-bg: var(--red-100); }
 .kpi-blue { --kpi: var(--blue-600); --kpi-bg: var(--blue-100); }
-.kpi-icon { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: var(--kpi-bg); color: var(--kpi); font: 800 18px var(--font-num); }
+.kpi-icon { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--kpi-bg); color: var(--kpi); }
+.kpi-icon svg { display: block; }
+.kpi-body small.kpi-hint { margin-top: 2px; font-style: italic; opacity: .85; }
 .kpi-body { display: flex; flex-direction: column; min-width: 0; }
 .kpi-body strong { font-size: 28px; line-height: 1.05; color: var(--navy-900); }
 .kpi-label { margin-top: 4px; font-size: 12px; font-weight: 700; color: var(--ink); }
