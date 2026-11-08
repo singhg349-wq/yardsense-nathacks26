@@ -9,43 +9,60 @@ const demoItems = [
 ]
 const money = new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 })
 const noShifts = []
-const names = {
-  move_ours: 'Move ours', rent_sister: 'Rent from Northgate Rentals',
-  rent_outside: 'Rent outside', buy: 'Buy through Northgate Rentals',
-}
 const payloadItem = (item) => ({ class: item.class, qty: Number(item.qty),
   start: item.start, finish: item.finish })
 
-function Option({ option, first, accepted, onAccept }) {
-  return <article className={`option ${first ? 'option-first' : ''} ${!option.available ? 'option-unavailable' : ''}`}>
-    <div className="option-main">
-      <div>
-        <div className="option-title">
-          <strong>{names[option.option] ?? option.option}</strong>
-          {first && <span className="recommendation-tag">Recommended</span>}
-          {!option.available && <span className="unavailable-tag">Unavailable</span>}
-        </div>
-        <p>{option.reason}</p>
-        {option.available && option.breakdown?.length > 0 && <details className="option-why">
-          <summary>Why this?</summary>
-          <ul>{option.breakdown.map((row) => <li key={row.label}>
-            <span>{row.label}</span><b>{money.format(row.amount)}</b>
-          </li>)}</ul>
-          <p>Group cost is what leaves Northgate Group. Project cost is what the project is charged.</p>
-        </details>}
+const pillClass = { move_ours: 'move', rent_sister: 'sister', rent_outside: 'outside', buy: 'buy' }
+const shortNames = { move_ours: 'Move ours', rent_sister: 'Rent from sister', rent_outside: 'Rent outside', buy: 'Buy' }
+
+function Option({ option, best, maxCost, accepted, onAccept }) {
+  const kind = pillClass[option.option] ?? 'muted'
+  const width = maxCost > 0 ? Math.max(3, (option.group_cost / maxCost) * 100) : 0
+  return <article className={`option ${best ? 'option-first' : ''} ${!option.available ? 'option-unavailable' : ''}`}>
+    <div className="option-row">
+      <div className="option-name">
+        <span className={`pill ${kind}`}>{shortNames[option.option] ?? option.option}</span>
+        {best && <span className="best-mark">&#9733; Best</span>}
       </div>
+      {option.available
+        ? <div className="bar-track"><div className={`bar-fill bar-${kind}`} style={{ width: `${width}%` }} /></div>
+        : <div className="bar-track bar-hatch"><span>{option.reason}</span></div>}
       {option.available && <div className="option-costs">
-        <div><span>Group cost</span><strong>{money.format(option.group_cost)}</strong></div>
-        <div><span>Project cost</span><strong>{money.format(option.project_cost)}</strong></div>
+        <strong className="num">{money.format(option.group_cost)}</strong>
+        <span className="num">project {money.format(option.project_cost)}</span>
       </div>}
     </div>
-    {first && option.available && <div className="option-action">
+    {option.available && <div className="option-detail">
+      <p>{option.reason}</p>
+      {option.breakdown?.length > 0 && <details className="option-why">
+        <summary>Why this?</summary>
+        <ul>{option.breakdown.map((row) => <li key={row.label}>
+          <span>{row.label}</span><b className="num">{money.format(row.amount)}</b>
+        </li>)}</ul>
+        <p>Group cost is what leaves Northgate Group. Project cost is what the project is charged.</p>
+      </details>}
+    </div>}
+    {best && <div className="option-action">
       <span>{money.format(option.kept_in_group)} kept in the group versus outside rental</span>
       <button type="button" onClick={onAccept} disabled={accepted}>
         {accepted ? 'Accepted' : 'Accept recommendation'}
       </button>
     </div>}
   </article>
+}
+
+function Summary({ items }) {
+  const picks = items.map((item) => item.options.find((option) => option.available)).filter(Boolean)
+  const sum = (key) => picks.reduce((total, option) => total + (option[key] ?? 0), 0)
+  const mix = picks.reduce((counts, option) => ({ ...counts, [option.option]: (counts[option.option] ?? 0) + 1 }), {})
+  return <div className="kpi-strip">
+    <div className="kpi kpi-hero"><span>Kept in group</span><strong className="num">{money.format(sum('kept_in_group'))}</strong></div>
+    <div className="kpi"><span>Group cost</span><strong className="num">{money.format(sum('group_cost'))}</strong></div>
+    <div className="kpi"><span>Project cost</span><strong className="num">{money.format(sum('project_cost'))}</strong></div>
+    <div className="kpi"><span>Option mix</span><div className="kpi-mix">
+      {Object.entries(mix).map(([key, count]) => <span key={key} className={`pill ${pillClass[key] ?? 'muted'}`}>{count} {shortNames[key] ?? key}</span>)}
+    </div></div>
+  </div>
 }
 
 export default function RequestScreen({ shifts = noShifts, onAccept, onResults }) {
@@ -160,13 +177,26 @@ export default function RequestScreen({ shifts = noShifts, onAccept, onResults }
         {currentResults && <span className="result-count">{currentResults.items.length} equipment need{currentResults.items.length !== 1 ? 's' : ''}</span>}
       </div>
       {!currentResults && <p className="results-empty">{pending ? 'Updating recommendations…' : 'Submit a request to see the best choice for the whole group.'}</p>}
-      {currentResults?.items.map((item, index) => <div className="result-group" key={`${item.class}-${index}`}>
-        <div className="result-group-heading"><span className="result-number">{String(index + 1).padStart(2, '0')}</span>
-          <h3>{item.qty} × {classes.find((entry) => entry.code === item.class)?.label ?? item.class}</h3></div>
-        <div className="option-list">{item.options.map((option, rank) => <Option key={option.option}
-          option={option} first={rank === 0 && option.available} accepted={accepted.includes(index)}
-          onAccept={() => accept(index, item, option)} />)}</div>
-      </div>)}
+      {currentResults && <Summary items={currentResults.items} />}
+      {currentResults && <div className="legend">
+        <span className="legend-item"><span className="legend-swatch" style={{ background: 'var(--opt-move)' }} />Move ours</span>
+        <span className="legend-item"><span className="legend-swatch" style={{ background: 'var(--opt-sister)' }} />Rent from sister</span>
+        <span className="legend-item"><span className="legend-swatch" style={{ background: 'var(--opt-outside)' }} />Rent outside</span>
+        <span className="legend-item"><span className="legend-swatch" style={{ background: 'var(--opt-buy)' }} />Buy</span>
+        <span className="legend-note">Bar length = group cost</span>
+      </div>}
+      {currentResults?.items.map((item, index) => {
+        const maxCost = Math.max(0, ...item.options.filter((option) => option.available).map((option) => option.group_cost))
+        const top = item.options.find((option) => option.available)
+        return <div className="result-group" key={`${item.class}-${index}`}>
+          <div className="result-group-heading"><span className="result-number">{String(index + 1).padStart(2, '0')}</span>
+            <h3>{item.qty} × {classes.find((entry) => entry.code === item.class)?.label ?? item.class}</h3>
+            {top && <div className="kept"><span>Kept in group</span><strong className="num">{money.format(top.kept_in_group)}</strong></div>}</div>
+          <div className="option-list">{item.options.map((option, rank) => <Option key={option.option}
+            option={option} best={rank === 0 && option.available} maxCost={maxCost} accepted={accepted.includes(index)}
+            onAccept={() => accept(index, item, option)} />)}</div>
+        </div>
+      })}
     </section>
   </div>
 }
