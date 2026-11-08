@@ -3,7 +3,7 @@
 Issues: #3 seed data, #5 cost model, #4 schema + connectors, #6 timeline, #7 pitch v1.
 #1 (lanes) is left alone. #2 (skeleton) belongs to Anant: **do not create** `backend/main.py`,
 `backend/app.py`, `frontend/package.json`, `frontend/vite.config.*`, `frontend/index.html`,
-`frontend/src/main.jsx`, `frontend/src/App.jsx`, `CLAUDE.md` or `DECISIONS.md`.
+`frontend/src/main.jsx`, `frontend/src/App.jsx`, `CONTRIBUTING.md` or `DECISIONS.md`.
 
 ## Ground rules (every issue)
 - Fictional **Northgate Group** only. No real company names or real numbers. All rates are
@@ -21,8 +21,7 @@ For each issue, in order:
 4. `git switch main && git pull && git merge --no-ff <branch>` (fold the branch into main)
 5. `git push origin main <branch>`
 If a pull or merge conflicts: stop, do not force anything, report back.
-Commit messages end with: `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`
-and the body says `Closes #N`.
+Commit message bodies say `Closes #N`.
 
 | Order | Issue | Branch |
 |---|---|---|

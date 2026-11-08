@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # The team develops natively on these two (see CLAUDE.md).
+        # The team develops natively on these two (see CONTRIBUTING.md).
         os: [windows-latest, macos-latest]
     defaults:
       run:
