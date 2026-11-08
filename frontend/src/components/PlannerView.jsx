@@ -62,6 +62,10 @@ export default function PlannerView({ shifts, onSetShift }) {
     return counts
   }, {})
 
+  const mixOptions = [['move_ours', 'Move ours', 'move'], ['rent_sister', 'Sister', 'sister'],
+    ['rent_outside', 'Outside', 'outside'], ['buy', 'Buy', 'buy']]
+  const mixTotal = mixOptions.reduce((sum, [key]) => sum + (optionCounts[key] ?? 0), 0)
+
   return <section className="planner-view">
     <div className="planner-heading">
       <div><div className="section-kicker">Forward plan · what-if</div><h1>Group timeline</h1>
@@ -72,15 +76,32 @@ export default function PlannerView({ shifts, onSetShift }) {
     </div>
     {error && <p className="planner-error" role="alert">{error}</p>}
     {plan && <>
-      <div className="planner-summary">
-        <div className="planner-summary-main">
-          <div className="section-kicker">Plan snapshot</div>
-          <strong>{money.format(plan.totals?.group_cost ?? 0)}</strong>
-          <span>group cost · {money.format(plan.totals?.kept_in_group ?? 0)} kept in group versus outside rental</span>
+      <div className="planner-cards">
+        <div className="planner-tile card planner-tile-cost">
+          <span className="planner-tile-label">Group cost</span>
+          <strong className="num">{money.format(plan.totals?.group_cost ?? 0)}</strong>
+          <small>what leaves the group for this plan</small>
         </div>
-        <div className="planner-summary-mix">
-          {[['move_ours', 'Move ours'], ['rent_sister', 'Sister'], ['rent_outside', 'Outside'], ['buy', 'Buy']]
-            .map(([key, label]) => <span key={key}>{label} <b>{optionCounts[key] ?? 0}</b></span>)}
+        <div className="planner-tile card planner-tile-kept">
+          <span className="planner-tile-label">Kept in group</span>
+          <strong className="num">{money.format(plan.totals?.kept_in_group ?? 0)}</strong>
+          <small>versus renting everything outside</small>
+        </div>
+        <div className="planner-tile card planner-tile-mix">
+          <span className="planner-tile-label">Option mix · {mixTotal} allocations</span>
+          <div className="planner-mixbar" role="img" aria-label="Option mix">
+            {mixOptions.map(([key, , cls]) => (optionCounts[key] ?? 0) > 0 &&
+              <i key={key} className={`tl-opt-${cls}`} style={{ flexGrow: optionCounts[key] }} />)}
+          </div>
+          <div className="planner-mixlist">
+            {mixOptions.map(([key, label, cls]) => <span key={key} className="legend-item">
+              <i className={`legend-swatch tl-opt-${cls}`} />{label} <b className="num">{optionCounts[key] ?? 0}</b></span>)}
+          </div>
+        </div>
+        <div className="planner-tile card">
+          <span className="planner-tile-label">Changed by what-if</span>
+          <strong className="num">{plan.changed.length}</strong>
+          <small>{shifts.length ? `${shifts.length} project${shifts.length !== 1 ? 's' : ''} shifted` : 'no project shifted'}</small>
         </div>
       </div>
       <div className="planner-date-controls">
@@ -99,7 +120,7 @@ export default function PlannerView({ shifts, onSetShift }) {
       </div>
       <div className={`planner-chart ${busy ? 'planner-chart-busy' : ''}`}>
         <Timeline projects={plan.projects} allocations={plan.allocations}
-          changedIds={changedIds} onShiftProject={shiftBy} />
+          changedIds={changedIds} onShiftProject={shiftBy} shifts={shifts} />
       </div>
     </>}
     {!plan && busy && <p className="planner-loading">Loading the group plan…</p>}
