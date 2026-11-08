@@ -98,7 +98,7 @@ function MovesTable({ moves, selectedMoveId, onSelect }) {
         </button>)}
       </div>
     </div>
-    <p className="map-footnote">Distances are straight-line × 1.3, an estimate of road distance. Truck cost = $150 base + $4.50/km per unit moved.</p>
+    <p className="map-footnote">Seed sites use saved <a href="https://project-osrm.org/">OSRM</a> driving distances; unknown routes use straight-line × 1.3. Truck cost = $150 base + $4.50/km per move. Road data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>.</p>
   </section>
 }
 
@@ -167,7 +167,7 @@ export default function MapView({ shifts, active = true }) {
           <Kpi primary label="Kept in group by moving" value={formatMoney(kpis.kept)} sub="vs renting the same units outside" />
           <Kpi label="Moves recommended" value={kpis.count} sub={`${kpis.soon} start within 30 days`} />
           <Kpi label="Idle units now" value={fleet.idle} sub="Across yards and sites" />
-          <Kpi label="Trucking cost" value={formatMoney(kpis.truck)} sub={`${Math.round(kpis.km)} km of moves, est.`} />
+          <Kpi label="Trucking cost" value={formatMoney(kpis.truck)} sub={`${Math.round(kpis.km)} km of recommended moves`} />
         </div>
         <FleetCard fleet={fleet} />
         <SitePanel site={site} fleet={fleet} moves={moves} selectedMoveId={selectedMove?.id}

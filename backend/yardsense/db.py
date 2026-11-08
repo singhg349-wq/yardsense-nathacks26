@@ -5,7 +5,7 @@ import sqlite3
 import threading
 from pathlib import Path
 
-from .config import SEED_DIR, load_rates
+from .config import SEED_DIR, load_rates, load_road_distances
 from .connectors import ProcoreConnector, SAPConnector
 
 SCHEMA = Path(__file__).with_name("schema.sql")
@@ -238,7 +238,8 @@ def load_world():
     projects = get_projects()
     for p in projects:
         p["planned_equipment"] = p["needs"]
-    return {"settings": settings, "classes": classes, "companies": _rows_of("companies"),
+    return {"settings": settings, "classes": classes, "road_distances": load_road_distances(),
+            "companies": _rows_of("companies"),
             "sites": get_sites(), "assets": get_assets(), "assignments": get_assignments(),
             "projects": projects}
 

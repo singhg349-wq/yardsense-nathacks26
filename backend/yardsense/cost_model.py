@@ -12,7 +12,7 @@ WEEK_DAYS = 7
 
 
 def road_km(lat1, lon1, lat2, lon2, road_factor):
-    """Straight-line (haversine) distance in km, times a road factor."""
+    """Fallback: straight-line (haversine) distance in km, times a road factor."""
     p1, p2 = math.radians(lat1), math.radians(lat2)
     dp = p2 - p1
     dl = math.radians(lon2 - lon1)
@@ -20,9 +20,25 @@ def road_km(lat1, lon1, lat2, lon2, road_factor):
     return 2 * 6371 * math.asin(math.sqrt(a)) * road_factor
 
 
+def move_km(unit, request, settings, road_distances):
+    """Directed OSRM distance for unchanged seed sites, or straight-line fallback."""
+    origin_id = unit.get("site_id")
+    dest_id = request.get("site_id")
+    if origin_id and origin_id == dest_id:
+        return 0.0
+    matrix = road_distances or {}
+    coordinates = matrix.get("coordinates", {})
+    if (coordinates.get(origin_id) == [unit["lat"], unit["lon"]]
+            and coordinates.get(dest_id) == list(request["dest"])):
+        km = matrix.get("distances_km", {}).get(origin_id, {}).get(dest_id)
+        if km is not None and math.isfinite(km) and km >= 0:
+            return km
+    return road_km(unit["lat"], unit["lon"], *request["dest"], settings["road_factor"])
+
+
 def transport_cost(km, s):
     """One truck move: base fee plus cost per km."""
-    return s["truck_base_fee"] + km * s["truck_cost_per_km"]
+    return 0.0 if km == 0 else s["truck_base_fee"] + km * s["truck_cost_per_km"]
 
 
 def rental_price(days, card):
@@ -67,16 +83,15 @@ def _unavailable(name, reason):
     return _option(name, False, 0, 0, reason, [])
 
 
-def _move_option(name, units, request, cls, s, days, who):
+def _move_option(name, units, request, cls, s, days, who, road_distances):
     """Shared math for move_ours and rent_sister (an idle unit is trucked over)."""
     qty = request["qty"]
     label = cls["label"]
     if len(units) < qty:
         return _unavailable(name, f"Only {len(units)} idle {label} unit(s) {who}; need {qty}.")
-    dest = request["dest"]
     chosen = []
     for u in units:
-        km = road_km(u["lat"], u["lon"], dest[0], dest[1], s["road_factor"])
+        km = move_km(u, request, s, road_distances)
         chosen.append((km, u))
     chosen.sort(key=lambda t: t[0])
     chosen = chosen[:qty]
@@ -84,9 +99,11 @@ def _move_option(name, units, request, cls, s, days, who):
     rent = qty * rental_price(days, cls["internal"])
     wear = qty * cls["wear_per_day"] * days
     first_km, first = chosen[0]
-    reason = f"{label} idle {first['where']}; {first_km:.0f} km move."
+    first_truck = transport_cost(first_km, s)
+    reason = (f"{label} idle {first['where']}; {first_km:.0f} km, ${first_truck:,.0f} truck."
+              if first_km else f"{label} idle {first['where']}; already on site, no truck move.")
     if qty > 1:
-        reason = f"{qty} x {label} idle {who}; nearest is {first_km:.0f} km away."
+        reason = f"{qty} x {label} idle {who}; nearest {first_km:.0f} km, ${trucking:,.0f} total truck."
     return _option(
         name, True, rent + trucking, trucking + wear, reason,
         [("Internal rental", rent), ("Transport", trucking)],
@@ -153,7 +170,8 @@ def _buy_option(request, cls, s, days, pipeline, idle_exists):
     return _option("buy", ok, internal, own, reason, breakdown, breakeven_month=breakeven)
 
 
-def price_options(request, cls_rates, settings, idle_owned, idle_sister, pipeline):
+def price_options(request, cls_rates, settings, idle_owned, idle_sister, pipeline,
+                  road_distances=None):
     """Return the 4 options (move_ours, rent_sister, rent_outside, buy) for a request.
 
     request: {class, qty, start, finish (dates), site_id, dest: (lat, lon)}
@@ -166,8 +184,10 @@ def price_options(request, cls_rates, settings, idle_owned, idle_sister, pipelin
     days = days_between(request["start"], request["finish"])
     qty = request["qty"]
 
-    move = _move_option("move_ours", idle_owned, request, cls, s, days, "owned by NB01/NE01")
-    sister = _move_option("rent_sister", idle_sister, request, cls, s, days, "at Northgate Rentals")
+    move = _move_option("move_ours", idle_owned, request, cls, s, days,
+                        "owned by NB01/NE01", road_distances)
+    sister = _move_option("rent_sister", idle_sister, request, cls, s, days,
+                          "at Northgate Rentals", road_distances)
 
     out_rent = qty * rental_price(days, cls["outside"])
     out_fee = qty * cls["outside_delivery_fee"]

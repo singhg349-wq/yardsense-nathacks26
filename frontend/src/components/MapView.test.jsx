@@ -41,7 +41,7 @@ describe('MapView', () => {
     expect(tiles[1]).toContain('2 start within 30 days')
     expect(tiles[2]).toContain('Idle units now4')
     expect(tiles[3]).toContain('Trucking cost$955')
-    expect(tiles[3]).toContain('46 km of moves, est.')
+    expect(tiles[3]).toContain('46 km of recommended moves')
   })
 
   it('shows fleet status counts', async () => {
@@ -126,9 +126,10 @@ describe('MapView', () => {
     expect(rows()).toHaveLength(4)
   })
 
-  it('notes that distances are estimates', async () => {
+  it('names the saved driving routes and fallback', async () => {
     await renderLoaded()
-    expect(screen.getByText(/straight-line × 1\.3/)).toBeTruthy()
+    expect(screen.getByText(/unknown routes use straight-line/).textContent)
+      .toContain('saved OSRM driving distances')
   })
 
   it('re-plans when shifts change and updates the moves', async () => {
