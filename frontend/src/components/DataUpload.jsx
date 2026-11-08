@@ -57,11 +57,17 @@ function UploadCard({ source, onUploaded, onViewRequests }) {
     }
   }
 
-  return <article className="upload-card">
-    <h2>{source.name}</h2>
+  const status = result ? ['sister', 'Imported'] : busy ? ['buy', 'Importing'] : error ? ['outside', 'Error'] : ['muted', 'Awaiting file']
+
+  return <article className="card upload-card">
+    <div className="upload-card-head">
+      <h2>{source.name}</h2>
+      <span className="upload-badge num">.CSV</span>
+      <span className={`pill ${status[0]}`}>{status[1]}</span>
+    </div>
     <p>Expected columns: {source.columns}.</p>
     <p className="upload-sample">Try the synthetic sample: <a href={`${API_URL}/samples/${source.sample}`} download>{source.id === 'sap' ? 'sap_assets.csv' : 'procore_schedule.csv'}</a></p>
-    <button className="upload-demo-button" type="button" onClick={loadSample} disabled={busy}>
+    <button className={`upload-demo-button${source.id === 'procore' ? ' upload-demo-primary' : ''}`} type="button" onClick={loadSample} disabled={busy}>
       {source.id === 'procore' ? 'Load slipped schedule demo' : 'Load sample asset register'}
     </button>
     <form onSubmit={submit}>
@@ -86,10 +92,9 @@ function Provenance({ data }) {
         <h2 id="provenance-title">Where these numbers come from</h2>
         <p>The demo is synthetic. Rates marked sourced come from public market listings; everything else is a labelled placeholder or a stated assumption.</p>
       </div>
-      <span className="provenance-badge">Synthetic demo data</span>
     </div>
     <div className="provenance-sources">
-      {data.sources.map((source) => <article className="provenance-card" key={source.id}>
+      {data.sources.map((source) => <article className="card provenance-card" key={source.id}>
         <div className="provenance-card-head"><h3>{source.name}</h3>
           <span className={`provenance-mode provenance-mode-${source.mode}`}>{source.mode}</span></div>
         <p>{source.shape}</p>
@@ -107,7 +112,7 @@ function Provenance({ data }) {
           <span>{row.field}</span>
           <span>{valueLabel(row.value)}</span>
           <span>{row.basis}</span>
-          <span><span className={`provenance-confidence provenance-confidence-${row.confidence}`}>{row.confidence}</span></span>
+          <span><span className={`pill provenance-confidence provenance-confidence-${row.confidence}`}>{row.confidence}</span></span>
           <span>{row.citation ? (row.source_url
             ? <a href={row.source_url} target="_blank" rel="noreferrer">{row.citation}</a>
             : row.citation) : '—'}</span>
@@ -136,6 +141,7 @@ export default function DataUpload({ onUploaded, onViewRequests }) {
   }, [])
 
   return <section className="upload-view">
+    <div className="upload-banner" role="note"><b>Synthetic demo data</b><span>Nothing here is a client record. Only rates marked sourced come from public listings.</span></div>
     <div className="section-kicker">Connected data</div>
     <h1>Upload equipment and schedule exports.</h1>
     <p>CSV imports update the local planning database. An upload can update known assets or projects and add new ones using existing company, site and equipment class codes.</p>
