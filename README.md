@@ -44,6 +44,18 @@ Install Python from [python.org](https://www.python.org/downloads/) (on Windows,
 - **APIs:** `/recommend`, `/plan`, `/dashboard`, `/backtest`, `/fleet-advisor`, `/sources`, `/mincost`, `/uploads/{sap|procore}`, `/assets/available` (GET and POST with shifts), `/assignments`.
 - **Storage:** SQLite seeded from `data/seed/`; reset with `python backend/scripts/reset_db.py`.
 
+## Screens
+
+| Requests | Timeline |
+|---|---|
+| ![Requests](docs/screenshots/requests.png) | ![Timeline](docs/screenshots/timeline.png) |
+| **Map** | **Dashboard** |
+| ![Map](docs/screenshots/map.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+| **Fleet advisor** | **Data & assumptions** |
+| ![Fleet advisor](docs/screenshots/fleet-advisor.png) | ![Data & assumptions](docs/screenshots/data-upload.png) |
+
+All screens use the fictional Northgate Group and synthetic data.
+
 ## Tests
 
 ```bash
