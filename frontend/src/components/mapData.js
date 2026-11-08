@@ -3,11 +3,14 @@
 // The API doesn't expose the demo date or company names, so they live here.
 export const DEMO_TODAY = '2026-11-16'
 export const COMPANIES = {
-  NB01: { name: 'Northgate Builders', color: '#2ad1a3' },
-  NR01: { name: 'Northgate Rentals', color: '#a78bfa' },
-  NE01: { name: 'Northgate Electric', color: '#6cb6ff' },
+  NB01: { name: 'Northgate Builders', color: '#24405a' },
+  NR01: { name: 'Northgate Rentals', color: '#1f8a5b' },
+  NE01: { name: 'Northgate Electric', color: '#2f6fb3' },
 }
-export const MOVE_COLORS = { move_ours: '#2ad1a3', rent_sister: '#a78bfa' }
+// Literals for Leaflet; these mirror the CSS tokens in index.css.
+export const TOKENS = { navy900: '#10202f', navy700: '#24405a', orange: '#f47a1f', blue: '#2f6fb3', green: '#1f8a5b', red: '#c8413b' }
+export const MOVE_COLORS = { move_ours: TOKENS.blue, rent_sister: TOKENS.green }
+export const SELECTED_ROUTE_COLOR = TOKENS.orange
 export const TYPE_LABELS = { move_ours: 'Move ours', rent_sister: 'From Rentals' }
 
 const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

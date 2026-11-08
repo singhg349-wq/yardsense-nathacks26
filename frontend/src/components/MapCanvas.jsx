@@ -3,7 +3,7 @@ import L from 'leaflet'
 import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvent } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import {
-  basemap, chipEdge, cityBounds, COMPANIES, escapeHtml, formatMoney, isCustomerSite, MOVE_COLORS, siteLabel,
+  basemap, chipEdge, cityBounds, COMPANIES, escapeHtml, formatMoney, isCustomerSite, MOVE_COLORS, SELECTED_ROUTE_COLOR, siteLabel,
 } from './mapData'
 import { arcGeometry } from './mapGeometry'
 
@@ -18,14 +18,14 @@ const SITE_ICON = '<svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="
 
 function siteIcon(site, idleCount, selected) {
   const name = siteLabel(site)
-  const color = COMPANIES[site.company]?.color ?? '#9fb2c1'
+  const color = COMPANIES[site.company]?.color ?? '#4b647b'
   const aria = `${name}, ${site.kind}${idleCount ? `, ${idleCount} idle` : ''}`
   const badge = idleCount ? `<span class="map-marker-badge">${idleCount} idle</span>` : ''
   return L.divIcon({
     className: 'map-marker-anchor',
     iconSize: [0, 0],
     html: `<button type="button" data-focus-key="site:${escapeHtml(site.id)}" aria-pressed="${selected}" aria-label="${escapeHtml(aria)}"
-      class="map-marker map-marker-${site.kind}${selected ? ' is-selected' : ''}" style="background:${color}">${site.kind === 'yard' ? YARD_ICON : SITE_ICON}</button>
+      class="map-marker map-marker-${site.kind}${selected ? ' is-selected' : ''}" style="--co:${color}">${site.kind === 'yard' ? YARD_ICON : SITE_ICON}</button>
       ${badge}<span class="map-marker-name map-marker-name-${LABEL_SIDES[site.id] ?? 'right'}">${escapeHtml(name)}</span>`,
   })
 }
@@ -66,7 +66,7 @@ function MoveArcs({ moves, sitesById, selectedMoveId, onSelectMove, onFocusKey }
     if (!geometry) return []
     const toLatLng = (point) => map.unproject(L.point(point.x, point.y), zoom)
     const selected = move.id === selectedMoveId
-    const color = MOVE_COLORS[move.type]
+    const color = selected ? SELECTED_ROUTE_COLOR : MOVE_COLORS[move.type]
     return [{
       move,
       selected,
@@ -201,11 +201,16 @@ export default function MapCanvas({
       {siteLabel(site)} · {rentedBySite[site.id] ?? 0} units rented out
     </button>)}
 
-    <div className="map-legend">
-      <div><span className="map-legend-line" style={{ background: MOVE_COLORS.move_ours }} />Move ours</div>
-      <div><span className="map-legend-line" style={{ background: MOVE_COLORS.rent_sister }} />From Northgate Rentals</div>
-      <div><span className="map-legend-dash" />Starts after 30 days</div>
-      <div><span className="map-legend-shape map-legend-yard" />Yard<span className="map-legend-shape map-legend-site" />Site</div>
+    <div className="map-legend legend" aria-label="Map legend">
+      <strong className="map-legend-title">Legend</strong>
+      <div className="legend-item"><span className="map-legend-shape map-legend-yard" />Yard</div>
+      <div className="legend-item"><span className="map-legend-shape map-legend-site" />Job site</div>
+      <div className="legend-item"><span className="map-legend-shape map-legend-idle">3</span>Idle units</div>
+      <div className="legend-item"><span className="map-legend-line" style={{ background: MOVE_COLORS.move_ours }} />Move ours</div>
+      <div className="legend-item"><span className="map-legend-line" style={{ background: MOVE_COLORS.rent_sister }} />From Northgate Rentals</div>
+      <div className="legend-item"><span className="map-legend-line" style={{ background: SELECTED_ROUTE_COLOR }} />Selected route</div>
+      <div className="legend-item"><span className="map-legend-dash" />Starts after 30 days</div>
+      <small className="map-legend-note">Idle counts follow the what-if shifts.</small>
     </div>
   </div>
 }
