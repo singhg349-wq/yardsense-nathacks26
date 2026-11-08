@@ -6,7 +6,7 @@
 
 ### 1. "Isn't this a textbook assignment problem?"
 
-The optimization is familiar; the product is not the solver. The hard part is the data model and the decision context: what is actually free, what the group pays versus what the project pays, how future demand changes a buy decision, and how to explain the answer to a project manager. We ship a greedy allocator that is easy to follow; the min-cost optimizer is an upgrade, and it only ships if it beats greedy on the group plan. A textbook assignment problem does not have a check-out log, a sister rental company, or a schedule that moves.
+The optimization is familiar; the product is not the solver. The hard part is the data model and the decision context: what is actually free, what the group pays versus what the project pays, how future demand changes a buy decision, and how to explain the answer to a project manager. We ship a greedy allocator that is easy to follow, and we built an exact PuLP/CBC static comparison: min-cost is 2.2% below greedy, but the live plan stays greedy because the exact model is a static snapshot. A textbook assignment problem does not have a check-out log, a sister rental company, or a schedule that moves.
 
 ### 2. "Procore already has equipment tracking. Why would anyone need this?"
 
