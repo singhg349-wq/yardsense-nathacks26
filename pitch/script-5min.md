@@ -1,64 +1,72 @@
 # YardSense — 5-minute spoken script
 
-**Pace:** ~140 words per minute. **Speakers:** lead + demo driver. **Rule:** say the fictional group name; never the real one.
+**Pace:** ~140 words per minute. **Spoken length:** 646 words ≈ 4:37, leaving ~20 s of slack for clicks. **Speakers:** lead + demo driver. **Rule:** say the fictional group name; never the real one.
+
+> **UI restyle (Sun Nov 8):** the app is being restyled today — navy + safety orange, cost bars on Requests, a legend on the Timeline. The demo click path stays the same. Lines marked **[re-check UI]** quote on-screen text; re-read them against the new UI after the redesign lands.
 
 ---
 
-## 0:00–1:00 — Story (lead)
+## 0:00–0:55 — Story (lead)
 
-It's Monday, 7:10 in the morning.
+Monday, 7:10 a.m.
 
-Priya, the superintendent on Riverside Clinic, needs two scissor lifts, a telehandler and a 45-kilowatt generator for ten weeks. She sends the request to Dana, the equipment coordinator at Northgate Builders.
+Priya, superintendent on Riverside Clinic, needs two scissor lifts, a telehandler and a 45-kilowatt generator for ten weeks. She asks Dana, the equipment coordinator at Northgate Builders.
 
-Dana's tools are an SAP asset register, a spreadsheet that is already out of date, and a phone. SAP knows what the group owns. It does not know where anything is, or whether it is free.
+Dana has an SAP asset register, an out-of-date spreadsheet and a phone. SAP knows what the group owns. It doesn't know where anything is, or whether it's free.
 
-Forty-five minutes later, Dana books everything from an outside rental company. That is not a mistake. That is what you do at 7:55 on a Monday with a site waiting.
+Forty-five minutes later, Dana books everything from an outside rental company. That's not a mistake. That's what you do at 7:55 on a Monday with a site waiting.
 
 At month-end, Riverside's equipment line is fourteen thousand dollars over budget.
 
-## 1:00–1:20 — Hidden facts + insight (lead)
+## 0:55–1:20 — Hidden facts + insight (lead)
 
-Here is what Dana could not see. The group's telehandler has been sitting idle at Westgate Tower since framing finished. Northgate Rentals, our own sister company, has two lifts parked in its yard. And four upcoming projects each plan to rent a generator.
+Here's what Dana couldn't see. The group's telehandler is idle at Westgate Tower. Northgate Rentals, our sister company, has lifts parked in its yard. And four upcoming projects each plan to rent a generator.
 
 Money left the group three times, and nobody did anything wrong.
 
-To one project, nine hundred dollars a week from our rental company and nine hundred and fifty from outside look about the same. To the group, the first is money staying in the family on a unit that was idle anyway. The second is nine hundred and fifty dollars gone.
+To the project, a scissor lift from our rental company at seven ninety-two for four weeks and from outside at nine hundred look about the same. To the group, the first is a unit that was idle anyway. The second is nine hundred dollars gone.
 
-The cheapest option for a project is not the cheapest option for the group. Nobody's job today is to look at the group number.
+The cheapest option for a project is not the cheapest option for the group.
 
 ## 1:20–3:40 — Live demo (demo driver)
 
-So here is Priya's request in YardSense. Three items, ten weeks, Riverside Clinic.
+Here's Priya's request in YardSense. Three items, ten weeks.
 
-For each item, the engine ranks four options by group cost: move ours, rent from our sister company, rent outside, or have the sister company buy it. Every option shows project cost next to group cost, a reason, and a "Why this?" breakdown.
+For each item, the engine ranks four options by group cost: move ours, rent from our sister company, rent outside, or have the sister company buy. Each shows project cost next to group cost, and a **"Why this?"** breakdown. **[re-check UI]**
 
-The scissor lifts come from Northgate Rentals. The telehandler is moved from Westgate. The generator is bought through Northgate Rentals, because four pipeline projects need one and it breaks even within six months.
+Scissor lifts: rent from Northgate Rentals. Telehandler: move ours from Westgate — eleven kilometres, a hundred ninety-eight dollars of trucking. Generator: buy through Northgate Rentals, because four pipeline projects need one and it breaks even in month five.
 
-I accept the recommendations. The kept-in-group counter rises.
+I accept all three. The **kept-in-group counter** rises. **[re-check UI]**
 
-Now the Timeline. This is the plan management sees: two lenses, a plan snapshot, and the option mix. I can drag Kingsway six weeks later as a what-if. The engine re-runs, and the generator flips from buy to rent outside. The banner shows five changes on the seed; the generator is the headline. The whole plan re-runs, not just one line. This is a what-if; it does not edit the Procore schedule. The real change is a revised schedule import, which we can also show.
+Now the Timeline. I drag Kingsway six weeks later as a what-if. The whole plan re-runs: **five recommendations change**, and the generator flips from buy to rent outside. **[re-check UI]** The drag doesn't edit the schedule; the real path is a revised schedule import, which we'll show.
 
-The Map shows the moves, the driving distances and the truck cost. The Dashboard shows accepted savings, idle days, and the synthetic backtest: one hundred thirty-seven thousand dollars of outside spend avoided out of two hundred seventy-five thousand, about fifty percent, with thirty-five rental leaks.
+The Map shows each move, its distance and its truck cost.
 
-The Fleet advisor tells the rental company what the next twelve months imply: add two boom lifts, add two heaters, retire a mini excavator and a plate compactor.
+The Dashboard shows the synthetic backtest: ninety-six past requests replayed, thirty-five rental leaks, one hundred thirty-seven thousand dollars of outside spend avoided out of two hundred seventy-five — fifty percent.
 
-## 3:40–4:15 — How it works + rigor (lead)
+The Fleet advisor tells the rental company what the next twelve months imply: add two sixty-foot boom lifts and two heaters; retire a mini excavator and a plate compactor.
 
-Under the hood, everything enters through a connector into one set of tables, and the engine reads only the tables.
+Last, Data upload: **Load slipped schedule demo**. **[re-check UI]** Same flip, through the real-data path.
 
-Availability comes from Dana's check-out log plus schedule inference: a unit frees when its project phase ends. The cost model computes project cost and group cost separately. Transport uses a saved OpenStreetMap driving-distance matrix, with a straight-line fallback. The allocator reserves physical units across overlapping dates. The backtest replays a year of synthetic decisions. We also solve the same snapshot exactly with PuLP: min-cost is two point two percent below greedy, so we keep the explainable plan and show the comparison. Every number has a source and a confidence label.
+## 3:40–4:10 — How it works (lead)
 
-## 4:15–4:45 — Competitors + business (lead)
+Every source enters through a connector into one set of tables; the engine reads only the tables.
 
-Tenna is a telematics tool: trackers, past usage. Procore Equipment looks at current usage, one company and one project at a time. HCSS and the rental ERPs run dispatch and billing. We are the group-level decision layer: all companies, future schedules, group cost. If the group already uses Procore, we sit on top.
+Availability comes from the check-out log plus the schedule: a unit frees when its phase ends. Project cost and group cost are computed separately. Transport uses a saved driving-distance matrix. The allocator reserves physical units across overlapping dates.
 
-The buyer is a group that owns its rental company. Turner launched one in January. The model is a per-group subscription or a paid pilot. We have not finalized pricing, and we have not run customer interviews.
+We also solve the same snapshot exactly. The optimal plan is two point two percent cheaper than ours, so the explainable plan is close. Every number carries a source and a confidence label, and fifty-nine backend and eighty-nine frontend tests pass.
 
-## 4:45–5:00 — Close (lead)
+## 4:10–4:40 — Competitors + business (lead)
 
-We built the engine, the demo and the tests. The data is synthetic and labelled; the engine is real. The next step is a sixty-day pilot on one group's real SAP and Procore export.
+Tenna needs trackers and looks at past usage. Procore Equipment looks at one company, one project at a time. HCSS and the rental ERPs run dispatch and billing. We're the group-level decision layer: all companies, future schedules, group cost. If the group uses Procore, we sit on top.
 
-The cheapest option for one project is not the cheapest for the group. We built the engine that looks at the group.
+The buyer is a group that owns its own rental company — Turner launched one in January. The model is a per-group subscription or a paid pilot. Pricing isn't final, and we haven't run customer interviews.
+
+## 4:40–5:00 — Close (lead)
+
+The data is synthetic and labelled; the engine is real. Next is a sixty-day pilot on one group's real SAP and Procore export.
+
+The cheapest option for one project isn't the cheapest for the group. We built the engine that looks at the group.
 
 Thank you.
 
@@ -74,4 +82,5 @@ Thank you.
 
 - **Before the talk:** `python backend/scripts/reset_db.py`, start backend and frontend, open Requests, remove browser bookmarks, zoom to 110%.
 - **During the demo:** one driver, one narrator. Do not debug live. If a screen errors, switch to the backup video.
+- **Running long:** cut the Data upload line (the Timeline flip already makes the point), then the Fleet advisor.
 - **After the demo:** return to the deck for the backtest and business slides.

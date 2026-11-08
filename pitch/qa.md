@@ -1,4 +1,4 @@
-# Judge Q&A — 10 hard questions, tight answers
+# Judge Q&A — 11 hard questions, tight answers
 
 **Rule:** answer in 20–40 seconds. Concede the true part, then give the specific defence.
 
@@ -6,7 +6,7 @@
 
 ### 1. "Isn't this a textbook assignment problem?"
 
-The optimization is familiar; the product is not the solver. The hard part is the data model and the decision context: what is actually free, what the group pays versus what the project pays, how future demand changes a buy decision, and how to explain the answer to a project manager. We ship a greedy allocator that is easy to follow, and we built an exact PuLP/CBC static comparison: min-cost is 2.2% below greedy, but the live plan stays greedy because the exact model is a static snapshot. A textbook assignment problem does not have a check-out log, a sister rental company, or a schedule that moves.
+The optimization is familiar; the product is not the solver. The hard part is the data model and the decision context: what is actually free, what the group pays versus what the project pays, how future demand changes a buy decision, and how to explain the answer to a project manager. We ship a greedy allocator that is easy to follow, and an exact PuLP/CBC solver grades it: greedy is within 2.2% (see Q11). A textbook assignment problem does not have a check-out log, a sister rental company, or a schedule that moves.
 
 ### 2. "Procore already has equipment tracking. Why would anyone need this?"
 
@@ -34,7 +34,7 @@ The buyer is the group, not the individual project. The value is outside rental 
 
 ### 8. "What's the hardest technical part?"
 
-Availability and allocation. A unit is only bookable if the check-out log and the schedule both say it is free for the whole date range. Physical units cannot be in two places at once, and transport changes the economics, so a per-request ranking is not enough. Then explainability: every recommendation has to show both cost lenses, a reason and a breakdown, or a project manager will not trust it. We chose a greedy allocator first because a working, explainable plan beats an optimal plan nobody can follow. We also solved the same static snapshot exactly with PuLP/CBC: min-cost is 2.2% below a like-for-like greedy, but we do not ship it as the live plan because it does not re-price relocation and it only allows buy when no unit is free.
+Availability and allocation. A unit is only bookable if the check-out log and the schedule both say it is free for the whole date range. Physical units cannot be in two places at once, and transport changes the economics, so a per-request ranking is not enough. Then explainability: every recommendation has to show both cost lenses, a reason and a breakdown, or a project manager will not trust it. We chose a greedy allocator first because a working, explainable plan beats an optimal plan nobody can follow. The exact solver then grades the plan: greedy is within 2.2% (see Q11).
 
 ### 9. "What about security, privacy and access to SAP?"
 
@@ -42,7 +42,11 @@ The connectors are read-only and least-privilege in the design: SAP asset regist
 
 ### 10. "What did you actually build, and what's next?"
 
-Real code: FastAPI routes, SQLite schema and imports, availability, the cost model, transport, the greedy allocator, the PuLP/CBC static min-cost comparison, the backtest, the fleet advisor, the React screens, the map, CSV upload, provenance, and 148 tests. Mocked or roadmap: live SAP/Procore/Textura APIs, real history, the Textura leak report, a dynamic optimizer, auth and mobile. Next is a 60-day read-only pilot on one group's real export, then the leak report and a dynamic optimizer if the pilot shows the gap.
+Real code: FastAPI routes, SQLite schema and imports, availability, the cost model, transport, the greedy allocator, the PuLP/CBC static min-cost comparison, the backtest, the fleet advisor, the React screens, the map, CSV upload, provenance, and 148 tests. Mocked or roadmap: live SAP/Procore/Textura APIs, real history, the Textura leak report, live re-solving, auth and mobile. Next is a 60-day read-only pilot on one group's real export, then the leak report and the live re-solve (Q11).
+
+### 11. "Your exact solver beats greedy. Why not just ship the optimal plan?"
+
+Today the exact solver grades our plan: greedy is within 2.2%. Next we run it live: when a request comes in or a schedule slips, it re-solves the open requests, locks what's already delivered, and charges a switching cost for any change, so it only recommends moving a machine when the saving beats the extra truck trip. The numbers: on the 16-request static snapshot, min-cost is $123,646 against greedy's $126,470, so $2,825 (2.2%) lower. We don't swap in the static solution because it does not re-price relocation and only allows buy when no unit is free; a live plan also has to respect machines already on trucks. The comparison is on the Dashboard.
 
 ---
 

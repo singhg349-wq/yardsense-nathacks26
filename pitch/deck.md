@@ -40,8 +40,8 @@ Speaker line: "Money left the group three times, and nobody did anything wrong."
 
 | | Project view | Group view |
 |---|---|---|
-| Rent from sister at $900/wk | A cost | Transport + wear; the unit was idle anyway |
-| Rent outside at $950/wk | A slightly higher cost | $950 leaves the group |
+| Rent from sister at $792 / 4 wk (88% of outside, assumption) | A cost | Transport + wear; the unit was idle anyway |
+| Rent outside at $900 / 4 wk (sourced scissor rate) | A slightly higher cost | $900 leaves the group |
 
 **The cheapest option for a project is not the cheapest option for the group. Nobody's job today is to look at the group number.**
 
@@ -65,7 +65,7 @@ Every option shows **project cost** next to **group cost**, a reason, and a "Why
 
 Cue the app. The demo path:
 
-1. Requests → Riverside Clinic → ranked options → "Why this?" → accept.
+1. Requests → Riverside Clinic → ranked options → "Why this?" → accept (scissor → rent from sister; telehandler → move ours, 11 km, $198 truck; generator → buy, break-even month 5).
 2. Timeline → plan snapshot → drag Kingsway six weeks as a what-if (five recommendations change; the generator is the headline).
 3. Map → recommended moves, distances, truck cost.
 4. Dashboard → accepted savings, idle days, backtest.
@@ -92,7 +92,7 @@ Rate card / roads ──┘                   ├─ availability
 - **Availability:** check-out log + schedule inference (a unit frees when its phase ends).
 - **Cost:** internal vs outside, transport, wear, buy break-even across the pipeline.
 - **Plan:** greedy allocator with physical-unit reservations; re-runs on a what-if or a schedule import.
-- **Exact check:** PuLP/CBC solves the same static snapshot; min-cost is 2.2% below greedy ($2,825). The live plan stays greedy because the exact model is static.
+- **Exact check:** PuLP/CBC solves the same static snapshot: min-cost $123,646 vs greedy $126,470, $2,825 (2.2%) lower. Today the solver grades the plan; next it re-solves live, locking delivered units and charging a switching cost for any change.
 - **Explainability:** every number has a breakdown; every data source has a confidence label.
 
 ---
@@ -151,7 +151,7 @@ If they use Procore Equipment: we are the group-level planning layer on top, not
 ## Slide 12 — Roadmap + team + close
 
 - **Next:** 60-day pilot on one group's real SAP/Procore export, read-only; compare recommendations to actual decisions.
-- **Then:** Textura leak report, a dynamic optimizer if the static gap justifies it, more data sources on the same tables.
+- **Then:** Textura leak report, live re-solving (locks delivered units, switching cost per change), more data sources on the same tables.
 - **Team:** five CS students; industry guidance from a construction professional (not a team member). We accept the interdisciplinary rubric hit.
 - **Close:** "The cheapest option for one project isn't the cheapest for the group. We built the engine that looks at the group."
 
@@ -161,7 +161,7 @@ If they use Procore Equipment: we are the group-level planning layer on top, not
 
 | Criterion | Where it shows |
 |---|---|
-| Technical Rigor | Two cost lenses, availability, transport matrix, greedy allocator, backtest, tests |
+| Technical Rigor | Two cost lenses, availability, transport matrix, greedy allocator graded by an exact solver (2.2%), backtest, 59 backend + 89 frontend tests |
 | Functionality | Six live screens, CSV upload, what-if flip, provenance |
 | Creativity | Project-vs-group insight, live schedule flip, fleet advisor |
 | Innovation | Group-level future demand, no hardware, SAP/Procore data |
