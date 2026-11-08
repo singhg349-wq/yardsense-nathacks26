@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { className } from './classNames'
+import { optionParts } from './optionParts'
 import './Timeline.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -16,7 +17,7 @@ const OPTION_KEYS = [
   ['move_ours', 'Move ours', 'move'], ['rent_sister', 'Sister rental', 'sister'],
   ['rent_outside', 'Outside rental', 'outside'], ['buy', 'Buy', 'buy'],
 ]
-const OPTION_CLASS = { move_ours: 'move', rent_sister: 'sister', rent_outside: 'outside', buy: 'buy' }
+const OPTION_CLASS = { move_ours: 'move', rent_sister: 'sister', rent_outside: 'outside', buy: 'buy', split: 'split' }
 
 // "2026-11-16" -> milliseconds (UTC, so time zones never shift the day)
 function toMs(iso) {
@@ -38,18 +39,39 @@ function needRows(project) {
 }
 
 // Allocator output (placeholder): [{project_id, label, start, finish}]
+// "1 move ours + 1 buy" for a split need, otherwise the option's own label.
+function choiceLabel(a) {
+  if (a.option !== 'split') return OPTION_LABELS[a.option]
+  return optionParts(a).map((part) => `${part.qty} ${OPTION_LABELS[part.option]}`).join(' + ')
+}
+
+// A split bar shows each source's colour in proportion to its units.
+function splitStyle(a) {
+  if (a.option !== 'split') return undefined
+  const parts = optionParts(a)
+  const total = parts.reduce((sum, part) => sum + part.qty, 0)
+  let at = 0
+  const stops = parts.map((part) => {
+    const from = at
+    at += (part.qty / total) * 100
+    return `var(--opt-${OPTION_CLASS[part.option]}) ${from}% ${at}%`
+  })
+  return { background: `linear-gradient(90deg, ${stops.join(', ')})` }
+}
+
 function allocationRows(project, allocations, changedIds) {
   return allocations
     .filter((a) => a.project_id === project.id)
     .map((a) => ({
       key: a.request_id,
       label: `${a.qty} × ${className(a.class)}`,
-      tag: OPTION_LABELS[a.option],
+      tag: choiceLabel(a),
       start: a.start,
       finish: a.finish,
       kind: 'allocated',
       option: a.option,
-      tip: `${a.qty} × ${className(a.class)} · ${OPTION_LABELS[a.option]} · group cost ${
+      style: splitStyle(a),
+      tip: `${a.qty} × ${className(a.class)} · ${choiceLabel(a)} · group cost ${
         a.group_cost == null ? 'n/a' : CURRENCY.format(a.group_cost)} · ${a.start} to ${a.finish}`,
       changed: changedIds.has(a.request_id),
     }))
@@ -198,7 +220,7 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
               <div className="tl-track">
                 {grid}
                 <div className={`tl-equip-bar tl-${row.kind} ${row.option ? `tl-opt-${OPTION_CLASS[row.option]}` : ''}`}
-                  style={barStyle(row.start, row.finish)} title={row.tip} />
+                  style={{ ...barStyle(row.start, row.finish), ...row.style }} title={row.tip} />
                 {todayLine}
               </div>
             </div>

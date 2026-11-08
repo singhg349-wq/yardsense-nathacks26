@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getBacktest, getMincost, postDashboard } from '../api'
+import { countSources } from './optionParts'
 import './Dashboard.css'
 
 const money = new Intl.NumberFormat('en-CA', {
@@ -98,10 +99,7 @@ export default function Dashboard({ shifts, accepted }) {
 
   const maxIdle = Math.max(1, ...(metrics?.idle_by_class ?? []).map((entry) => entry.idle_days))
   const maxOutside = Math.max(1, ...(backtest?.by_class ?? []).map((row) => row.outside_spend))
-  const acceptedMix = accepted.reduce((counts, entry) => {
-    counts[entry.option.option] = (counts[entry.option.option] ?? 0) + 1
-    return counts
-  }, {})
+  const acceptedMix = countSources(accepted.map((entry) => entry.option))
   const useAccepted = accepted.length > 0
   const mix = useAccepted ? acceptedMix : (backtest?.option_mix?.recommended ?? {})
   const mixSegments = Object.keys(optionNames).map((key) => ({

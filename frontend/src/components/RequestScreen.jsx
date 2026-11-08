@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getClasses, getProjects, recommend } from '../api'
+import { countSources } from './optionParts'
 import './RequestScreen.css'
 
 const demoItems = [
@@ -35,11 +36,19 @@ function Option({ option: rawOption, item, best, maxCost, accepted, onAccept }) 
   return <article className={`option ${best ? 'option-first' : ''} ${!option.available ? 'option-unavailable' : ''}`}>
     <div className="option-row">
       <div className="option-name">
-        <span className={`pill ${kind}`}>{shortNames[option.option] ?? option.option}</span>
+        {option.units?.length
+          ? <span className="split-parts" aria-label="Split">{option.units.map((part, index) => <span key={part.option}>
+            {index > 0 && <span className="split-plus">+</span>}
+            <span className={`pill ${pillClass[part.option] ?? 'muted'}`}>{part.qty} × {shortNames[part.option] ?? part.option}</span>
+          </span>)}</span>
+          : <span className={`pill ${kind}`}>{shortNames[option.option] ?? option.option}</span>}
         {best && <span className="best-mark">&#9733; Best</span>}
       </div>
       {option.available
-        ? <div className="bar-track"><div className={`bar-fill bar-${kind}`} style={{ width: `${width}%` }} /></div>
+        ? <div className="bar-track">{option.units?.length
+          ? <div className="bar-split" style={{ width: `${width}%` }}>{option.units.map((part) => <div key={part.option}
+            className={`bar-fill bar-${pillClass[part.option] ?? 'muted'}`} style={{ flexGrow: Math.max(part.group_cost, 1) }} />)}</div>
+          : <div className={`bar-fill bar-${kind}`} style={{ width: `${width}%` }} />}</div>
         : <div className="bar-track bar-hatch"><span>{option.reason}</span></div>}
       {option.available && <div className="option-costs">
         <strong className="num">{money.format(option.group_cost)}</strong>
@@ -68,7 +77,7 @@ function Option({ option: rawOption, item, best, maxCost, accepted, onAccept }) 
 function Summary({ items }) {
   const picks = items.map((item) => item.options.find((option) => option.available)).filter(Boolean)
   const sum = (key) => picks.reduce((total, option) => total + (option[key] ?? 0), 0)
-  const mix = picks.reduce((counts, option) => ({ ...counts, [option.option]: (counts[option.option] ?? 0) + 1 }), {})
+  const mix = countSources(picks)
   return <div className="kpi-strip">
     <div className="kpi kpi-hero"><span>Kept in group</span><strong className="num">{money.format(sum('kept_in_group'))}</strong></div>
     <div className="kpi"><span>Group cost</span><strong className="num">{money.format(sum('group_cost'))}</strong></div>
