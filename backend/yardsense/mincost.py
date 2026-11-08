@@ -105,7 +105,13 @@ def _overlap(first, second):
 
 def _greedy_static(requests, candidates, outside, buy):
     """Greedy under the same static model, for an apples-to-apples baseline."""
+    return _greedy_static_choices(requests, candidates, outside, buy)[0]
+
+
+def _greedy_static_choices(requests, candidates, outside, buy):
+    """Greedy result plus the chosen key (asset_id, "outside" or "buy") per request."""
     busy = {}  # unit_id -> list of assigned request rows
+    choices = {}
     total = 0.0
     mix = {"move_ours": 0, "rent_sister": 0, "rent_outside": 0, "buy": 0}
     for request in requests:
@@ -117,16 +123,18 @@ def _greedy_static(requests, candidates, outside, buy):
         options.append((outside[request["request_id"]], "outside", None))
         cost, kind, unit = min(options, key=lambda entry: entry[0])
         total += cost
+        choices[request["request_id"]] = unit["asset_id"] if kind == "unit" else kind
         if kind == "unit":
             busy.setdefault(unit["asset_id"], []).append(request)
             mix["rent_sister" if unit["company"] == OWNED_BY_RENTALS else "move_ours"] += 1
         else:
             mix["buy" if kind == "buy" else "rent_outside"] += 1
-    return {"group_cost": round(total, 2), "option_mix": mix, "requests": len(requests)}
+    return ({"group_cost": round(total, 2), "option_mix": mix, "requests": len(requests)},
+            choices)
 
 
-def compare(world):
-    """Solve the static assignment and compare it with the greedy baselines."""
+def _inputs(world):
+    """Requests, candidate units, outside and buy costs for the static model."""
     settings = world["settings"]
     road_distances = world.get("road_distances")
     requests = _requests(world)
@@ -137,8 +145,30 @@ def compare(world):
     for row in requests:
         buy[row["request_id"]] = (None if candidates[row["request_id"]]
                                   else _buy_cost(world, row, settings, road_distances))
+    return requests, candidates, outside, buy
 
+
+def solve(requests, candidates, outside, buy, fixed=None):
+    """Solve the static assignment; ``fixed`` pins request_id -> chosen key.
+
+    Returns (status, runtime_ms, choices) where choices maps request_id to an
+    asset_id, "outside" or "buy".
+    """
     started = time.perf_counter()
+    problem, use = _build_problem(requests, candidates, outside, buy)
+    for rid, key in (fixed or {}).items():
+        if (rid, key) in use:
+            problem += use[(rid, key)] == 1
+    problem.solve(pulp.PULP_CBC_CMD(msg=False, timeLimit=60))
+    runtime_ms = round((time.perf_counter() - started) * 1000, 1)
+    choices = {}
+    for (rid, key), variable in use.items():
+        if rid not in choices and variable.value() and variable.value() > 0.5:
+            choices[rid] = key
+    return pulp.LpStatus[problem.status], runtime_ms, choices
+
+
+def _build_problem(requests, candidates, outside, buy):
     problem = pulp.LpProblem("yardsense_static_assignment", pulp.LpMinimize)
     use = {}
     for request in requests:
@@ -171,28 +201,30 @@ def compare(world):
                 if _overlap(first, second):
                     problem += (use[(first["request_id"], unit_id)]
                                 + use[(second["request_id"], unit_id)] <= 1)
+    return problem, use
 
-    solver = pulp.PULP_CBC_CMD(msg=False, timeLimit=60)
-    problem.solve(solver)
-    runtime_ms = round((time.perf_counter() - started) * 1000, 1)
+
+def compare(world):
+    """Solve the static assignment and compare it with the greedy baselines."""
+    settings = world["settings"]
+    requests, candidates, outside, buy = _inputs(world)
+    status, runtime_ms, choices = solve(requests, candidates, outside, buy)
 
     mix = {"move_ours": 0, "rent_sister": 0, "rent_outside": 0, "buy": 0}
     total = 0.0
     for request in requests:
         rid = request["request_id"]
-        chosen = [(key, variable) for key, variable in use.items()
-                  if key[0] == rid and variable.value() and variable.value() > 0.5]
-        if not chosen:
+        key = choices.get(rid)
+        if key is None:
             continue
-        key = chosen[0][0]
-        if key[1] == "outside":
+        if key == "outside":
             total += outside[rid]
             mix["rent_outside"] += 1
-        elif key[1] == "buy":
+        elif key == "buy":
             total += buy[rid]
             mix["buy"] += 1
         else:
-            unit = next(unit for unit in candidates[rid] if unit["asset_id"] == key[1])
+            unit = next(unit for unit in candidates[rid] if unit["asset_id"] == key)
             total += unit["group_cost"]
             mix["rent_sister" if unit["company"] == OWNED_BY_RENTALS else "move_ours"] += 1
 
@@ -209,7 +241,7 @@ def compare(world):
     return {
         "as_of": settings["demo_today"],
         "requests": len(requests),
-        "status": pulp.LpStatus[problem.status],
+        "status": status,
         "runtime_ms": runtime_ms,
         "greedy_static": greedy_static,
         "mincost": {"group_cost": round(total, 2), "option_mix": mix,

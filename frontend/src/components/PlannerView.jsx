@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getPlan, postPlan } from '../api'
 import Timeline from './Timeline'
+import ReplanCard from './ReplanCard'
 import './PlannerView.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -124,5 +125,6 @@ export default function PlannerView({ shifts, onSetShift }) {
       </div>
     </>}
     {!plan && busy && <p className="planner-loading">Loading the group plan…</p>}
+    <ReplanCard shifts={shifts} />
   </section>
 }

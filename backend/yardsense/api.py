@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, model_validator
 
 from . import (allocator, availability, backtest, cost_model, db, fleet_advisor,
-               metrics, mincost, sources, uploads)
+               metrics, mincost, replan_suggestion, sources, uploads)
 from .config import REPO_ROOT
 
 router = APIRouter()
@@ -290,3 +290,18 @@ def get_sources():
 def get_mincost():
     """Exact static assignment versus the greedy baseline."""
     return mincost.compare(load_world())
+
+
+@router.get("/replan")
+def get_replan():
+    """Suggested re-plan of open requests, net of switching costs. Suggestion only."""
+    return replan_suggestion.suggest(load_world())
+
+
+@router.post("/replan")
+def post_replan(body: PlanRequest):
+    try:
+        world = allocator.shifted_world(load_world(), [shift.model_dump() for shift in body.shifts])
+    except ValueError as error:
+        raise HTTPException(404, str(error)) from error
+    return replan_suggestion.suggest(world)
