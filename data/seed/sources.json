@@ -45,11 +45,11 @@
       "id": "backtest",
       "name": "Backtest history",
       "system": "Generated for the demo",
-      "shape": "12 months of synthetic requests, decisions and availability flags",
+      "shape": "96 synthetic requests over 12 months: site, class, quantity, inclusive dates, the decision made and availability flags",
       "mode": "synthetic",
       "confidence": "synthetic",
       "citation": null,
-      "notes": "Deterministic generator (seed 42). It is a replay, not actual company performance."
+      "notes": "Deterministic generator (seeds 42 and 4242). Availability is drawn on its own random stream, independent of the decision made. Idle units are placed at the group and rental yards and trucked with the saved road-distance matrix. Buy is excluded and the current rate card is used. It is a replay, not actual company performance."
     },
     {
       "id": "sites",
@@ -149,7 +149,8 @@
     "Road distance uses saved driving distances; straight-line x 1.3 only when a route is missing; a truck move costs $150 plus $4.50/km.",
     "The internal rental rate is 88% of the outside rate. Research suggests about 75%, so this is an assumption.",
     "A purchase only counts if it breaks even within 6 months. Break-even compares depreciation plus carrying cost with outside rental avoided, not the cash purchase price.",
-    "The backtest history and its availability flags are synthetic. Buy is excluded from the replay.",
+    "The backtest history is synthetic. Assumption: about 1 in 5 outside rentals had a comparable idle group or sister unit, based on industry interviews and published fleet-utilization figures; this 20% rate is drawn independently of the decision that was made.",
+    "In the backtest, idle units sit at the group and rental yards and are trucked to the site at current truck rates. Buy is excluded because historical pipeline demand is unknown, costs use the current rate card, and ties keep the original decision.",
     "Equipment, projects, companies and sites are fictional Northgate Group data."
   ]
 }
