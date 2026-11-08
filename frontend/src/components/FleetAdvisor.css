@@ -38,6 +38,7 @@
 .fleet-meta span { color: var(--ink-faint); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
 .fleet-meta b { color: var(--navy-900); font-size: 18px; }
 .fleet-meta b.fleet-impact { color: var(--green-600); }
+.fleet-meta b.fleet-loss { color: var(--red-600); }
 .fleet-rules { margin-top: 18px; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--surface-2); color: var(--ink-muted); font-size: 12px; }
 .fleet-rules summary { color: var(--navy-900); cursor: pointer; font-weight: 800; }
 .fleet-rules ul { display: grid; gap: 6px; margin: 10px 0 0 18px; padding: 0; }
