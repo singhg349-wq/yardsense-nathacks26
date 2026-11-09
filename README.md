@@ -6,6 +6,8 @@ Equipment decisions in a group of companies are made project by project, by phon
 
 > All project code is written during natHacks 2026 (Nov 6–9). The demo uses a fictional company group (**Northgate Group**) and synthetic data.
 
+
+
 ## Repo layout
 
 ```
@@ -29,10 +31,10 @@ Install Python from [python.org](https://www.python.org/downloads/) (on Windows,
 | Name | Role |
 |---|---|
 | Gurshmeer Singh | Team lead, engine, integration |
-| Rakshit | Team |
-| Sreeman | Backend, engine, data |
-| Aarish | Team |
-| Anant | Frontend, map, infrastructure |
+| Rakshit Singh | Team |
+| Sreeman Reddy Gokula| Backend, engine, data |
+| Aarish Naiyer | Team |
+| Anant Gupta | Frontend, map, infrastructure |
 
 ## How it works
 
@@ -135,4 +137,6 @@ Open <http://localhost:5173>. The **Requests** tab loads Riverside Clinic's thre
 
 ## Credits
 
-Team: Gurshmeer, Rakshit, Sreeman, Aarish, Anant. Industry guidance from a construction professional (not a team member).
+**Team:** Gurshmeer Singh, Rakshit Singh, Sreeman Reddy Gokula, Aarish Naiyer, Anant Gupta.
+
+Industry guidance from a construction professional (not a team member). Map data © OpenStreetMap contributors; dark basemap © CARTO. Road distances precomputed with OSRM. The 19 ft scissor lift and telehandler 4-week rates come from public DOZR listings; other rates are labelled placeholders. Deck photos from Wikimedia Commons (CC0 / public domain). Market and audit sources are listed in the deck's Sources slide.
