@@ -91,7 +91,7 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 | Looks at | Live + past use | Project needs | Daily operations | Future demand |
 | Multi-company | Not shown | Not shown | Not shown | Whole group |
 | Optimizes for | Utilization | Job allocation | Operations | Group cost |
-- Public-web review of about 20 platforms, not hands-on testing. Closest: Rentel (2026), built for rental firms and dealers. With Procore, YardSense sits on top as the group-level planning layer.
+- Public-web review of about 20 platforms, not hands-on testing. Closest: Rentel (2026), built for rental firms and dealers. With Procore, we sit on top.
 
 **Speaker notes:** [0:15] Tenna is tracker-led. Procore plans equipment by project. HCSS and the rental ERPs run operations. In a public review of about twenty platforms, we found none that ranks all four options across legal entities from future schedules.  If asked: Rentel (2026) recommends buy, sell, move or rent, but for rental companies and dealers. Wynne RentalResult runs internal and external rentals in one process. Tenna, owned by Deere, markets buying, renting and reallocating decisions from utilization data. Procore forecasts project equipment needs. We have not tested them.
 
@@ -105,7 +105,7 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 - Alberta share of Canadian machinery rental and leasing revenue, 2024 (StatCan)
 - The structure exists / Turner's First Equipment Company (2026), JE Dunn's Blue Hat, McGough's Six Side Supply
 - Reachable market: about $7.9M a year / 440 ranked contractors at $18K, an upper bound since not all own a rental arm. We pilot in Alberta.
-- ARA coverage does not name a currency. Entry market is our arithmetic, not a forecast. Sources in the appendix.
+- ARA coverage does not name a currency. Reachable market is our arithmetic, not a forecast. Sources in the appendix.
 
 **Speaker notes:** [0:20] Turner, the largest US contractor, launched its own rental company in January 2026. JE Dunn and McGough run equipment companies too. ARA forecasts about 83 billion dollars of rental in the US and 6 billion in Canada this year. Alberta earns over a third of Canada's wider rental and leasing revenue, so we pilot here. 440 ranked contractors at the entry price is at most about eight million a year.  Caveats: ARA coverage does not state the currency. StatCan is a broader category that includes leasing. We have not counted how many of the 440 own a rental arm, and we found no survey that does.
 
