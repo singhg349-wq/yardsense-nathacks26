@@ -78,7 +78,7 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 
 - 2.1% / Exact PuLP/CBC solve below greedy on a 16-request snapshot. A method check, not a grade of the live plan.
 - -$3,750 / A year of one more generator: $10,050 rent avoided, $13,800 to own. So it rents.
-- 206 / Backend and frontend tests. Key numbers in this pitch are pinned by tests.
+- 211 / Backend and frontend tests. Key numbers in this pitch are pinned by tests.
 - SAP and Procore exports enter through connectors into one set of tables. The app labels each data source and rate by confidence.
 
 **Speaker notes:** [0:20] Two reasons to trust it. On a sixteen-request snapshot, an exact solver is two point one percent below a greedy pass under the same model. That checks the method; it doesn't grade the live plan. And the engine refuses bad buys: one more generator covers $10,050 of rent against $13,800 to own.  If asked: the generator result depends on placeholder owning costs. Maintenance and insurance would need to fall from $500 to about $188 a month to break even.
@@ -153,7 +153,7 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 
 ## Slide 15: Backup: real, synthetic and not built yet
 
-- Real code / FastAPI, SQLite, six React screens / Availability, cost model, allocator / Backtest, fleet advisor, CSV import / 206 tests
+- Real code / FastAPI, SQLite, six React screens / Availability, cost model, allocator / Backtest, fleet advisor, CSV import / 211 tests
 - Synthetic or assumed / Northgate Group and its projects / Backtest history and 1-in-5 idle rate / Most rates; two 4-week rates are sourced / Proposed price and pilot targets
 - Not built yet / Live SAP, Procore, Textura APIs / Textura leak report / Sign-in and multi-tenant / Customer interviews
 

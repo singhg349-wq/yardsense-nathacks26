@@ -66,6 +66,6 @@ The cheapest option for one project isn't the cheapest for the group. We built t
 
 ## Cues
 
-- **Before the talk:** `python backend/scripts/reset_db.py`, start backend and frontend, open Requests, hide bookmarks, zoom to 110%.
+- **Before the talk:** `python backend/scripts/reset_db.py`, start backend and frontend, click Requests (the app opens on Dashboard), hide bookmarks, zoom to 110%.
 - **During the demo:** one driver, one narrator. Do not debug live. If a screen errors, switch to the backup video.
 - **Running long:** cut the market detail on slide 10, then the exact-solver card on slide 8.

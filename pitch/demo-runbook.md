@@ -7,7 +7,7 @@
 1. `python backend/scripts/reset_db.py`
 2. Start backend: `cd backend; .\.venv\Scripts\Activate.ps1; uvicorn app.main:app --reload`
 3. Start frontend: `cd frontend; npm run dev`
-4. Open `http://localhost:5173`; zoom to 110%; hide bookmarks; close Discord/Slack/email.
+4. Open `http://localhost:5173` and click Requests (the app opens on Dashboard); zoom to 110%; hide bookmarks; close Discord/Slack/email.
 5. Run the click path once, then reset the DB again.
 6. Have `pitch/script-5min.md` open on a second screen and the backup video ready.
 

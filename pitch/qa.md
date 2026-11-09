@@ -42,7 +42,7 @@ The design reads SAP and Procore read-only, through their exports; the app write
 
 ### 10. "What did you actually build, and what's next?"
 
-Real code: FastAPI routes, SQLite schema and imports, availability, the cost model, transport, the greedy allocator, the PuLP/CBC static min-cost comparison, the backtest, the fleet advisor, the React screens, the map, CSV upload, provenance, and 206 tests (103 backend, 103 frontend). Mocked or roadmap: live SAP/Procore/Textura APIs, real history, the Textura leak report, live re-solving, auth and mobile. Next is a 60-day read-only pilot on one group's real export, then the leak report and the live re-solve (Q11).
+Real code: FastAPI routes, SQLite schema and imports, availability, the cost model, transport, the greedy allocator, the PuLP/CBC static min-cost comparison, the backtest, the fleet advisor, the React screens, the map, CSV upload, provenance, and 211 tests (106 backend, 105 frontend). Mocked or roadmap: live SAP/Procore/Textura APIs, real history, the Textura leak report, live re-solving, auth and mobile. Next is a 60-day read-only pilot on one group's real export, then the leak report and the live re-solve (Q11).
 
 ### 11. "Your exact solver beats greedy. Why not just ship the optimal plan?"
 
