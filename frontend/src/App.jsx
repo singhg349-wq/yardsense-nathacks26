@@ -8,7 +8,7 @@ import DataUpload from './components/DataUpload'
 import './App.css'
 
 function App() {
-  const [view, setView] = useState('request')
+  const [view, setView] = useState('dashboard')
   const [shiftMap, setShiftMap] = useState({})
   const [accepted, setAccepted] = useState([])
   const [dataVersion, setDataVersion] = useState(0)
@@ -34,10 +34,10 @@ function App() {
       <div className="brand-mark">Y</div>
       <div className="brand-copy"><strong>YardSense</strong><span>Northgate Group / Equipment desk · synthetic demo</span></div>
       <nav className="app-nav" aria-label="Main navigation">
+        <button type="button" className={view === 'dashboard' ? 'active' : ''} onClick={() => setView('dashboard')}>Dashboard</button>
         <button type="button" className={view === 'request' ? 'active' : ''} onClick={() => setView('request')}>Requests</button>
         <button type="button" className={view === 'timeline' ? 'active' : ''} onClick={() => setView('timeline')}>Timeline</button>
         <button type="button" className={view === 'map' ? 'active' : ''} onClick={() => setView('map')}>Map</button>
-        <button type="button" className={view === 'dashboard' ? 'active' : ''} onClick={() => setView('dashboard')}>Dashboard</button>
         <button type="button" className={view === 'fleet' ? 'active' : ''} onClick={() => setView('fleet')}>Fleet advisor</button>
         <button type="button" className={view === 'data' ? 'active' : ''} onClick={() => setView('data')}>Data upload</button>
       </nav>
