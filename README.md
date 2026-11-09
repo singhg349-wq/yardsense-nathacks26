@@ -59,7 +59,7 @@ All screens use the fictional Northgate Group and synthetic data.
 ## Tests
 
 ```bash
-cd backend && python -m pytest -q          # 102 tests
+cd backend && python -m pytest -q          # 103 tests
 cd frontend && npm test                    # 103 tests
 cd frontend && npm run lint && npm run build
 ```

@@ -30,13 +30,9 @@ Northgate Rentals, our own sister company, has two lifts parked in its yard.
 
 And four upcoming projects in Procore each plan to rent a generator. Four separate rentals, and nobody has added them up. When we do add them up, buying still loses money, and the engine says so.
 
-[slide: month-end. Riverside equipment line: $14k over budget]
+[slide: $23,208 leaving the "Northgate Group" box]
 
-At month-end, Riverside's equipment line is fourteen thousand dollars over budget. And in Textura, a drywall sub's change order bills forty-eight hundred dollars for lift rental, during the same weeks our lifts sat idle.
-
-[slide: three arrows leaving the "Northgate Group" box]
-
-Money left the group three times. And nobody did anything wrong.
+Twenty-three thousand dollars left the group for one request, while three of our own machines sat idle. And nobody did anything wrong.
 
 Here's why. To one project, a $900 week from our rental company and a $950 week from outside look the same. To the group, one is money staying in the family on a unit that was idle anyway. The other is $950 gone. The cheapest answer for a project isn't the cheapest answer for the group, and nobody's job is to look at the group.
 

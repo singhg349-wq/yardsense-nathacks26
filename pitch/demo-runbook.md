@@ -2,8 +2,6 @@
 
 **One driver, one narrator.** Do not debug live. If the app fails, switch to the backup video.
 
-> **UI restyle (Sun Nov 8):** the app is being restyled today (navy + safety orange, cost bars on Requests, a legend on the Timeline). The click path below stays the same. Steps marked **[re-check UI]** quote on-screen labels or banner text; re-run the path after the redesign and update the wording if a label changed.
-
 ## Pre-flight (15 minutes before)
 
 1. `python backend/scripts/reset_db.py`
@@ -17,15 +15,15 @@
 
 | Step | Screen | Click | Say |
 |---|---|---|---|
-| 1 | Requests | Wait for the three Riverside items and ranked options (new cost bars) **[re-check UI]** | "Three needs, four options each, ranked by what the whole group pays." |
-| 2 | Requests | Open **Why this?** on the telehandler; close it **[re-check UI: button label]** | "Internal rental plus transport. The project sees a charge; the group sees transport and wear." |
-| 3 | Requests | Accept the scissor, telehandler and generator recommendations **[re-check UI: counter name]** | "The kept-in-group counter rises with each accepted decision. The generator is rented outside: one more would lose $3,750 a year, so the engine refuses to buy." |
-| 4 | Timeline | Drag **Kingsway Lofts** six weeks right **[re-check UI: "Changed by what-if" tile shows 2, new legend]** | "This is a what-if. The engine re-runs; two recommendations change. Kingsway's scissor phase now starts first and takes the two idle Northgate Rentals lifts, so Riverside's and one of Capilano's go to outside rental." |
-| 5 | Map | Point at the telehandler move and the table | "Ten point six kilometres, one hundred ninety-eight dollars; the saved road matrix, no live routing." |
+| 1 | Requests | Wait for the three Riverside items and ranked options (new cost bars) | "Three needs, four options each, ranked by what the whole group pays." |
+| 2 | Requests | Open **Why this?** on the telehandler; close it | "Internal rental plus transport. The project sees a charge; the group sees transport and wear." |
+| 3 | Requests | Accept the scissor, telehandler and generator recommendations | "The kept-in-group counter rises with each accepted decision. The generator is rented outside: one more would lose $3,750 a year, so the engine refuses to buy." |
+| 4 | Timeline | Drag **Kingsway Lofts** six weeks right | "This is a what-if. The engine re-runs; two recommendations change. Kingsway's scissor phase now starts first and takes the two idle Northgate Rentals lifts, so Riverside's and one of Capilano's go to outside rental. The ones already accepted get flagged 'changed by what-if', so nothing changes silently." |
+| 5 | Map | Point at the telehandler move and the table | "Ten point six kilometres, one hundred ninety-eight dollars of trucking, from the saved road matrix." |
 | 6 | Dashboard | Point at accepted savings, idle days, backtest, optimizer | "A synthetic replay: ninety-six requests, fifteen leaks, forty-eight thousand avoided of two hundred eighty-six. The rates are our input: it shows the method, not a forecast. On a static snapshot of sixteen requests, the exact solver is 2.1% below greedy; that does not grade the live plan." |
-| 7 | Fleet advisor | Point at Retire 1 mini excavator; every other class is Hold **[re-check UI: card labels]** | "The rental arm sees what the next twelve months imply: retire one idle unit, add nothing. It agrees with the generator call." |
-| 8 | Data upload | Click **Load slipped schedule demo**; wait for "Imported 5 projects"; click **View requests** **[re-check UI: button + toast text]** | "Same change through the real-data path: Procore sent a revised schedule." |
-| 9 | Requests | Point at the Riverside scissor lifts: **Rent outside** **[re-check UI: option label]** | "No one edited the schedule by hand. The engine re-ran." |
+| 7 | Fleet advisor | Point at Retire 1 mini excavator; every other class is Hold | "The rental arm sees what the next twelve months imply: retire one idle unit, add nothing. It agrees with the generator call." |
+| 8 | Data upload | Click **Load slipped schedule demo**; wait for "Imported 5 projects"; click **View requests** | "Same change through the real-data path: Procore sent a revised schedule." |
+| 9 | Requests | Point at the Riverside scissor lifts: **Rent outside** | "No one edited the schedule by hand. The engine re-ran." |
 
 ## Timing
 

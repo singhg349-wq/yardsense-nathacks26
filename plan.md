@@ -120,6 +120,9 @@ Work is tracked as user-story issues on GitHub, with one milestone per gate. Lan
 | **Frontend + pitch owner** | Fleet advisor UI, "Why this?" view; owns the deck, video and written summary from Sun afternoon | #7 pitch v1 |
 
 ## Rubric map (80)
+
+> Superseded: the official rubric is 68 points and includes Feasibility & Continuation. See DECISIONS #29.
+
 | Criterion | Pts | Target | What earns it |
 |---|---|---|---|
 | Technical Rigor | 10 | 8 | Min-cost allocator (greedy fallback), road-distance transport cost, backtest that proves the engine against a baseline, two-lens cost model |
