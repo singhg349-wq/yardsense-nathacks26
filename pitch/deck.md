@@ -15,17 +15,17 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 - $23,208 / left the group for one request
 - Engine-priced output for the fictional Northgate Group; most rates are labelled placeholders
 
-**Speaker notes:** [0:20] Monday, 7:10 a.m. Priya needs two scissor lifts, a telehandler and a generator for ten weeks. Dana has an SAP register that doesn't say what's free, a stale spreadsheet and a phone. Forty-five minutes later it's all booked outside. Twenty-three thousand dollars leaves the group, and nobody did anything wrong.  Number: live engine, all-outside cost of Riverside's three demo needs ($5,198 + $15,420 + $2,590).
+**Speaker notes:** [0:20] Monday, 7:10 a.m. Northgate Group owns a general contractor and its own rental company. Priya, on one of its projects, needs two scissor lifts, a telehandler and a generator for ten weeks. Dana has an SAP register that doesn't say what's free, a stale spreadsheet and a phone. Forty-five minutes later it's all booked outside. Twenty-three thousand dollars leaves the group, and nobody did anything wrong.  Number: live engine, all-outside cost of Riverside's three demo needs ($5,198 + $15,420 + $2,590).
 
 ## Slide 3: Three idle machines sat unused while the money left
 
-- 1 telehandler / Idle at Westgate Tower since framing finished
+- 1 telehandler / Westgate framing is done, so the schedule shows it free
 - 2 scissor lifts / Parked in the Northgate Rentals yard
 - The trap: buy a generator / 4 projects each rent a 45 kW unit, yet one more would lose $3,750 a year
 - Contractors don't have an equipment shortage. They have a visibility problem.
-- Caltrans audit (2018): owned equipment was available for 9 of 32 rentals justified by breakdowns. Three districts, not a fleet-wide rate.
+- Caltrans audit (2018): of 32 breakdown-justified rentals in three districts, Caltrans equipment was available before or during the rental for 9.
 
-**Speaker notes:** [0:15] Here's what Dana couldn't see. A telehandler idle at Westgate. Two lifts in our own rental yard. And a trap: four projects each renting a generator, where buying one would actually lose $3,750 a year. Contractors don't have an equipment shortage. They have a visibility problem.  Footnote if asked: Caltrans audit, public agency, three districts, 32 rentals justified by broken-down units. Not a fleet-wide rate.
+**Speaker notes:** [0:15] Here's what Dana couldn't see. A telehandler Westgate's schedule says is finished with. Two lifts in our own rental yard. And a trap: four projects each renting a generator, where buying one would actually lose $3,750 a year. Contractors don't have an equipment shortage. They have a visibility problem.  Footnote if asked: Caltrans audit, public agency, three districts, 32 rentals justified by broken-down units. Not a fleet-wide rate.
 
 ## Slide 4: The same plan saves the project 11% and the group 66%
 
@@ -87,15 +87,15 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 
 |   | Tenna | Procore Equipment | HCSS / rental ERPs | YardSense |
 |---|---|---|---|---|
-| Starts from | Tracker hardware | OEM telematics | Dispatch, upkeep | Exports you have |
+| Starts from | Tracker hardware | Equipment records | Dispatch, upkeep | Exports you have |
 | Looks at | Live + past use | Project needs | Daily operations | Future demand |
 | Multi-company | Not shown | Not shown | Not shown | Whole group |
 | Optimizes for | Utilization | Job allocation | Operations | Group cost |
-- Public-web review of about 20 platforms, not hands-on testing. If a group already uses Procore, YardSense sits on top as the group-level planning layer.
+- Public-web review of about 20 platforms, not hands-on testing. Closest: Rentel (2026), built for rental firms and dealers. With Procore, YardSense sits on top as the group-level planning layer.
 
 **Speaker notes:** [0:15] Tenna is tracker-led. Procore plans equipment by project. HCSS and the rental ERPs run operations. In a public review of about twenty platforms, we found none that ranks all four options across legal entities from future schedules.  If asked: Rentel (2026) recommends buy, sell, move or rent, but for rental companies and dealers. Wynne RentalResult runs internal and external rentals in one process. Tenna, owned by Deere, markets buying, renting and reallocating decisions from utilization data. Procore forecasts project equipment needs. We have not tested them.
 
-## Slide 10: Contractors are building their own rental arms, starting with Turner
+## Slide 10: Large contractors already run their own equipment companies, most recently Turner
 
 - $83.5B
 - US equipment and tool rental, 2026 forecast (ARA)
@@ -104,10 +104,10 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 - 35.3%
 - Alberta share of Canadian machinery rental and leasing revenue, 2024 (StatCan)
 - The structure exists / Turner's First Equipment Company (2026), JE Dunn's Blue Hat, McGough's Six Side Supply
-- Entry market: about $7.9M a year / 440 ranked contractors (ENR Top 400, On-Site Top 40) at $18K. Not all own a rental arm.
+- Reachable market: about $7.9M a year / 440 ranked contractors at $18K, an upper bound since not all own a rental arm. We pilot in Alberta.
 - ARA coverage does not name a currency. Entry market is our arithmetic, not a forecast. Sources in the appendix.
 
-**Speaker notes:** [0:20] Turner, the largest US contractor, launched its own rental company in January 2026. JE Dunn and McGough have theirs. Rental is about a ninety-billion-dollar North American market, and Alberta is over a third of Canada's machinery rental revenue, so we start here. 440 ranked contractors at the entry price is about eight million a year.  Caveats: ARA coverage does not state the currency. StatCan is a broader category that includes leasing. We have not counted how many of the 440 own a rental arm, and we found no survey that does.
+**Speaker notes:** [0:20] Turner, the largest US contractor, launched its own rental company in January 2026. JE Dunn and McGough run equipment companies too. ARA forecasts about 83 billion dollars of rental in the US and 6 billion in Canada this year. Alberta earns over a third of Canada's wider rental and leasing revenue, so we pilot here. 440 ranked contractors at the entry price is at most about eight million a year.  Caveats: ARA coverage does not state the currency. StatCan is a broader category that includes leasing. We have not counted how many of the 440 own a rental arm, and we found no survey that does.
 
 ## Slide 11: A proposed $1,500 a month pays back 2.7x on the replay
 
@@ -115,17 +115,17 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 - vs
 - Group keeps / $48,112 / a year of outside spend avoided in the synthetic replay
 - 2.7x / payback
-- One Riverside-size request keeps $15,252 in the group: about 10 months of subscription
+- A large request like Riverside's keeps $15,252 in the group: about 10 months of subscription
 - Proposed price. Synthetic replay. No customer has validated either yet.
 
-**Speaker notes:** [0:15] We propose fifteen hundred dollars a month per group. Against the synthetic replay that's 2.7 times payback, and one Riverside-size request covers about ten months. No customer has validated this price; the pilot will.  PROPOSED PRICE: team to confirm.
+**Speaker notes:** [0:15] We propose fifteen hundred dollars a month per group. Against the synthetic replay that's 2.7 times payback, and one large request like Riverside's covers about ten months. No customer has validated this price; the pilot will.  PROPOSED PRICE: team to confirm.
 
 ## Slide 12: Nine months to a paid pilot on real data
 
 - Months 1-3: Prove the data / Map one real SAP and Procore export / Interview 5 coordinators / Add sign-in and audit log
 - Months 4-6: Shadow pilot / 60 days, read-only, one Edmonton GC group with a rental arm / Coordinator decides as usual
 - Months 7-9: Paid pilot / Measured savings replace the replay / Convert pilot 1, start pilot 2
-- Pilot passes if / 50+ real requests, 70%+ of recommendations accepted, measured savings at least 3x the fee
+- Pilot passes if / 50+ real requests, 70%+ of recommendations accepted, measured savings at least 2x the fee
 - $2,000 seed / Legal and pilot agreement $600, hosting $540, site visits $360, tools $200, reserve $300
 
 **Speaker notes:** [0:20] Three months to prove the data on a real export and interview coordinators. Then a sixty-day shadow pilot: read-only, the coordinator decides as usual, and we compare. Then a paid pilot with measured savings replacing our synthetic number.  PROPOSED TARGETS AND BUDGET: team to confirm.
@@ -161,6 +161,6 @@ Generated from `pitch/YardSense-Final-Draft.pptx`. 13 main slides plus 3 backup 
 
 ## Slide 16: Backup: sources
 
-- Turner: turnerconstruction.com/insights/turner-construction-company-launches-first-equipment-company / JE Dunn: bluehatrentals.com; centennial.jedunn.com/blog/from-the-warehouse-to-blue-hat-je-dunns-equipment-story / McGough: rentalresult.com/resources/treating-equipment-like-a-business / Rental forecast: ARA via Heavy Equipment Guide, Aug 25 2026: heavyequipmentguide.ca/article/44867 / Alberta: Statistics Canada, The Daily, Dec 2 2025: www150.statcan.gc.ca/n1/daily-quotidien/251202/dq251202d-eng.htm / Audit: Caltrans IOAI P3010-0636 (2018): ig.dot.ca.gov/publications/p3010-0636 / Contractor lists: enr.com/toplists/2026-Top-400-Contractors-1; on-sitemag.com/top-contractors / Rates: DOZR public listings for the 19 ft scissor lift and telehandler; other rates are labelled placeholders in the app / Engine numbers: YardSense repo tests: test_pitch_numbers.py, test_demo_numbers.py, test_backtest.py
+- Turner: turnerconstruction.com/insights/turner-construction-company-launches-first-equipment-company / JE Dunn: bluehatrentals.com; centennial.jedunn.com/blog/from-the-warehouse-to-blue-hat-je-dunns-equipment-story / McGough: rentalresult.com/resources/treating-equipment-like-a-business / Rental forecast: ARA via Heavy Equipment Guide, Aug 25 2026: heavyequipmentguide.ca/article/44867 / Alberta: Statistics Canada, The Daily, Dec 2 2025: www150.statcan.gc.ca/n1/daily-quotidien/251202/dq251202d-eng.htm / Audit: Caltrans IOAI P3010-0636 (2018): ig.dot.ca.gov/-/media/ig-media/documents/performance/2018/p3010-0636.pdf / Contractor lists: enr.com/toplists/2026-Top-400-Contractors-1; on-sitemag.com/top-contractors / Rates: DOZR public listings for the 19 ft scissor lift and telehandler; other rates are labelled placeholders in the app / Engine numbers: YardSense repo tests: test_pitch_numbers.py, test_demo_numbers.py, test_backtest.py
 
 **Speaker notes:** Backup slide: sources.

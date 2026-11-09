@@ -1,6 +1,6 @@
 # YardSense: 5-minute spoken script
 
-**Spoken length outside the demo:** 473 words at about 140 words a minute, plus 1:20 for the demo slide. **Rule:** say the fictional group name; never the real one.
+**Spoken length outside the demo:** 509 words at about 140 words a minute, plus 1:20 for the demo slide. **Rule:** say the fictional group name; never the real one.
 
 ## Slide 1 (0:05): YardSense
 
@@ -8,11 +8,11 @@ Construction groups rent machines they already own. We built YardSense to stop t
 
 ## Slide 2 (0:20): One routine request sent $23,208 outside the group
 
-Monday, 7:10 a.m. Priya needs two scissor lifts, a telehandler and a generator for ten weeks. Dana has an SAP register that doesn't say what's free, a stale spreadsheet and a phone. Forty-five minutes later it's all booked outside. Twenty-three thousand dollars leaves the group, and nobody did anything wrong.
+Monday, 7:10 a.m. Northgate Group owns a general contractor and its own rental company. Priya, on one of its projects, needs two scissor lifts, a telehandler and a generator for ten weeks. Dana has an SAP register that doesn't say what's free, a stale spreadsheet and a phone. Forty-five minutes later it's all booked outside. Twenty-three thousand dollars leaves the group, and nobody did anything wrong.
 
 ## Slide 3 (0:15): Three idle machines sat unused while the money left
 
-Here's what Dana couldn't see. A telehandler idle at Westgate. Two lifts in our own rental yard. And a trap: four projects each renting a generator, where buying one would actually lose $3,750 a year. Contractors don't have an equipment shortage. They have a visibility problem.
+Here's what Dana couldn't see. A telehandler Westgate's schedule says is finished with. Two lifts in our own rental yard. And a trap: four projects each renting a generator, where buying one would actually lose $3,750 a year. Contractors don't have an equipment shortage. They have a visibility problem.
 
 ## Slide 4 (0:20): The same plan saves the project 11% and the group 66%
 
@@ -42,13 +42,13 @@ Two reasons to trust it. On a sixteen-request snapshot, an exact solver is two p
 
 Tenna is tracker-led. Procore plans equipment by project. HCSS and the rental ERPs run operations. In a public review of about twenty platforms, we found none that ranks all four options across legal entities from future schedules.
 
-## Slide 10 (0:20): Contractors are building their own rental arms, starting with Turner
+## Slide 10 (0:20): Large contractors already run their own equipment companies, most recently Turner
 
-Turner, the largest US contractor, launched its own rental company in January 2026. JE Dunn and McGough have theirs. Rental is about a ninety-billion-dollar North American market, and Alberta is over a third of Canada's machinery rental revenue, so we start here. 440 ranked contractors at the entry price is about eight million a year.
+Turner, the largest US contractor, launched its own rental company in January 2026. JE Dunn and McGough run equipment companies too. ARA forecasts about 83 billion dollars of rental in the US and 6 billion in Canada this year. Alberta earns over a third of Canada's wider rental and leasing revenue, so we pilot here. 440 ranked contractors at the entry price is at most about eight million a year.
 
 ## Slide 11 (0:15): A proposed $1,500 a month pays back 2.7x on the replay
 
-We propose fifteen hundred dollars a month per group. Against the synthetic replay that's 2.7 times payback, and one Riverside-size request covers about ten months. No customer has validated this price; the pilot will.
+We propose fifteen hundred dollars a month per group. Against the synthetic replay that's 2.7 times payback, and one large request like Riverside's covers about ten months. No customer has validated this price; the pilot will.
 
 ## Slide 12 (0:20): Nine months to a paid pilot on real data
 

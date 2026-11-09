@@ -69,3 +69,11 @@ Not yet. Accept records the recommendation; it does not reserve the machine. Aft
 ## Bonus: "Why is the team all CS?"
 
 We accept the rubric hit. The industry helper gave us the workflow and the price ranges, and we labelled every inference. The pilot is how we close the domain gap: the coordinator's actual decisions become the ground truth.
+
+### 15. "Alberta's $6.4B is bigger than Canada's $6.3B?"
+
+Different categories. Statistics Canada covers all commercial and industrial machinery rental and leasing. ARA covers construction equipment and general tool rental. We never add or compare them directly.
+
+### 16. "Who keeps the check-out log? Is that a tracker with a clipboard?"
+
+A coordinator keeps it in the app, and schedules fill the gaps. It needs discipline, so where the log and schedule disagree a person confirms. The pilot measures how often that happens.
