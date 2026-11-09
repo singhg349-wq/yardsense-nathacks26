@@ -35,6 +35,9 @@ jobs:
           cache-dependency-path: backend/requirements.txt
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Install CBC solver
+        if: runner.os == 'macOS'
+        run: brew install cbc
       - name: Check the API entry point imports
         run: python -c "from app.main import app"
       - name: Run tests

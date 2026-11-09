@@ -9,7 +9,7 @@ import { acceptKey } from './acceptKey'
 import './App.css'
 
 function App() {
-  const [view, setView] = useState('request')
+  const [view, setView] = useState('dashboard')
   const [shiftMap, setShiftMap] = useState({})
   const [accepted, setAccepted] = useState([])
   const [dataVersion, setDataVersion] = useState(0)
@@ -17,6 +17,7 @@ function App() {
     .map(([project_id, days]) => ({ project_id, days })), [shiftMap])
   const setShift = useCallback((projectId, days) => {
     setShiftMap((current) => ({ ...current, [projectId]: days }))
+    setAccepted([])
   }, [])
   const acceptRecommendation = useCallback((entry) => {
     const { project_id, request } = entry
@@ -51,10 +52,10 @@ function App() {
       <div className="brand-mark">Y</div>
       <div className="brand-copy"><strong>YardSense</strong><span>Northgate Group / Equipment desk · synthetic demo</span></div>
       <nav className="app-nav" aria-label="Main navigation">
+        <button type="button" className={view === 'dashboard' ? 'active' : ''} aria-current={view === 'dashboard' ? 'page' : undefined} onClick={() => setView('dashboard')}>Dashboard</button>
         <button type="button" className={view === 'request' ? 'active' : ''} aria-current={view === 'request' ? 'page' : undefined} onClick={() => setView('request')}>Requests</button>
         <button type="button" className={view === 'timeline' ? 'active' : ''} aria-current={view === 'timeline' ? 'page' : undefined} onClick={() => setView('timeline')}>Timeline</button>
         <button type="button" className={view === 'map' ? 'active' : ''} aria-current={view === 'map' ? 'page' : undefined} onClick={() => setView('map')}>Map</button>
-        <button type="button" className={view === 'dashboard' ? 'active' : ''} aria-current={view === 'dashboard' ? 'page' : undefined} onClick={() => setView('dashboard')}>Dashboard</button>
         <button type="button" className={view === 'fleet' ? 'active' : ''} aria-current={view === 'fleet' ? 'page' : undefined} onClick={() => setView('fleet')}>Fleet advisor</button>
         <button type="button" className={view === 'data' ? 'active' : ''} aria-current={view === 'data' ? 'page' : undefined} onClick={() => setView('data')}>Data upload</button>
       </nav>

@@ -1,5 +1,7 @@
 """Availability and check-out/in behavior through the running app."""
 
+from concurrent.futures import ThreadPoolExecutor
+
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -84,3 +86,36 @@ def test_past_project_phase_does_not_release_a_new_checkout():
         "site_id": "S-WGT", "checked_out": "2026-11-23"})
     assert response.status_code == 201
     assert "100017" not in available(client, "2026-11-24", "2026-11-24")
+
+
+def test_checkout_before_a_future_booking_cannot_overlap_it():
+    client = TestClient(app)
+    booking = {"asset_id": "100004", "site_id": "S-EX1"}
+    assert client.post("/assignments", json={**booking,
+                                               "checked_out": "2027-12-01"}).status_code == 201
+    earlier = client.post("/assignments", json={**booking, "checked_out": "2027-11-01"})
+    assert earlier.status_code == 409
+    assert len([entry for entry in client.get("/assignments").json()
+                if entry["asset_id"] == "100004" and
+                entry["checked_out"] in {"2027-11-01", "2027-12-01"}]) == 1
+
+
+def test_project_checkout_can_be_followed_after_its_scheduled_need():
+    client = TestClient(app)
+    first = client.post("/assignments", json={"asset_id": "100004", "project_id": "PRJ-RIV",
+                                                  "site_id": "S-RIV", "checked_out": "2026-11-23"})
+    assert first.status_code == 201
+    later = client.post("/assignments", json={"asset_id": "100004", "site_id": "S-EX1",
+                                                  "checked_out": "2027-02-01"})
+    assert later.status_code == 201
+
+
+def test_simultaneous_checkouts_reserve_one_unit_once():
+    booking = {"asset_id": "100004", "site_id": "S-EX1", "checked_out": "2027-11-01"}
+
+    def checkout(_):
+        return TestClient(app).post("/assignments", json=booking).status_code
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        statuses = sorted(pool.map(checkout, range(2)))
+    assert statuses == [201, 409]

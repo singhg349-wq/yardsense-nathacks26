@@ -112,7 +112,7 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
     if (drag.current?.projectId === projectId) {
       const raw = event.clientX - drag.current.x
       const snapped = snapWeeks(raw / drag.current.width * span / DAY_MS) * DAY_MS / span * drag.current.width
-      setPreview({ projectId, pixels: snapped })
+      setPreview({ projectId, pixels: snapped, width: drag.current.width })
     }
   }
 
@@ -145,6 +145,11 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
   const grid = months.map((m) => <i key={m.key} className="tl-grid" style={{ left: `${m.left}%` }} />)
   const shiftDays = (id) => shifts.find((shift) => shift.project_id === id)?.days ?? 0
   const weeks = (days) => `${days > 0 ? '+' : '-'}${Math.round(Math.abs(days) / 7)} wk`
+  const live = (days) => (Math.abs(days) < 7 ? `${days > 0 ? '+' : '-'}${Math.abs(days)} d` : weeks(days))
+  const previewDays = (id) => {
+    if (preview?.projectId !== id) return 0
+    return Math.round(preview.pixels / preview.width * span / DAY_MS)
+  }
 
   return (
     <div className="tl">
@@ -212,8 +217,14 @@ export default function Timeline({ projects, allocations = [], changedIds = new 
                     title={`${phase.task_name}: ${phase.start} to ${phase.finish}`}
                   />
                 ))}
-                {shiftDays(project.id) !== 0 && <span className="tl-badge">{weeks(shiftDays(project.id))}</span>}
+                {preview?.projectId !== project.id && shiftDays(project.id) !== 0
+                  && <span className="tl-badge">{weeks(shiftDays(project.id))}</span>}
               </div>
+              {preview?.projectId === project.id && previewDays(project.id) !== 0 && (
+                <span className="tl-badge tl-badge-live" style={{
+                  left: `calc(${pct(project.start_date) + widthPct(project.start_date, project.completion_date) / 2}% + ${preview.pixels}px)` }}>
+                  {live(previewDays(project.id))}</span>
+              )}
               {todayLine}
             </div>
           </div>
