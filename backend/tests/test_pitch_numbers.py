@@ -91,3 +91,19 @@ def test_replan_suggestion_numbers(client):
     assert data["switching_cost"] == cents(354.26)
     assert data["net_saving"] == cents(2470.39)
     assert data["recommend"] is True
+
+
+def test_riverside_outside_vs_recommended_totals(client):
+    """The deck's headline: three Riverside needs, booked outside vs the engine's plan."""
+    window = {"start": "2026-11-23", "finish": "2027-01-31"}
+    items = [{"class": "SCISSOR_19", "qty": 2, **window},
+             {"class": "TELEHANDLER", "qty": 1, **window},
+             {"class": "GEN_45KW", "qty": 1, **window}]
+    rows = client.post("/recommend", json={"project_id": "PRJ-RIV", "items": items}).json()["items"]
+    picks = [next(o for o in row["options"] if o["available"]) for row in rows]
+    outside = [next(o for o in row["options"] if o["option"] == "rent_outside") for row in rows]
+
+    assert sum(o["group_cost"] for o in outside) == cents(23208.00)
+    assert sum(o["project_cost"] for o in picks) == cents(20770.25)
+    assert sum(o["group_cost"] for o in picks) == cents(7956.25)
+    assert sum(o["kept_in_group"] for o in picks) == cents(15251.75)
