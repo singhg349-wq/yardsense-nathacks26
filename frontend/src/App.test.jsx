@@ -23,9 +23,14 @@ vi.mock('./components/MapView', () => ({
 const tabs = () => screen.getAllByRole('button').filter((button) => button.closest('nav'))
 
 describe('App navigation', () => {
-  it('orders the tabs Requests, Timeline, Map, Dashboard, Fleet advisor, Data upload', () => {
+  it('orders the tabs Dashboard, Requests, Timeline, Map, Fleet advisor, Data upload', () => {
     render(<App />)
-    expect(tabs().map((tab) => tab.textContent)).toEqual(['Requests', 'Timeline', 'Map', 'Dashboard', 'Fleet advisor', 'Data upload'])
+    expect(tabs().map((tab) => tab.textContent)).toEqual(['Dashboard', 'Requests', 'Timeline', 'Map', 'Fleet advisor', 'Data upload'])
+  })
+
+  it('opens on the Dashboard', () => {
+    render(<App />)
+    expect(screen.getByRole('button', { name: 'Dashboard' }).className).toBe('active')
   })
 
   it('tells the map when its tab is open', () => {
