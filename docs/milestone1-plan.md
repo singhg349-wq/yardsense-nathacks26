@@ -83,7 +83,7 @@ Files:
   the next 12 months.
 - With these numbers, the #5 buy break-even month is **≤ 6** (aim for 5). If one of the
   other generator projects slips 6 weeks, it becomes **> 6** → the recommendation flips
-  to rent outside. Tune the dates/rates until this holds.
+  to rent outside. Tune the dates/rates until this holds. (superseded: see DECISIONS #28; the 6-month limit is gone and the generator is rented outside from the start.)
 
 ## #5 Cost model (`backend/yardsense/`)
 Files: `__init__.py`, `config.py`, `cost_model.py`, `api.py`; `backend/tests/test_cost_model.py`;
@@ -124,7 +124,7 @@ JSON files directly (#4 swaps this for the DB). Anant's `main.py` will `include_
 
 Tests (`pytest backend/tests`): build a FastAPI app in a fixture with `include_router`.
 - telehandler → move_ours ranks first; 19' scissor lift → rent_sister ranks first;
-  45 kW generator → buy ranks first, breakeven_month ≤ 6.
+  45 kW generator → buy ranks first, breakeven_month ≤ 6 (superseded: see DECISIONS #28; rent_outside ranks first).
 - After shifting one generator project's dates +42 days → buy unavailable, rent_outside first.
 - rental_price tiers (e.g. 10 days is never more than 2 weeks).
 - POST /recommend with no body returns 200 and 4 options per item.

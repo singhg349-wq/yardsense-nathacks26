@@ -6,7 +6,7 @@ import ReplanCard from './ReplanCard'
 vi.mock('../api', () => ({ postReplan: vi.fn() }))
 
 const saving = {
-  greedy_cost: 126470.48, replan_cost: 123645.83, switching_cost: 354.26,
+  greedy_cost: 133993.34, replan_cost: 131168.69, switching_cost: 354.26,
   net_saving: 2470.39, locked_count: 21, recommend: true,
   changes: [
     { request_id: 'PRJ-RIV:0', project: 'Riverside Clinic', class: 'SCISSOR_19',
@@ -34,7 +34,8 @@ describe('ReplanCard', () => {
     expect(await screen.findByText(/Re-plan open requests/)).toBeTruthy()
     expect(screen.getByText(/2,470/)).toBeTruthy()
     expect(screen.getByText(/354/)).toBeTruthy()
-    expect(screen.getByText('21')).toBeTruthy()
+    expect(screen.getByText(/units locked/)).toBeTruthy()
+    expect(screen.getByText(/open requests:/)).toBeTruthy()
     expect(screen.getAllByText(/Westgate Tower/).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/19 ft scissor lift/).length).toBe(2)
     expect(screen.getByText(/Frees the sister-yard unit for Westgate Tower/)).toBeTruthy()

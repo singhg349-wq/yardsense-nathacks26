@@ -94,3 +94,5 @@
 
 @media (max-width: 1100px) { .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dash-card, .dashboard-mincost { grid-column: span 6; } .dashboard-backtest { grid-column: span 12; } }
 @media (max-width: 650px) { .dashboard-view { padding: 20px 12px 40px; } .kpi-row { grid-template-columns: 1fr; } .dash-card, .dashboard-backtest, .dashboard-mincost { grid-column: span 12; } .backtest-grid { grid-template-columns: 1fr; } }
+.accepted-stale { opacity: .6; }
+.accepted-stale span { color: var(--red-600); }

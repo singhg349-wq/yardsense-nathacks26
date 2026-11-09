@@ -56,15 +56,16 @@ def test_scissor_lifts_come_from_the_sister_yard(client):
     assert top["SCISSOR_19"]["option"] == "rent_sister"
 
 
-def test_generator_breaks_even_within_six_months(client):
-    top = top_options(client.post("/recommend"))
-    assert top["GEN_45KW"]["option"] == "buy"
-    assert top["GEN_45KW"]["breakeven_month"] <= 6
-
-
-def test_generator_flips_when_kingsway_slips(client, monkeypatch):
-    monkeypatch.setattr(api, "load_world", slip_project("PRJ-KNG", 42))
+def test_generator_is_rented_because_buying_one_loses_money(client):
     options = {item["class"]: item["options"] for item in client.post("/recommend").json()["items"]}
     assert options["GEN_45KW"][0]["option"] == "rent_outside"
     buy = next(option for option in options["GEN_45KW"] if option["option"] == "buy")
     assert buy["available"] is False
+    assert buy["net_annual_impact"] < 0
+
+
+def test_scissors_flip_to_outside_when_kingsway_slips(client, monkeypatch):
+    monkeypatch.setattr(api, "load_world", slip_project("PRJ-KNG", 42))
+    options = {item["class"]: item["options"] for item in client.post("/recommend").json()["items"]}
+    assert options["SCISSOR_19"][0]["option"] == "rent_outside"
+    assert options["GEN_45KW"][0]["option"] == "rent_outside"

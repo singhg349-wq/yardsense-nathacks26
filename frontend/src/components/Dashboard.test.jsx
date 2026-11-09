@@ -19,9 +19,9 @@ beforeEach(() => {
   })
   vi.mocked(api.getMincost).mockResolvedValue({
     requests: 16, runtime_ms: 34,
-    greedy_static: { group_cost: 126470.48 },
-    mincost: { group_cost: 123645.83 },
-    delta: { group_cost: 2824.65, pct: 2.2 },
+    greedy_static: { group_cost: 133993.34 },
+    mincost: { group_cost: 131168.69 },
+    delta: { group_cost: 2824.65, pct: 2.1 },
     assumptions: ['static snapshot'],
   })
 })
@@ -33,7 +33,18 @@ describe('Dashboard comparisons', () => {
     expect(await screen.findByText('Greedy vs min-cost')).toBeTruthy()
     expect(screen.getByText(/Min-cost saves/)).toBeTruthy()
     expect(screen.getByText('$2,825')).toBeTruthy()
-    expect(screen.getByText('$123,646')).toBeTruthy()
-    expect(screen.getByText(/static comparison/)).toBeTruthy()
+    expect(screen.getByText('$131,169')).toBeTruthy()
+    expect(screen.getByText('Greedy (static model)')).toBeTruthy()
+    expect(screen.getByText(/does not grade the live plan/)).toBeTruthy()
+    expect(screen.queryByText(/like-for-like/)).toBeNull()
+  })
+
+  it('marks accepted items changed by a what-if and shows human class names', async () => {
+    const entry = { key: 'k', project_name: 'Riverside', item: { qty: 1, class: 'GEN_45KW' },
+      option: { option: 'buy', kept_in_group: 900 }, stale: true }
+    render(<Dashboard shifts={[]} accepted={[entry]} />)
+    expect(await screen.findByText(/1 × 45 kW generator/)).toBeTruthy()
+    expect(screen.getByText(/changed by what-if/, { selector: '.accepted-row span' })).toBeTruthy()
+    expect(screen.queryByText('GEN_45KW')).toBeNull()
   })
 })

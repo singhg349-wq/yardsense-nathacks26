@@ -43,12 +43,14 @@ export default function ReplanCard({ shifts = [] }) {
     return () => { cancelled = true }
   }, [shiftKey])
 
-  const data = result?.key === shiftKey ? result.data : null
+  const data = result?.data ?? null
+  const updating = result !== null && result.key !== shiftKey && !error
   if (error) return <aside className="replan-card card"><p className="replan-muted" role="alert">Re-plan check unavailable: {error}</p></aside>
   if (!data) return <aside className="replan-card card"><p className="replan-muted">Checking for a cheaper re-plan…</p></aside>
 
+  const openRequests = data.open_requests ?? data.requests ?? 16
   const gap = Math.max(0, data.greedy_cost - data.replan_cost)
-  return <aside className="replan-card card" aria-label="Re-plan suggestion">
+  return <aside className="replan-card card" aria-label="Re-plan suggestion" aria-busy={updating}>
     {data.recommend ? <>
       <div className="replan-kicker">Re-plan open requests</div>
       <div className="replan-headline">saves <span className="num replan-big">{money.format(data.net_saving)}</span> net</div>
@@ -58,7 +60,8 @@ export default function ReplanCard({ shifts = [] }) {
     </>}
     <div className="replan-stats">
       <span>Switching cost <b className="num">{money.format(data.switching_cost)}</b></span>
-      <span><b className="num">{data.locked_count}</b> locked (already started)</span>
+      <span><b className="num">{data.locked_count}</b> units locked (already started)</span>
+      <span>open requests: <b className="num">{openRequests}</b></span>
     </div>
     {data.recommend && data.changes.length > 0 && <ul className="replan-changes">
       {data.changes.map((change) => <li key={`${change.request_id}-${change.from_asset}-${change.to_asset}`}>
@@ -68,7 +71,8 @@ export default function ReplanCard({ shifts = [] }) {
         <span className={`num replan-saving ${change.saving < 0 ? 'is-loss' : ''}`}>{change.saving < 0 ? '−' : '+'}{money.format(Math.abs(change.saving))}</span>
       </li>)}
     </ul>}
-    <p className="replan-muted">Re-plan prices a 16-request static snapshot; the live plan above re-prices moves.</p>
+    <p className="replan-muted">Re-plan prices a {openRequests}-request static snapshot; the live plan above re-prices moves.</p>
+    {updating && <p className="replan-muted" role="status">updating…</p>}
     <p className="replan-muted">Suggestion only — the live plan does not change until accepted.</p>
   </aside>
 }

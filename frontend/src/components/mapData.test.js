@@ -49,6 +49,20 @@ describe('buildMoves', () => {
     expect(rows.map((row) => [row.fromId, row.qty, row.kept])).toEqual([['Y-NR', 2, 600], ['S-KNG', 1, 300]])
   })
 
+  it('draws only the moved unit of a split need and credits what that unit kept', () => {
+    const split = { ...allocations[0], option: 'split', qty: 2, group_cost: 19264.42, kept_in_group: 67575.58,
+      units: [
+        { option: 'move_ours', qty: 1, asset_ids: ['100017'], group_cost: 8544.16 },
+        { option: 'buy', qty: 1, asset_ids: ['BUY-TELEHANDLER-6'], group_cost: 10720.26 },
+      ],
+      moves: [{ asset_id: '100017', from_site_id: 'S-WGT', to_site_id: 'S-RIV', km: 16.5, transport_cost: 224.16 }] }
+    const rows = buildMoves([split], classes, sites)
+    expect(rows).toHaveLength(1)
+    expect(rows[0]).toMatchObject({ type: 'move_ours', qty: 1, ids: '#100017', fromId: 'S-WGT' })
+    // One outside unit costs (67575.58 + 19264.42) / 2 = 43420; the moved unit's group cost is 8544.16.
+    expect(rows[0].kept).toBeCloseTo(34875.84)
+  })
+
   it('flags a move that stays on the same site', () => {
     const same = { ...allocations[1], moves: [{ asset_id: '1', from_site_id: 'S-RIV', to_site_id: 'S-RIV', km: 0, transport_cost: 150 }] }
     expect(buildMoves([same], classes, sites)[0].onSite).toBe(true)

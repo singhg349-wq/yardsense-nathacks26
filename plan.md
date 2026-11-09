@@ -45,7 +45,7 @@ Monday, 7:10 AM. Priya, the superintendent on *Riverside Clinic*, asks Dana for 
 At month-end, Riverside's equipment line is $14k over budget, and a drywall sub's change order in Textura bills $4,800 for lift rental during the same weeks the group's lifts sat idle. Money left the group three times, and nobody did anything wrong. Nobody could see the whole picture.
 
 ## Demo sentence
-> **In the demo, Dana enters Priya's request for *Riverside Clinic*. YardSense recommends moving the idle telehandler from *Westgate Tower* on Tuesday, booking 2 lifts from Northgate Rentals, and having Northgate Rentals buy a 45 kW generator, because 4 pipeline projects need it and it breaks even in month 5. The "$ kept in group" counter jumps. Then Dana drags one project 6 weeks later on the timeline as a what-if, and the generator recommendation flips live to "rent outside short-term." Finally, the backtest shows last year's outside rentals and what the engine would have avoided.**
+> **In the demo, Dana enters Priya's request for *Riverside Clinic*. YardSense recommends moving the idle telehandler from *Westgate Tower* on Tuesday, booking 2 lifts from Northgate Rentals, and having Northgate Rentals buy a 45 kW generator, because 4 pipeline projects need it and it breaks even in month 5 (superseded: see DECISIONS #28; the engine now rents the generator outside because one more nets -$3,750/yr). The "$ kept in group" counter jumps. Then Dana drags one project 6 weeks later on the timeline as a what-if, and the generator recommendation flips live to "rent outside short-term" (superseded: see DECISIONS #28; the slip now moves Riverside's and Capilano's scissor lifts to outside rental). Finally, the backtest shows last year's outside rentals and what the engine would have avoided.**
 
 ## How we're different
 | | Tenna | Procore Equipment | **YardSense** |
@@ -79,7 +79,7 @@ If the company already uses Procore's Equipment tool (still unknown), position Y
 6. **Real transport cost:** yards and sites geocoded (Edmonton-area fictional addresses). Road distance is precomputed (OSRM, or straight-line distance × 1.3 as a fallback) and converted to a truck cost per move. "Move ours" uses it, and it's shown on a map with routes.
 7. **Backtest:** 12 months of synthetic *past* requests and what was actually done (rented outside, bought, moved). Replay them through the engine to get the headline number: *"$X left the group last year; YardSense would have kept $Y."*
 8. **Live file upload:** upload a CSV in SAP asset-register format and a Procore schedule export format. The app validates and ingests it live, and the recommendations update. This proves the connectors are real code, not hard-coded data.
-9. **Fleet advisor (Northgate Rentals view):** from the GC's 12-month pipeline, the shipped rule-based advisor returns: *"Add 2 × 60 ft boom lifts and 2 × 400k BTU heaters; retire one plate compactor and one mini excavator (13.7% utilized)."* The rules are shown in the app. (The earlier 45 kW generator / telehandler example did not match the seed's fleet counts.)
+9. **Fleet advisor (Northgate Rentals view):** from the GC's 12-month pipeline, the shipped rule-based advisor returns: *"Add 2 × 60 ft boom lifts and 2 × 400k BTU heaters; retire one plate compactor and one mini excavator (13.7% utilized)."* (superseded: see DECISIONS #26 and #28; the advisor now retires one mini excavator and adds nothing.) The rules are shown in the app. (The earlier 45 kW generator / telehandler example did not match the seed's fleet counts.)
 10. **Screens:** (a) request → ranked options with $, a one-line reason and a "Why this?" breakdown; (b) group timeline where dragging a project runs a what-if re-plan (it does not edit the schedule of record); (c) map with recommended moves; (d) dashboard with **$ kept in group**, **idle days** and the synthetic backtest result; (e) fleet advisor; (f) data upload + provenance.
 
 **Should**
@@ -103,7 +103,7 @@ If the company already uses Procore's Equipment tool (still unknown), position Y
 **"Our group-cost numbers match what a real coordinator would do, and the answer isn't obvious."**
 - **Spike (tonight, first 2 hours):** Gurshmeer and the data lane run 3 items with the helper's numbers (telehandler, 45 kW generator, 19' scissor lift) through all 4 options in a spreadsheet, under 2 pipelines (normal and one project slipped 6 weeks). Success: the recommendation flips between the pipelines, and the helper agrees with both answers.
 - **Fallback:** a transparent rule-based version (idle internal unit → move; Northgate Rentals has a unit → sister; pipeline demand over the break-even point → rental company buys; else rent outside), with every assumption editable in the UI.
-- **Second risk, the allocator:** greedy ships first (by the Sat 6 PM MVP gate). Min-cost is built on top and swapped in only if it matches or beats greedy on the backtest by **Sun 2 PM**. Otherwise greedy stays, and the flip still works. **Result (Nov 8):** the PuLP/CBC static comparison solves the 16-request snapshot usually under 100 ms; min-cost is **2.2% ($2,825) below a like-for-like greedy**. The live plan stays greedy because the static model does not re-price relocation and only allows buy when no unit is free; the comparison is shown on the Dashboard.
+- **Second risk, the allocator:** greedy ships first (by the Sat 6 PM MVP gate). Min-cost is built on top and swapped in only if it matches or beats greedy on the backtest by **Sun 2 PM**. Otherwise greedy stays, and the flip still works. **Result (Nov 8):** the PuLP/CBC static comparison solves the 16-request snapshot usually under 100 ms; min-cost is **2.2% ($2,825) below a like-for-like greedy** (superseded: see DECISIONS #27 and #28; now 2.1% on the same 16 requests, and it does not grade the live plan). The live plan stays greedy because the static model does not re-price relocation and only allows buy when no unit is free; the comparison is shown on the Dashboard.
 - **Third risk, workload:** this is 5 engine/data features plus 5 screens. Order of build: greedy → transport cost → backtest → upload → fleet advisor → min-cost. Anything not working by **Sun 10 PM code freeze** gets cut from the demo, not patched live.
 
 ## Task split
@@ -120,6 +120,9 @@ Work is tracked as user-story issues on GitHub, with one milestone per gate. Lan
 | **Frontend + pitch owner** | Fleet advisor UI, "Why this?" view; owns the deck, video and written summary from Sun afternoon | #7 pitch v1 |
 
 ## Rubric map (80)
+
+> Superseded: the official rubric is 68 points and includes Feasibility & Continuation. See DECISIONS #29.
+
 | Criterion | Pts | Target | What earns it |
 |---|---|---|---|
 | Technical Rigor | 10 | 8 | Min-cost allocator (greedy fallback), road-distance transport cost, backtest that proves the engine against a baseline, two-lens cost model |
@@ -139,7 +142,7 @@ Confirmed with the organizers' handbook (see `DECISIONS.md` #11). The demo shows
 | Segment | Time | Who |
 |---|---|---|
 | Story: "Monday 7:10 AM" (Dana, Priya, money leaving the group) | 0:45 | Pitch owner |
-| Live demo: request → four options ranked by group cost → $ kept → slip a project 6 weeks → generator flips | 2:30 | Gurshmeer drives, pitch owner narrates |
+| Live demo: request → four options ranked by group cost → $ kept → slip a project 6 weeks → generator flips (superseded: see DECISIONS #28) | 2:30 | Gurshmeer drives, pitch owner narrates |
 | Why it works: group cost vs project cost, **backtest result** | 0:45 | Gurshmeer |
 | Competitors (Procore, HCSS, Tenna) + one scale slide (connectors → shared tables → more engines) | 0:45 | Presenter |
 | Close | 0:15 | Presenter |

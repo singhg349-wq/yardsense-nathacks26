@@ -120,7 +120,8 @@ def recommend(world, body):
             req, world["classes"][cls], settings,
             [u for u in idle if u["company"] != OWNED_BY_RENTALS],
             [u for u in idle if u["company"] == OWNED_BY_RENTALS],
-            pipeline_for(world, cls), world.get("road_distances"))
+            pipeline_for(world, cls), world.get("road_distances"),
+            availability.usable_supply(world, cls))
         results.append({"class": cls, "qty": req["qty"], "options": cost_model.rank(options)})
     return {"project_id": body["project_id"], "items": results}
 
