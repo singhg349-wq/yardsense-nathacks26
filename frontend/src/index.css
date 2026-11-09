@@ -2,8 +2,8 @@
 :root {
   --navy-950: #0b1724; --navy-900: #10202f; --navy-800: #182d40; --navy-700: #24405a; --navy-500: #4b647b;
   --ink: #142536; --ink-muted: #5a6d7e; --ink-faint: #8a9aa8;
-  --surface: #ffffff; --surface-2: #f6f8fa; --canvas: #eef2f5; --line: #dfe5ea; --line-strong: #c7d1d9;
-  --orange-600: #e0640f; --orange-500: #f47a1f; --orange-100: #fdeedd; --orange-50: #fff7ef;
+  --surface: #ffffff; --surface-2: #f7f6f3; --canvas: #f1f0ec; --line: #e1dfd8; --line-strong: #c9c6bc;
+  --orange-600: #b8500e; --orange-500: #cf6014; --orange-100: #fdeedd; --orange-50: #fff7ef;
   --green-600: #1f8a5b; --green-100: #e2f4ea;
   --blue-600: #2f6fb3; --blue-100: #e3eefa;
   --yellow-500: #f2b51c; --yellow-100: #fdf3d6;
@@ -11,8 +11,8 @@
   --grey-300: #c9d2da; --grey-100: #eef1f4;
   /* option colours, used consistently in bars, pills, donuts and legends */
   --opt-move: var(--blue-600); --opt-sister: var(--green-600); --opt-outside: var(--red-600); --opt-buy: var(--orange-500);
-  --radius-sm: 8px; --radius: 14px; --radius-lg: 20px;
-  --shadow: 0 1px 2px rgba(16, 32, 47, .06), 0 4px 16px rgba(16, 32, 47, .06);
+  --radius-sm: 4px; --radius: 6px; --radius-lg: 8px;
+  --shadow: none;
   --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-num: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
   font-family: var(--font); color: var(--ink); background: var(--canvas); font-synthesis: none;
@@ -22,8 +22,8 @@ body { margin: 0; min-width: 320px; background: var(--canvas); }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 .num { font-family: var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .02em; }
-.pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+.pill::before { content: none; }
 .pill.move { color: var(--opt-move); background: var(--blue-100); }
 .pill.sister { color: var(--opt-sister); background: var(--green-100); }
 .pill.outside { color: var(--opt-outside); background: var(--red-100); }
