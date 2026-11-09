@@ -14,7 +14,6 @@ frontend/     React + Vite app (Node 24)
 data/seed/    fictional Northgate Group seed data (committed)
 data/private/ real numbers for tuning; gitignored, never commit
 docs/         design notes
-pitch/        deck, script, demo video
 ```
 
 ## Requirements
